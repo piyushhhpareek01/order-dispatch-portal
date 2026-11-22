@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Khushali Logistic Panel — Order & Dispatch Portal</title>
+    <title>Khushali Logistic Panel</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter -->
@@ -31,7 +31,7 @@
                     }
                 }
             }
-        }
+        };
     </script>
     <style>
         body {
@@ -58,7 +58,7 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        /* Clean Print CSS for Bill / Invoice */
+        /* Print layout dedicated to the Khushali Logistic Panel bill */
         @media print {
             body * {
                 visibility: hidden;
@@ -71,7 +71,7 @@
                 left: 0;
                 top: 0;
                 width: 100%;
-                padding: 20px;
+                padding: 16px;
                 background: #ffffff !important;
                 color: #000000 !important;
                 box-shadow: none !important;
@@ -85,87 +85,87 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <!-- ==================== TOAST NOTIFICATION CONTAINER ==================== -->
-    <div id="toast-container" class="fixed bottom-4 right-4 z-[80] flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-[90] flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
 
     <!-- ==================== LOGIN SCREEN ==================== -->
-    <div id="login-screen" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-slate-800 to-brand-900">
-        <div class="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-200/80 overflow-hidden">
-            <!-- Header -->
-            <div class="bg-slate-50 px-6 py-7 border-b border-slate-200 text-center">
+    <section id="login-screen" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-slate-800 to-brand-900">
+        <div class="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200/80 overflow-hidden">
+            <div class="bg-slate-50 px-6 py-6 border-b border-slate-200 text-center">
                 <div class="w-14 h-14 rounded-2xl bg-brand-600 text-white flex items-center justify-center mx-auto shadow-lg shadow-brand-600/30 mb-3">
-                    <i data-lucide="truck" class="w-8 h-8"></i>
+                    <i data-lucide="truck" class="w-7 h-7"></i>
                 </div>
                 <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">Khushali Logistic Panel</h1>
-                <p class="text-xs sm:text-sm text-slate-500 mt-1">Order Taking & Dispatch Live Sync Portal</p>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1">Order Entry, Packing Checklist, Dispatch & Bill Management</p>
             </div>
 
-            <!-- Login Form -->
-            <form id="login-form" onsubmit="handleLogin(event)" class="p-6 sm:p-7 space-y-5">
-                <!-- Role / User Selection (4 Options) -->
+            <form id="login-form" onsubmit="handleLogin(event)" class="p-6 space-y-5">
+                <!-- 4 Selectable User / Role Profiles -->
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">1. Select User / Role</label>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+                        1. Select Profile
+                    </label>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                        <label class="cursor-pointer">
-                            <input type="radio" name="userRole" value="Piyush (Order Team)" class="peer sr-only" checked>
-                            <div class="p-3 rounded-2xl border-2 border-slate-200 peer-checked:border-brand-600 peer-checked:bg-brand-50/70 transition flex items-center gap-2.5">
-                                <div class="w-8 h-8 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center shrink-0">
-                                    <i data-lucide="clipboard-edit" class="w-4 h-4"></i>
+                        <label class="cursor-pointer block">
+                            <input type="radio" name="loginProfile" value="Piyush (Order Team)" class="peer sr-only" checked>
+                            <div class="p-3.5 rounded-2xl border-2 border-slate-200 peer-checked:border-brand-600 peer-checked:bg-brand-50/70 transition flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center shrink-0">
+                                    <i data-lucide="clipboard-plus" class="w-4 h-4"></i>
                                 </div>
                                 <div class="min-w-0">
                                     <span class="text-xs sm:text-sm font-bold text-slate-900 block truncate">Piyush (Order Team)</span>
-                                    <span class="text-[10px] text-slate-500 block truncate">Order entry & edit</span>
+                                    <span class="text-[11px] text-slate-500 block truncate">Create & edit orders</span>
                                 </div>
                             </div>
                         </label>
 
-                        <label class="cursor-pointer">
-                            <input type="radio" name="userRole" value="Govardhan (Order Team)" class="peer sr-only">
-                            <div class="p-3 rounded-2xl border-2 border-slate-200 peer-checked:border-brand-600 peer-checked:bg-brand-50/70 transition flex items-center gap-2.5">
-                                <div class="w-8 h-8 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center shrink-0">
+                        <label class="cursor-pointer block">
+                            <input type="radio" name="loginProfile" value="Govardhan (Order Team)" class="peer sr-only">
+                            <div class="p-3.5 rounded-2xl border-2 border-slate-200 peer-checked:border-brand-600 peer-checked:bg-brand-50/70 transition flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center shrink-0">
                                     <i data-lucide="clipboard-list" class="w-4 h-4"></i>
                                 </div>
                                 <div class="min-w-0">
                                     <span class="text-xs sm:text-sm font-bold text-slate-900 block truncate">Govardhan (Order Team)</span>
-                                    <span class="text-[10px] text-slate-500 block truncate">Order entry & edit</span>
+                                    <span class="text-[11px] text-slate-500 block truncate">Create & edit orders</span>
                                 </div>
                             </div>
                         </label>
 
-                        <label class="cursor-pointer">
-                            <input type="radio" name="userRole" value="Lokesh (Packaging Team)" class="peer sr-only">
-                            <div class="p-3 rounded-2xl border-2 border-slate-200 peer-checked:border-purple-600 peer-checked:bg-purple-50/70 transition flex items-center gap-2.5">
-                                <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
-                                    <i data-lucide="boxes" class="w-4 h-4"></i>
+                        <label class="cursor-pointer block">
+                            <input type="radio" name="loginProfile" value="Lokesh (Packaging Team)" class="peer sr-only">
+                            <div class="p-3.5 rounded-2xl border-2 border-slate-200 peer-checked:border-purple-600 peer-checked:bg-purple-50/70 transition flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
+                                    <i data-lucide="package-check" class="w-4 h-4"></i>
                                 </div>
                                 <div class="min-w-0">
                                     <span class="text-xs sm:text-sm font-bold text-slate-900 block truncate">Lokesh (Packaging Team)</span>
-                                    <span class="text-[10px] text-slate-500 block truncate">Checklist, AWB & bills</span>
+                                    <span class="text-[11px] text-slate-500 block truncate">Checklist, remarks & bills</span>
                                 </div>
                             </div>
                         </label>
 
-                        <label class="cursor-pointer">
-                            <input type="radio" name="userRole" value="Manager" class="peer sr-only">
-                            <div class="p-3 rounded-2xl border-2 border-slate-200 peer-checked:border-emerald-600 peer-checked:bg-emerald-50/70 transition flex items-center gap-2.5">
-                                <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                        <label class="cursor-pointer block">
+                            <input type="radio" name="loginProfile" value="Manager" class="peer sr-only">
+                            <div class="p-3.5 rounded-2xl border-2 border-slate-200 peer-checked:border-emerald-600 peer-checked:bg-emerald-50/70 transition flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
                                     <i data-lucide="shield-check" class="w-4 h-4"></i>
                                 </div>
                                 <div class="min-w-0">
                                     <span class="text-xs sm:text-sm font-bold text-slate-900 block truncate">Manager</span>
-                                    <span class="text-[10px] text-slate-500 block truncate">Full orders & dispatch access</span>
+                                    <span class="text-[11px] text-slate-500 block truncate">Full panel & dispatch access</span>
                                 </div>
                             </div>
                         </label>
                     </div>
                 </div>
 
-                <!-- PIN Input -->
+                <!-- 6-Digit PIN -->
                 <div>
                     <div class="flex items-center justify-between mb-1.5">
-                        <label for="login-pin" class="block text-xs font-bold uppercase tracking-wider text-slate-500">2. Enter 6-Digit PIN</label>
-                        <button type="button" onclick="quickFillPin()" class="text-[11px] font-bold text-brand-600 bg-brand-50 hover:bg-brand-100 px-2.5 py-0.5 rounded-md transition">
-                            Use Default: 000000
+                        <label for="login-pin" class="block text-xs font-bold uppercase tracking-wider text-slate-500">2. Access PIN</label>
+                        <button type="button" onclick="fillDefaultPin()" class="text-[11px] font-bold text-brand-600 bg-brand-50 hover:bg-brand-100 px-2.5 py-0.5 rounded-md transition">
+                            Fill Default: 000000
                         </button>
                     </div>
                     <div class="relative">
@@ -173,6 +173,7 @@
                         <input
                             type="password"
                             id="login-pin"
+                            value="000000"
                             maxlength="6"
                             inputmode="numeric"
                             placeholder="000000"
@@ -182,28 +183,25 @@
                     </div>
                     <p id="login-error" class="hidden text-xs font-semibold text-red-600 mt-1.5 flex items-center gap-1">
                         <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i>
-                        <span>Galat PIN! Default PIN 000000 daalein.</span>
+                        <span>Invalid PIN. Use default PIN 000000.</span>
                     </p>
                 </div>
 
-                <!-- Submit -->
-                <button type="submit" class="w-full py-3.5 px-4 bg-brand-600 hover:bg-brand-700 active:scale-[0.99] text-white font-bold text-sm rounded-xl shadow-lg shadow-brand-600/25 flex items-center justify-center gap-2 transition">
+                <button type="submit" id="login-submit-btn" class="w-full py-3.5 px-4 bg-brand-600 hover:bg-brand-700 active:scale-[0.99] text-white font-bold text-sm rounded-xl shadow-lg shadow-brand-600/25 flex items-center justify-center gap-2 transition cursor-pointer">
                     <span>Login to Khushali Logistic Panel</span>
                     <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </button>
             </form>
         </div>
-    </div>
+    </section>
 
-    <!-- ==================== MAIN APP SHELL ==================== -->
+    <!-- ==================== MAIN APPLICATION SHELL ==================== -->
     <div id="app-shell" class="hidden flex-1 flex flex-col">
 
-        <!-- Sticky Top Navbar -->
+        <!-- Sticky Top Bar -->
         <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
                 <div class="flex flex-wrap items-center justify-between gap-3">
-
-                    <!-- Left: Brand + Active Department Badge -->
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center shadow-sm shrink-0">
                             <i data-lucide="truck" class="w-5 h-5"></i>
@@ -211,43 +209,38 @@
                         <div>
                             <div class="flex items-center gap-2 flex-wrap">
                                 <span class="text-base sm:text-lg font-extrabold tracking-tight text-slate-900">Khushali Logistic Panel</span>
-                                <span id="dept-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-brand-50 text-brand-700 border border-brand-200">
+                                <span id="active-profile-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-brand-50 text-brand-700 border border-brand-200">
                                     Piyush (Order Team)
                                 </span>
                             </div>
-                            <p class="text-[11px] text-slate-500 font-medium hidden sm:block">Live Order Taking, Packing Checklist, Bill & Google Sheets Sync</p>
+                            <p id="active-role-subtitle" class="text-[11px] text-slate-500 font-medium hidden sm:block">Order Entry & Edit Workspace</p>
                         </div>
                     </div>
 
-                    <!-- Right: Sync Status + Actions -->
                     <div class="flex items-center gap-2">
-                        <!-- Google Sheets Sync Status Button -->
-                        <button onclick="openSyncModal()" id="sync-status-btn" class="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold border border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 transition">
-                            <span id="sync-dot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                            <span id="sync-label">Google Sheet Sync</span>
+                        <button type="button" onclick="openSyncModal()" id="sync-status-btn" class="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold border border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 transition cursor-pointer">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span>Google Sheet Sync</span>
                             <i data-lucide="settings" class="w-3.5 h-3.5 opacity-75"></i>
                         </button>
 
-                        <!-- Manual Refresh Button -->
-                        <button onclick="manualRefresh()" id="refresh-btn" title="Sync / Refresh Data" class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 transition">
+                        <button type="button" onclick="manualRefresh()" id="refresh-btn" title="Sync / Refresh" class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 transition cursor-pointer">
                             <i data-lucide="refresh-cw" class="w-4 h-4"></i>
                         </button>
 
-                        <!-- Switch Dept / Logout -->
-                        <button onclick="handleLogout()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 hover:bg-red-50 hover:text-red-600 hover:border-red-200 text-slate-700 text-xs font-semibold transition">
+                        <button type="button" onclick="handleLogout()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 hover:bg-red-50 hover:text-red-600 hover:border-red-200 text-slate-700 text-xs font-semibold transition cursor-pointer">
                             <i data-lucide="log-out" class="w-4 h-4"></i>
-                            <span class="hidden sm:inline">Switch / Logout</span>
+                            <span class="hidden sm:inline">Logout</span>
                         </button>
                     </div>
-
                 </div>
             </div>
         </header>
 
-        <!-- Main Content Area -->
+        <!-- Main Workspace -->
         <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 space-y-6">
 
-            <!-- Quick Status Counters -->
+            <!-- Status Counters -->
             <section class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                 <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-amber-200/80 shadow-xs">
                     <div class="flex items-center justify-between">
@@ -282,10 +275,9 @@
                 </div>
             </section>
 
-            <!-- ==================== VIEW 1: ORDER TEAM ==================== -->
-            <div id="order-team-view" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-
-                <!-- Left Column: Create New Order Form -->
+            <!-- ==================== ORDER TEAM / MANAGER ORDER SECTION ==================== -->
+            <section id="order-section" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <!-- Create New Order Form -->
                 <div id="create-order-card" class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
                     <div class="bg-slate-50 px-5 py-4 border-b border-slate-200 flex items-center justify-between gap-2">
                         <div class="flex items-center gap-2">
@@ -294,162 +286,134 @@
                             </div>
                             <div>
                                 <h2 class="text-sm sm:text-base font-bold text-slate-900">Create New Order</h2>
-                                <p class="text-[11px] text-slate-500">Seedha Packing team ko live dikhega</p>
+                                <p class="text-[11px] text-slate-500">Live sync with Packing & Google Sheet</p>
                             </div>
                         </div>
-                        <!-- Locked Payment Status Badge -->
                         <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
                             <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
-                            Payment: Success
+                            Paid: Success
                         </span>
                     </div>
 
                     <form id="new-order-form" onsubmit="submitNewOrder(event)" class="p-5 space-y-4">
-                        <!-- Customer Name & Contact No -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-1">Customer Name <span class="text-red-500">*</span></label>
                                 <input type="text" id="cust-name" required placeholder="e.g. Rahul Sharma" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-600">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Contact No <span class="text-red-500">*</span></label>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Contact Number <span class="text-red-500">*</span></label>
                                 <input type="tel" id="cust-phone" required placeholder="e.g. 9876543210" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-600">
                             </div>
                         </div>
 
-                        <!-- Optional: Company Name & Aadhaar / GST No -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-1">Company Name <span class="text-slate-400 font-normal">(if any)</span></label>
-                                <input type="text" id="cust-company" placeholder="e.g. Sharma Enterprises" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-600">
+                                <input type="text" id="cust-company" placeholder="Optional company name" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-600">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-1">Aadhaar / GST No <span class="text-slate-400 font-normal">(if any)</span></label>
-                                <input type="text" id="cust-tax-id" placeholder="GSTIN or Aadhaar No" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm uppercase focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-600">
+                                <input type="text" id="cust-tax-id" placeholder="Optional GSTIN or Aadhaar" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm uppercase focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-600">
                             </div>
                         </div>
 
-                        <!-- Full Delivery Address -->
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Full Delivery Address <span class="text-red-500">*</span></label>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Delivery Address <span class="text-red-500">*</span></label>
                             <textarea id="cust-address" rows="2" required placeholder="House/Shop No, Area, City, State - Pincode" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-600"></textarea>
                         </div>
 
-                        <!-- Dynamic Items & Quantity Builder + Automatic Item Count Badge -->
+                        <!-- Dynamic Product Items & Automatic Item Count -->
                         <div>
                             <div class="flex items-center justify-between gap-2 mb-1.5">
                                 <div class="flex items-center gap-2">
-                                    <label class="block text-xs font-bold text-slate-700">Items & Quantity <span class="text-red-500">*</span></label>
+                                    <label class="block text-xs font-bold text-slate-700">Products & Quantity <span class="text-red-500">*</span></label>
                                     <span id="create-item-count-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-brand-50 text-brand-700 border border-brand-200">
                                         1 Item
                                     </span>
                                 </div>
-                                <button type="button" onclick="addItemRow('create-items-container', 'create-item-count-badge')" class="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1">
+                                <button type="button" onclick="addItemRow('create-items-container', 'create-item-count-badge')" class="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1 cursor-pointer">
                                     <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
-                                    Add More Item
+                                    Add Item
                                 </button>
                             </div>
-                            <div id="create-items-container" class="space-y-2.5">
-                                <!-- Initial Item Row injected via JS -->
-                            </div>
+                            <div id="create-items-container" class="space-y-2.5"></div>
                         </div>
 
-                        <!-- Locked Payment Status Box -->
                         <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-3 flex items-center justify-between">
                             <div>
                                 <span class="text-xs font-bold text-emerald-900 block">Payment Status</span>
-                                <span class="text-[11px] text-emerald-700">Default locked for confirmed orders</span>
+                                <span class="text-[11px] text-emerald-700">Confirmed order status</span>
                             </div>
                             <span class="px-3 py-1 rounded-lg bg-emerald-600 text-white text-xs font-extrabold tracking-wide uppercase">
                                 SUCCESS
                             </span>
                         </div>
 
-                        <!-- Submit Button -->
-                        <button type="submit" id="create-order-btn" class="w-full py-3.5 px-4 bg-brand-600 hover:bg-brand-700 active:scale-[0.99] text-white font-bold text-sm rounded-xl shadow-md shadow-brand-600/20 flex items-center justify-center gap-2 transition">
+                        <button type="submit" class="w-full py-3.5 px-4 bg-brand-600 hover:bg-brand-700 active:scale-[0.99] text-white font-bold text-sm rounded-xl shadow-md shadow-brand-600/20 flex items-center justify-center gap-2 transition cursor-pointer">
                             <i data-lucide="send" class="w-4 h-4"></i>
-                            <span>Submit Order to Packing Team</span>
+                            <span>Submit Order</span>
                         </button>
                     </form>
                 </div>
 
-                <!-- Right Column: Recent Orders List -->
+                <!-- Orders List for Order Team / Manager -->
                 <div id="order-list-column" class="lg:col-span-7 space-y-4">
                     <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                            <div class="flex items-center gap-3 flex-wrap">
+                            <div class="flex items-center gap-2.5 flex-wrap">
                                 <div>
-                                    <h2 class="text-base font-bold text-slate-900">Orders & Dispatch Status</h2>
-                                    <p class="text-xs text-slate-500">Kuch galat type ho jaye toh "Edit Order" se turant sudharein</p>
+                                    <h2 class="text-base font-bold text-slate-900">Orders Directory</h2>
+                                    <p class="text-xs text-slate-500">Edit any order anytime if details need correction</p>
                                 </div>
-                                <button id="manager-toggle-order-form-btn" type="button" onclick="toggleManagerCreateForm()" class="hidden px-3 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold flex items-center gap-1.5 transition">
+                                <button id="manager-toggle-form-btn" type="button" onclick="toggleOrderFormPanel()" class="hidden px-3 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold flex items-center gap-1.5 transition cursor-pointer">
                                     <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                                     <span>New Order</span>
                                 </button>
                             </div>
                             <div class="relative w-full sm:w-64">
                                 <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-                                <input type="text" oninput="filterOrders(this.value)" placeholder="Search customer, phone, item..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-brand-600">
+                                <input type="text" oninput="handleSearchInput(this.value)" placeholder="Search customer, phone, item..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-brand-600">
                             </div>
                         </div>
 
-                        <!-- Status Filter Pills for Order Team -->
                         <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1">
-                            <button onclick="setOrderStatusFilter('ALL')" data-ofilter="ALL" class="ofilter-btn px-3 py-1.5 rounded-xl text-xs font-bold border transition whitespace-nowrap">All</button>
-                            <button onclick="setOrderStatusFilter('Pending')" data-ofilter="Pending" class="ofilter-btn px-3 py-1.5 rounded-xl text-xs font-bold border transition whitespace-nowrap">Pending</button>
-                            <button onclick="setOrderStatusFilter('Packing')" data-ofilter="Packing" class="ofilter-btn px-3 py-1.5 rounded-xl text-xs font-bold border transition whitespace-nowrap">Packing</button>
-                            <button onclick="setOrderStatusFilter('Packed')" data-ofilter="Packed" class="ofilter-btn px-3 py-1.5 rounded-xl text-xs font-bold border transition whitespace-nowrap">Packed</button>
-                            <button onclick="setOrderStatusFilter('Dispatched')" data-ofilter="Dispatched" class="ofilter-btn px-3 py-1.5 rounded-xl text-xs font-bold border transition whitespace-nowrap">Dispatched</button>
+                            <button type="button" onclick="setOrderFilter('ALL')" data-ofilter="ALL" class="ofilter-btn px-3 py-1.5 rounded-xl text-xs font-bold border transition whitespace-nowrap cursor-pointer">All</button>
+                            <button type="button" onclick="setOrderFilter('Pending')" data-ofilter="Pending" class="ofilter-btn px-3 py-1.5 rounded-xl text-xs font-bold border transition whitespace-nowrap cursor-pointer">Pending</button>
+                            <button type="button" onclick="setOrderFilter('Packing')" data-ofilter="Packing" class="ofilter-btn px-3 py-1.5 rounded-xl text-xs font-bold border transition whitespace-nowrap cursor-pointer">Packing</button>
+                            <button type="button" onclick="setOrderFilter('Packed')" data-ofilter="Packed" class="ofilter-btn px-3 py-1.5 rounded-xl text-xs font-bold border transition whitespace-nowrap cursor-pointer">Packed</button>
+                            <button type="button" onclick="setOrderFilter('Dispatched')" data-ofilter="Dispatched" class="ofilter-btn px-3 py-1.5 rounded-xl text-xs font-bold border transition whitespace-nowrap cursor-pointer">Dispatched</button>
                         </div>
                     </div>
 
-                    <div id="order-team-list" class="space-y-3">
-                        <!-- Rendered dynamically -->
-                    </div>
+                    <div id="order-team-list" class="space-y-3"></div>
                 </div>
-            </div>
+            </section>
 
-            <!-- ==================== VIEW 2: PACKING & DISPATCH TEAM ==================== -->
-            <div id="dispatch-team-view" class="hidden space-y-4">
-
-                <!-- Filter Tabs & Search -->
+            <!-- ==================== PACKAGING TEAM / MANAGER DISPATCH SECTION ==================== -->
+            <section id="dispatch-section" class="hidden space-y-4">
                 <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
-                    <!-- Status Filter Pills -->
                     <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-                        <button onclick="setDispatchFilter('ALL')" data-dfilter="ALL" class="dfilter-btn px-3.5 py-2 rounded-xl text-xs font-bold border transition whitespace-nowrap">
-                            All Orders
-                        </button>
-                        <button onclick="setDispatchFilter('Pending')" data-dfilter="Pending" class="dfilter-btn px-3.5 py-2 rounded-xl text-xs font-bold border transition whitespace-nowrap">
-                            Pending
-                        </button>
-                        <button onclick="setDispatchFilter('Packing')" data-dfilter="Packing" class="dfilter-btn px-3.5 py-2 rounded-xl text-xs font-bold border transition whitespace-nowrap">
-                            Packing
-                        </button>
-                        <button onclick="setDispatchFilter('Packed')" data-dfilter="Packed" class="dfilter-btn px-3.5 py-2 rounded-xl text-xs font-bold border transition whitespace-nowrap">
-                            Packed
-                        </button>
-                        <button onclick="setDispatchFilter('Dispatched')" data-dfilter="Dispatched" class="dfilter-btn px-3.5 py-2 rounded-xl text-xs font-bold border transition whitespace-nowrap">
-                            Dispatched
-                        </button>
+                        <button type="button" onclick="setDispatchFilter('ALL')" data-dfilter="ALL" class="dfilter-btn px-3.5 py-2 rounded-xl text-xs font-bold border transition whitespace-nowrap cursor-pointer">All Orders</button>
+                        <button type="button" onclick="setDispatchFilter('Pending')" data-dfilter="Pending" class="dfilter-btn px-3.5 py-2 rounded-xl text-xs font-bold border transition whitespace-nowrap cursor-pointer">Pending</button>
+                        <button type="button" onclick="setDispatchFilter('Packing')" data-dfilter="Packing" class="dfilter-btn px-3.5 py-2 rounded-xl text-xs font-bold border transition whitespace-nowrap cursor-pointer">Packing</button>
+                        <button type="button" onclick="setDispatchFilter('Packed')" data-dfilter="Packed" class="dfilter-btn px-3.5 py-2 rounded-xl text-xs font-bold border transition whitespace-nowrap cursor-pointer">Packed</button>
+                        <button type="button" onclick="setDispatchFilter('Dispatched')" data-dfilter="Dispatched" class="dfilter-btn px-3.5 py-2 rounded-xl text-xs font-bold border transition whitespace-nowrap cursor-pointer">Dispatched</button>
                     </div>
 
-                    <!-- Search Box -->
                     <div class="relative w-full md:w-72">
                         <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-                        <input type="text" oninput="filterOrders(this.value)" placeholder="Search Customer, Company, AWB..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-purple-600">
+                        <input type="text" oninput="handleSearchInput(this.value)" placeholder="Search customer, company, AWB..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-purple-600">
                     </div>
                 </div>
 
-                <!-- Dispatch Cards Grid -->
-                <div id="dispatch-team-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Rendered dynamically -->
-                </div>
-            </div>
+                <div id="dispatch-team-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </section>
 
         </main>
     </div>
 
-    <!-- ==================== MODAL: EDIT ORDER DETAILS ==================== -->
+    <!-- ==================== MODAL: EDIT ORDER ==================== -->
     <div id="edit-order-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-8">
             <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
@@ -457,7 +421,7 @@
                     <span class="text-xs font-extrabold text-brand-600 uppercase tracking-wider">Khushali Logistic Panel</span>
                     <h3 class="text-base font-bold text-slate-900">Edit Order Details</h3>
                 </div>
-                <button onclick="closeEditOrderModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition">
+                <button type="button" onclick="closeEditOrderModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition cursor-pointer">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
@@ -471,7 +435,7 @@
                         <input type="text" id="edit-cust-name" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-brand-600">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Contact No <span class="text-red-500">*</span></label>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Contact Number <span class="text-red-500">*</span></label>
                         <input type="tel" id="edit-cust-phone" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-brand-600">
                     </div>
                 </div>
@@ -495,12 +459,12 @@
                 <div>
                     <div class="flex items-center justify-between gap-2 mb-1.5">
                         <div class="flex items-center gap-2">
-                            <label class="block text-xs font-bold text-slate-700">Items & Quantity <span class="text-red-500">*</span></label>
+                            <label class="block text-xs font-bold text-slate-700">Products & Quantity <span class="text-red-500">*</span></label>
                             <span id="edit-item-count-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-brand-50 text-brand-700 border border-brand-200">
                                 1 Item
                             </span>
                         </div>
-                        <button type="button" onclick="addItemRow('edit-items-container', 'edit-item-count-badge')" class="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1">
+                        <button type="button" onclick="addItemRow('edit-items-container', 'edit-item-count-badge')" class="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1 cursor-pointer">
                             <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
                             Add Item
                         </button>
@@ -509,21 +473,21 @@
                 </div>
 
                 <div class="pt-2 flex items-center gap-3">
-                    <button type="button" onclick="closeEditOrderModal()" class="flex-1 py-3 px-4 rounded-xl border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 transition">
+                    <button type="button" onclick="closeEditOrderModal()" class="flex-1 py-3 px-4 rounded-xl border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 transition cursor-pointer">
                         Cancel
                     </button>
-                    <button type="submit" class="flex-2 py-3 px-6 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs sm:text-sm shadow-md transition">
-                        Save Changes & Sync
+                    <button type="submit" class="flex-2 py-3 px-6 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs sm:text-sm shadow-md transition cursor-pointer">
+                        Save & Sync Order
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- ==================== MODAL: INTERACTIVE PACKING CHECKLIST & DISPATCH ==================== -->
+    <!-- ==================== MODAL: PACKING CHECKLIST & DISPATCH ==================== -->
     <div id="dispatch-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-white w-full max-w-xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-8">
-            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between gap-2">
                 <div>
                     <div class="flex items-center gap-2">
                         <span class="text-xs font-extrabold text-purple-600 uppercase tracking-wider">Packing & Dispatch</span>
@@ -532,11 +496,11 @@
                     <h3 id="modal-cust-title" class="text-base font-bold text-slate-900 mt-0.5">Customer Order</h3>
                 </div>
                 <div class="flex items-center gap-1.5">
-                    <button type="button" onclick="openEditOrderFromDispatch()" title="Edit Order Details" class="px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold flex items-center gap-1 transition">
+                    <button type="button" onclick="openEditOrderFromDispatch()" class="px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold flex items-center gap-1 transition cursor-pointer">
                         <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
-                        <span>Edit Order</span>
+                        <span>Edit</span>
                     </button>
-                    <button onclick="closeDispatchModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition">
+                    <button type="button" onclick="closeDispatchModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition cursor-pointer">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
@@ -545,11 +509,10 @@
             <form id="dispatch-form" onsubmit="saveDispatchUpdate(event)" class="p-6 space-y-4 max-h-[82vh] overflow-y-auto">
                 <input type="hidden" id="edit-dispatch-uid">
 
-                <!-- Customer Summary Box -->
                 <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 text-xs space-y-1">
                     <div class="flex flex-wrap justify-between gap-2 font-bold text-slate-900">
-                        <span id="modal-cust-name">Customer Name</span>
-                        <span id="modal-cust-phone" class="text-brand-600">9876543210</span>
+                        <span id="modal-cust-name"></span>
+                        <span id="modal-cust-phone" class="text-brand-600"></span>
                     </div>
                     <div id="modal-cust-extra" class="text-slate-600 font-medium hidden"></div>
                     <p id="modal-cust-address" class="text-slate-500"></p>
@@ -559,23 +522,21 @@
                 <div class="space-y-2">
                     <div class="flex items-center justify-between">
                         <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-700">
-                            Item Packing Checklist (Tick Packed Items)
+                            Item Packing Checklist
                         </label>
-                        <button type="button" onclick="toggleAllChecklist(true)" class="text-[11px] font-bold text-purple-600 hover:underline">
-                            Tick All Packed
-                        </button>
+                        <div class="flex items-center gap-3 text-[11px] font-bold">
+                            <button type="button" onclick="setAllChecklist(true)" class="text-emerald-700 hover:underline cursor-pointer">Tick All Packed</button>
+                            <button type="button" onclick="setAllChecklist(false)" class="text-amber-700 hover:underline cursor-pointer">Reset Pending</button>
+                        </div>
                     </div>
-                    <!-- Live Progress Bar -->
                     <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
                         <div id="checklist-progress-bar" class="h-full bg-purple-600 transition-all duration-300" style="width: 0%"></div>
                     </div>
-                    <!-- Checklist Container -->
                     <div id="modal-checklist-container" class="space-y-2 pt-1"></div>
                 </div>
 
-                <!-- Packing Status Dropdown -->
                 <div>
-                    <label for="edit-packing-status" class="block text-xs font-bold text-slate-700 mb-1">Packing / Dispatch Status <span class="text-red-500">*</span></label>
+                    <label for="edit-packing-status" class="block text-xs font-bold text-slate-700 mb-1">Status <span class="text-red-500">*</span></label>
                     <select id="edit-packing-status" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none focus:border-purple-600">
                         <option value="Pending">Pending</option>
                         <option value="Packing">Packing</option>
@@ -584,44 +545,40 @@
                     </select>
                 </div>
 
-                <!-- Weight / Box Size & Courier -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Weight / Box Size</label>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Box / Weight</label>
                         <input type="text" id="edit-weight-box" placeholder="e.g. 12 Kg / 1 Box" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-purple-600">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Courier Name</label>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Courier / Transport Name</label>
                         <input type="text" id="edit-courier" placeholder="e.g. Delhivery / BlueDart / Transport" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-purple-600">
                     </div>
                 </div>
 
-                <!-- Quick Courier Chips -->
                 <div class="flex flex-wrap gap-1.5 -mt-1">
-                    <button type="button" onclick="setCourier('Delhivery')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700">Delhivery</button>
-                    <button type="button" onclick="setCourier('BlueDart')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700">BlueDart</button>
-                    <button type="button" onclick="setCourier('DTDC')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700">DTDC</button>
-                    <button type="button" onclick="setCourier('Transport')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700">Transport</button>
-                    <button type="button" onclick="setCourier('Self Delivery')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700">Self Delivery</button>
+                    <button type="button" onclick="setCourierPreset('Delhivery')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700 cursor-pointer">Delhivery</button>
+                    <button type="button" onclick="setCourierPreset('BlueDart')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700 cursor-pointer">BlueDart</button>
+                    <button type="button" onclick="setCourierPreset('DTDC')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700 cursor-pointer">DTDC</button>
+                    <button type="button" onclick="setCourierPreset('Transport')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700 cursor-pointer">Transport</button>
+                    <button type="button" onclick="setCourierPreset('Self Pickup')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700 cursor-pointer">Self Pickup</button>
                 </div>
 
-                <!-- Tracking ID / AWB -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Tracking ID / AWB</label>
-                    <input type="text" id="edit-tracking" placeholder="e.g. 149283749201" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-mono font-semibold focus:outline-none focus:border-purple-600">
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Tracking / AWB / LR No</label>
+                    <input type="text" id="edit-tracking" placeholder="e.g. AWB123456789" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-mono font-semibold focus:outline-none focus:border-purple-600">
                 </div>
 
-                <!-- Remarks Field -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Remarks (Packing / Dispatch Notes)</label>
-                    <textarea id="edit-remarks" rows="2" placeholder="e.g. Bubble wrap done, sealed properly, balance item tomorrow..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-purple-600"></textarea>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Remarks</label>
+                    <textarea id="edit-remarks" rows="2" placeholder="Packing notes, pending item note, or dispatch remarks..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-purple-600"></textarea>
                 </div>
 
                 <div class="pt-2 flex items-center gap-3">
-                    <button type="button" onclick="closeDispatchModal()" class="flex-1 py-3 px-4 rounded-xl border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 transition">
+                    <button type="button" onclick="closeDispatchModal()" class="flex-1 py-3 px-4 rounded-xl border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 transition cursor-pointer">
                         Cancel
                     </button>
-                    <button type="submit" id="save-dispatch-btn" class="flex-2 py-3 px-6 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs sm:text-sm shadow-md shadow-purple-600/20 transition">
+                    <button type="submit" class="flex-2 py-3 px-6 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs sm:text-sm shadow-md shadow-purple-600/20 transition cursor-pointer">
                         Save & Sync
                     </button>
                 </div>
@@ -632,25 +589,22 @@
     <!-- ==================== MODAL: BILL / INVOICE PRINT & DOWNLOAD ==================== -->
     <div id="bill-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-8">
-            <!-- Modal Header -->
             <div class="no-print bg-slate-50 px-6 py-3.5 border-b border-slate-200 flex items-center justify-between">
                 <div class="flex items-center gap-2">
                     <i data-lucide="file-text" class="w-4 h-4 text-brand-600"></i>
                     <span class="text-sm font-bold text-slate-900">Khushali Logistic Panel — Bill / Invoice</span>
                 </div>
-                <button onclick="closeBillModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700">
+                <button type="button" onclick="closeBillModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 cursor-pointer">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
 
-            <!-- Printable / Downloadable Bill Content -->
             <div id="bill-print-area" class="p-6 sm:p-8 bg-white space-y-5">
                 <div class="border-2 border-slate-900 rounded-2xl p-5 sm:p-6 space-y-5">
-                    <!-- Bill Top Branding -->
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-slate-900 pb-4">
                         <div>
                             <h2 class="text-xl sm:text-2xl font-black tracking-tight text-slate-900 uppercase">Khushali Logistic Panel</h2>
-                            <p class="text-xs font-semibold text-slate-600 mt-0.5">Order Dispatch Bill & Packing Challan</p>
+                            <p class="text-xs font-semibold text-slate-600 mt-0.5">Bill / Invoice & Dispatch Slip</p>
                         </div>
                         <div class="sm:text-right space-y-1">
                             <span class="inline-block px-3 py-1 bg-emerald-600 text-white text-xs font-extrabold rounded-md uppercase tracking-wider">
@@ -660,10 +614,9 @@
                         </div>
                     </div>
 
-                    <!-- Customer & Dispatch Info Grid -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                         <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-1">
-                            <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">Billed & Shipped To</p>
+                            <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">Customer & Billing Details</p>
                             <p id="bill-cust-name" class="text-sm font-extrabold text-slate-900"></p>
                             <p id="bill-cust-company" class="font-bold text-slate-800 hidden"></p>
                             <p id="bill-cust-tax" class="font-mono font-semibold text-slate-700 hidden"></p>
@@ -672,66 +625,61 @@
                         </div>
 
                         <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-1.5">
-                            <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">Dispatch & Logistics Info</p>
+                            <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">Dispatch Details</p>
                             <div class="flex justify-between">
-                                <span class="text-slate-500">Order Status:</span>
+                                <span class="text-slate-500">Status:</span>
                                 <span id="bill-status" class="font-extrabold text-slate-900"></span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-slate-500">Courier:</span>
+                                <span class="text-slate-500">Courier / Transport:</span>
                                 <span id="bill-courier" class="font-bold text-slate-900"></span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-slate-500">Tracking / AWB:</span>
+                                <span class="text-slate-500">Tracking / AWB / LR:</span>
                                 <span id="bill-awb" class="font-mono font-bold text-slate-900"></span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-slate-500">Weight / Box:</span>
+                                <span class="text-slate-500">Box / Weight:</span>
                                 <span id="bill-weight" class="font-bold text-slate-900"></span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Itemized Table -->
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse text-xs">
                             <thead>
                                 <tr class="bg-slate-900 text-white">
                                     <th class="py-2.5 px-3 font-bold rounded-tl-lg w-12">Sr.</th>
-                                    <th class="py-2.5 px-3 font-bold">Item Name</th>
+                                    <th class="py-2.5 px-3 font-bold">Product</th>
                                     <th class="py-2.5 px-3 font-bold">Quantity</th>
-                                    <th class="py-2.5 px-3 font-bold rounded-tr-lg text-right">Packing Status</th>
+                                    <th class="py-2.5 px-3 font-bold rounded-tr-lg text-right">Packing</th>
                                 </tr>
                             </thead>
-                            <tbody id="bill-items-tbody" class="divide-y divide-slate-200 border-x border-b border-slate-200">
-                                <!-- Injected dynamically -->
-                            </tbody>
+                            <tbody id="bill-items-tbody" class="divide-y divide-slate-200 border-x border-b border-slate-200"></tbody>
                         </table>
                     </div>
 
-                    <!-- Remarks & Footer -->
                     <div id="bill-remarks-section" class="hidden bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs">
-                        <span class="font-extrabold text-amber-900 uppercase text-[10px] block">Remarks / Notes:</span>
+                        <span class="font-extrabold text-amber-900 uppercase text-[10px] block">Remarks:</span>
                         <span id="bill-remarks-text" class="text-slate-800 font-medium"></span>
                     </div>
 
                     <div class="pt-3 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500">
-                        <span>Generated by <strong>Khushali Logistic Panel</strong></span>
-                        <span>Authorized Dispatch Copy</span>
+                        <span><strong>Khushali Logistic Panel</strong></span>
+                        <span id="bill-total-count-footer"></span>
                     </div>
                 </div>
             </div>
 
-            <!-- Action Buttons -->
             <div class="no-print px-6 pb-6 flex flex-col sm:flex-row gap-3">
-                <button onclick="closeBillModal()" class="py-3 px-4 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 transition">
+                <button type="button" onclick="closeBillModal()" class="py-3 px-4 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 transition cursor-pointer">
                     Close
                 </button>
-                <button onclick="downloadBillHTML()" class="flex-1 py-3 px-4 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition">
+                <button type="button" onclick="downloadBillFile()" class="flex-1 py-3 px-4 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition cursor-pointer">
                     <i data-lucide="download" class="w-4 h-4"></i>
                     <span>Download Bill</span>
                 </button>
-                <button onclick="window.print()" class="flex-1 py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition">
+                <button type="button" onclick="window.print()" class="flex-1 py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition cursor-pointer">
                     <i data-lucide="printer" class="w-4 h-4"></i>
                     <span>Print Bill</span>
                 </button>
@@ -749,44 +697,37 @@
                     </div>
                     <div>
                         <h3 class="text-base font-bold text-slate-900">Khushali Logistic Panel — Google Sheet Sync</h3>
-                        <p class="text-xs text-slate-500">Pre-configured Web App URL active • Test or update anytime</p>
+                        <p class="text-xs text-slate-500">Web App URL pre-configured • Safe sync with fallback</p>
                     </div>
                 </div>
-                <button onclick="closeSyncModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60">
+                <button type="button" onclick="closeSyncModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 cursor-pointer">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
 
             <div class="p-6 space-y-5 max-h-[80vh] overflow-y-auto">
-                <!-- URL Input & Actions -->
                 <div class="bg-brand-50/60 border border-brand-200 rounded-2xl p-4 space-y-3">
-                    <div class="flex items-center justify-between">
-                        <label class="block text-xs font-extrabold uppercase tracking-wider text-brand-900">
-                            Google Apps Script Web App URL
-                        </label>
-                        <span id="modal-sync-status-pill" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">
-                            Ready & Configured
-                        </span>
-                    </div>
+                    <label class="block text-xs font-extrabold uppercase tracking-wider text-brand-900">
+                        Google Apps Script Web App URL
+                    </label>
                     <div class="flex flex-col sm:flex-row gap-2">
                         <input type="url" id="sheets-url-input" placeholder="https://script.google.com/macros/s/.../exec" class="flex-1 px-3.5 py-2.5 bg-white border border-brand-300 rounded-xl text-xs font-mono focus:outline-none focus:ring-2 focus:ring-brand-500">
-                        <button onclick="saveAndSyncNow()" class="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-xs whitespace-nowrap transition">
-                            Sync Now / Pull & Push
+                        <button type="button" onclick="saveAndSyncNow()" class="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-xs whitespace-nowrap transition cursor-pointer">
+                            Save & Sync
                         </button>
                     </div>
                     <div class="flex items-center justify-between text-[11px] text-slate-600">
-                        <span>URL automatically saved for this browser.</span>
-                        <button type="button" onclick="resetToDefaultSheetsUrl()" class="text-brand-700 font-bold hover:underline">Reset Default URL</button>
+                        <span>Stored safely in localStorage.</span>
+                        <button type="button" onclick="restoreDefaultSheetsUrl()" class="text-brand-700 font-bold hover:underline cursor-pointer">Restore Default URL</button>
                     </div>
                 </div>
 
-                <!-- Copyable Apps Script (No Order ID Column) -->
                 <div>
                     <div class="flex items-center justify-between mb-1.5">
-                        <span class="text-xs font-bold text-slate-800">Google Apps Script (Code.gs) — Without Order ID Column</span>
-                        <button type="button" onclick="copyAppsScript()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition">
+                        <span class="text-xs font-bold text-slate-800">Apps Script Code (No Order ID Column)</span>
+                        <button type="button" onclick="copyAppsScriptCode()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition cursor-pointer">
                             <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                            <span>Copy Script Code</span>
+                            <span>Copy Script</span>
                         </button>
                     </div>
                     <pre id="apps-script-code" class="bg-slate-900 text-emerald-300 p-4 rounded-2xl text-[11px] font-mono overflow-x-auto leading-relaxed">const SHEET_NAME = "Orders";
@@ -801,18 +742,18 @@ function setupSheet() {
     sheet.appendRow([
       "Date & Time",
       "Customer Name",
-      "Contact No",
+      "Contact Number",
       "Company Name",
       "Aadhaar / GST No",
-      "Address",
-      "Items & Quantity",
+      "Delivery Address",
+      "Products & Quantity",
       "Total Items",
       "Payment Status",
       "Packing Status",
       "Packed Checklist",
-      "Weight / Box Size",
-      "Courier Name",
-      "Tracking ID / AWB",
+      "Box / Weight",
+      "Courier / Transport",
+      "Tracking / AWB / LR",
       "Remarks"
     ]);
     sheet.getRange(1, 1, 1, 15).setFontWeight("bold");
@@ -877,7 +818,6 @@ function doPost(e) {
       .setMimeType(ContentService.MimeType.JSON);
   }
 
-  // Match row by Date & Time + Customer Name
   for (let i = 1; i < data.length; i++) {
     const matchTime = String(data[i][0]) === String(payload.createdAt);
     const matchName = String(data[i][1]) === String(payload.matchCustomerName || payload.customerName);
@@ -912,13 +852,13 @@ function doPost(e) {
         </div>
     </div>
 
-    <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+    <!-- ==================== APPLICATION JAVASCRIPT ==================== -->
     <script>
-        // --- CONSTANTS & CONFIGURATION ---
         const DEFAULT_PIN = "000000";
         const DEFAULT_SHEETS_URL = "https://script.google.com/macros/s/AKfycbxdw3b-wUh284AjYOZ5cT08liAU8aY-gKtl6GFevQUHJ6ncHzgr2rI75YiS06H9iormTA/exec";
 
-        const PRODUCT_LIST = [
+        // 17 specific cleaning products
+        const CLEANING_PRODUCTS = [
             "Toilet Cleaner",
             "Bathroom Cleaner",
             "Hand Wash (Rose)",
@@ -941,39 +881,36 @@ function doPost(e) {
         const QUANTITY_PRESETS = ["100 ML", "1Kg", "5Kg", "25Kg", "50Kg"];
 
         const STORAGE_KEYS = {
-            SESSION_USER: "khushali_session_user",
-            SESSION_DEPT: "khushali_session_dept",
-            ORDERS: "khushali_orders_data_v2",
-            SHEETS_URL: "khushali_sheets_url"
+            PROFILE: "khushali_logistic_profile",
+            ORDERS: "khushali_logistic_orders",
+            SHEETS_URL: "khushali_logistic_sheets_url"
         };
 
-        const USER_ROLE_CONFIG = {
-            "Piyush (Order Team)": { user: "Piyush", role: "Order Team", view: "order" },
-            "Govardhan (Order Team)": { user: "Govardhan", role: "Order Team", view: "order" },
-            "Lokesh (Packaging Team)": { user: "Lokesh", role: "Packaging Team", view: "dispatch" },
-            "Manager": { user: "Manager", role: "Manager", view: "manager" }
+        const PROFILES = {
+            "Piyush (Order Team)": { role: "order", subtitle: "Order Team • Create & Edit Orders" },
+            "Govardhan (Order Team)": { role: "order", subtitle: "Order Team • Create & Edit Orders" },
+            "Lokesh (Packaging Team)": { role: "dispatch", subtitle: "Packaging Team • Checklist, Remarks & Bills" },
+            "Manager": { role: "manager", subtitle: "Manager • Full Orders, Packing & Dispatch Access" }
         };
 
-        let loggedInUser = null;
-        let loggedInRole = null;
-        let currentDept = null; // 'order' | 'dispatch' | 'manager'
+        let activeProfile = null;
+        let activeRole = null; // 'order' | 'dispatch' | 'manager'
         let orders = [];
-        let searchQuery = "";
-        let orderStatusFilter = "ALL";
+        let searchTerm = "";
+        let orderFilter = "ALL";
         let dispatchFilter = "ALL";
-        let syncInterval = null;
-        let activeBillOrderUid = null;
+        let pollTimer = null;
+        let currentBillUid = null;
 
-        // Sample initial orders (No Order ID logic anywhere)
-        const SAMPLE_ORDERS = [
+        const INITIAL_ORDERS = [
             {
-                uid: "u_sample_1",
-                createdAt: "22 Nov, 09:40 PM",
+                uid: "klp_sample_1",
+                createdAt: "22 Nov, 09:45 PM",
                 customerName: "Vikramaditya Singh",
                 contactNo: "9829011223",
                 companyName: "Jaipur Hygiene Solutions",
                 taxId: "08AAACJ1234F1Z5",
-                address: "42, Vaishali Nagar, Near Amrapali Circle, Jaipur, Rajasthan - 302021",
+                address: "42, Vaishali Nagar, Jaipur, Rajasthan - 302021",
                 items: "Toilet Cleaner (5Kg) | Black Phenyl (25Kg)",
                 itemCount: 2,
                 paymentStatus: "Success",
@@ -985,233 +922,295 @@ function doPost(e) {
                 remarks: ""
             },
             {
-                uid: "u_sample_2",
-                createdAt: "22 Nov, 08:15 PM",
+                uid: "klp_sample_2",
+                createdAt: "22 Nov, 08:20 PM",
                 customerName: "Ananya Verma",
                 contactNo: "9811223344",
                 companyName: "Ananya Enterprises",
                 taxId: "",
                 address: "Shop 14, Karol Bagh Main Market, New Delhi - 110005",
-            const savedUser = sessionStorage.getItem(STORAGE_KEYS.SESSION_USER);
-            const savedDept = sessionStorage.getItem(STORAGE_KEYS.SESSION_DEPT);
-            if (savedUser && USER_ROLE_CONFIG[savedUser]) {
-                enterPortal(savedUser);
-            } else if (savedDept === "order" || savedDept === "dispatch") {
-                const fallbackUser = savedDept === "dispatch" ? "Lokesh (Packaging Team)" : "Piyush (Order Team)";
-                enterPortal(fallbackUser);
+                items: "Floor Cleaner (Rose) (5Kg) | Dish Wash (1Kg) | Glass Cleaner (100 ML)",
+                itemCount: 3,
+                paymentStatus: "Success",
+                packingStatus: "Packed",
+                packedFlags: [true, true, true],
+                weightBox: "10 Kg / 1 Box",
+                courierName: "Delhivery",
+                trackingId: "DEL99887766",
+                remarks: "All 3 items packed and sealed."
+            }
+        ];
+
+        // --- INITIALIZATION ---
+        document.addEventListener("DOMContentLoaded", function () {
+            try {
+                if (typeof lucide !== "undefined") {
+                    lucide.createIcons();
+                }
+            } catch (e) {
+                console.warn("Icon init warning:", e);
+            }
+
+            loadOrdersFromStorage();
+            resetCreateItems();
+            setOrderFilter("ALL");
+            setDispatchFilter("ALL");
+
+            try {
+                const savedProfile = sessionStorage.getItem(STORAGE_KEYS.PROFILE);
+                if (savedProfile && PROFILES[savedProfile]) {
+                    activateSession(savedProfile);
+                }
+            } catch (e) {
+                console.warn("Session restore warning:", e);
             }
         });
 
-        // --- AUTHENTICATION ---
-        function quickFillPin() {
+        // --- LOGIN & ROLE ACCESS ---
+        function fillDefaultPin() {
             const pinInput = document.getElementById("login-pin");
-            pinInput.value = DEFAULT_PIN;
-            document.getElementById("login-error").classList.add("hidden");
-        }
-
-        function handleLogin(e) {
-            e.preventDefault();
-            const pinInput = document.getElementById("login-pin").value.trim();
-            const selectedUserRole = document.querySelector('input[name="userRole"]:checked').value;
-            const errorEl = document.getElementById("login-error");
-
-            if (pinInput === DEFAULT_PIN) {
-                errorEl.classList.add("hidden");
-                const cfg = USER_ROLE_CONFIG[selectedUserRole] || USER_ROLE_CONFIG["Piyush (Order Team)"];
-                sessionStorage.setItem(STORAGE_KEYS.SESSION_USER, selectedUserRole);
-                sessionStorage.setItem(STORAGE_KEYS.SESSION_DEPT, cfg.view);
-                enterPortal(selectedUserRole);
-                showToast(`Welcome ${selectedUserRole} to Khushali Logistic Panel`, "success");
-            } else {
-                errorEl.classList.remove("hidden");
-                document.getElementById("login-pin").focus();
+            if (pinInput) {
+                pinInput.value = DEFAULT_PIN;
+                pinInput.focus();
             }
+            const err = document.getElementById("login-error");
+            if (err) err.classList.add("hidden");
         }
 
-        function toggleManagerCreateForm() {
-            const formCard = document.getElementById("create-order-card");
-            if (!formCard) return;
-            formCard.classList.toggle("hidden");
+        function handleLogin(event) {
+            if (event) event.preventDefault();
+
+            const pinInput = document.getElementById("login-pin");
+            const errEl = document.getElementById("login-error");
+            const selectedRadio = document.querySelector('input[name="loginProfile"]:checked');
+            const profileName = selectedRadio ? selectedRadio.value : "Piyush (Order Team)";
+            const enteredPin = pinInput ? pinInput.value.trim() : "";
+
+            if (enteredPin !== DEFAULT_PIN) {
+                if (errEl) errEl.classList.remove("hidden");
+                if (pinInput) pinInput.focus();
+                return;
+            }
+
+            if (errEl) errEl.classList.add("hidden");
+
+            try {
+                sessionStorage.setItem(STORAGE_KEYS.PROFILE, profileName);
+            } catch (e) {
+                console.warn("Session storage blocked:", e);
+            }
+
+            activateSession(profileName);
+            showToast(`Logged in as ${profileName}`, "success");
         }
 
-        function enterPortal(selectedUserRole) {
-            const cfg = USER_ROLE_CONFIG[selectedUserRole] || USER_ROLE_CONFIG["Piyush (Order Team)"];
-            loggedInUser = cfg.user;
-            loggedInRole = cfg.role;
-            currentDept = cfg.view;
+        function activateSession(profileName) {
+            const cfg = PROFILES[profileName] || PROFILES["Piyush (Order Team)"];
+            activeProfile = profileName;
+            activeRole = cfg.role;
 
-            document.getElementById("login-screen").classList.add("hidden");
-            document.getElementById("app-shell").classList.remove("hidden");
+            const loginSec = document.getElementById("login-screen");
+            const appShell = document.getElementById("app-shell");
+            if (loginSec) loginSec.classList.add("hidden");
+            if (appShell) appShell.classList.remove("hidden");
 
-            const badge = document.getElementById("dept-badge");
-            const orderView = document.getElementById("order-team-view");
-            const dispatchView = document.getElementById("dispatch-team-view");
+            const badge = document.getElementById("active-profile-badge");
+            const subtitle = document.getElementById("active-role-subtitle");
+            const orderSec = document.getElementById("order-section");
+            const dispatchSec = document.getElementById("dispatch-section");
             const createCard = document.getElementById("create-order-card");
             const listCol = document.getElementById("order-list-column");
-            const mgrToggleBtn = document.getElementById("manager-toggle-order-form-btn");
+            const mgrBtn = document.getElementById("manager-toggle-form-btn");
 
-            badge.textContent = selectedUserRole;
+            if (badge) badge.textContent = profileName;
+            if (subtitle) subtitle.textContent = cfg.subtitle;
 
-            if (currentDept === "order") {
-                badge.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-brand-50 text-brand-700 border border-brand-200";
-                orderView.classList.remove("hidden");
-                dispatchView.classList.add("hidden");
+            if (activeRole === "order") {
+                if (badge) badge.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-brand-50 text-brand-700 border border-brand-200";
+                if (orderSec) orderSec.classList.remove("hidden");
+                if (dispatchSec) dispatchSec.classList.add("hidden");
+                if (createCard) {
+                    createCard.classList.remove("hidden");
+                    createCard.className = "lg:col-span-5 bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden";
+                }
+                if (listCol) listCol.className = "lg:col-span-7 space-y-4";
+                if (mgrBtn) mgrBtn.classList.add("hidden");
+            } else if (activeRole === "dispatch") {
+                if (badge) badge.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-50 text-purple-700 border border-purple-200";
+                if (dispatchSec) dispatchSec.classList.remove("hidden");
+                if (orderSec) orderSec.classList.add("hidden");
+                if (mgrBtn) mgrBtn.classList.add("hidden");
+            } else {
+                // Manager: full visibility across Order entry/edit and Packing/Dispatch/Bills
+                if (badge) badge.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200";
+                if (orderSec) orderSec.classList.remove("hidden");
+                if (dispatchSec) dispatchSec.classList.remove("hidden");
+                if (createCard) createCard.classList.add("hidden");
+                if (listCol) listCol.className = "lg:col-span-12 space-y-4";
+                if (mgrBtn) mgrBtn.classList.remove("hidden");
+            }
+
+            renderWorkspace();
+            syncFromGoogleSheets(true);
+            startPolling();
+        }
+
+        function toggleOrderFormPanel() {
+            const createCard = document.getElementById("create-order-card");
+            const listCol = document.getElementById("order-list-column");
+            if (!createCard || !listCol) return;
+
+            const isHidden = createCard.classList.contains("hidden");
+            if (isHidden) {
                 createCard.classList.remove("hidden");
                 createCard.className = "lg:col-span-5 bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden";
                 listCol.className = "lg:col-span-7 space-y-4";
-                if (mgrToggleBtn) mgrToggleBtn.classList.add("hidden");
-                setOrderStatusFilter("ALL");
-            } else if (currentDept === "dispatch") {
-                badge.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-50 text-purple-700 border border-purple-200";
-                dispatchView.classList.remove("hidden");
-                orderView.classList.add("hidden");
-                if (mgrToggleBtn) mgrToggleBtn.classList.add("hidden");
-                setDispatchFilter("ALL");
             } else {
-                // Manager: Full visibility across orders and packing/dispatch progress
-                badge.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200";
-                orderView.classList.remove("hidden");
-                dispatchView.classList.remove("hidden");
                 createCard.classList.add("hidden");
                 listCol.className = "lg:col-span-12 space-y-4";
-                if (mgrToggleBtn) mgrToggleBtn.classList.remove("hidden");
-                setOrderStatusFilter("ALL");
-                setDispatchFilter("ALL");
             }
-
-            syncFromGoogleSheets(true);
-            startAutoPolling();
-            renderAll();
         }
 
         function handleLogout() {
-            sessionStorage.removeItem(STORAGE_KEYS.SESSION_USER);
-            sessionStorage.removeItem(STORAGE_KEYS.SESSION_DEPT);
-            loggedInUser = null;
-            loggedInRole = null;
-            currentDept = null;
-            if (syncInterval) clearInterval(syncInterval);
-            document.getElementById("login-pin").value = "";
-            document.getElementById("app-shell").classList.add("hidden");
-            document.getElementById("login-screen").classList.remove("hidden");
-        }
-
-        // --- ITEM PARSING & NORMALIZATION ---
-        function parseItemsArray(itemsStr) {
-            if (!itemsStr) return [];
-            const delimiter = itemsStr.includes(" | ") ? " | " : ", ";
-            return itemsStr.split(delimiter).map(s => s.trim()).filter(Boolean);
-        }
-
-        function parseSingleItem(itemText) {
-            const match = itemText.match(/^(.*?)\s*\(([^()]+)\)\s*$/);
-            if (match) {
-                return { name: match[1].trim(), qty: match[2].trim() };
+            try {
+                sessionStorage.removeItem(STORAGE_KEYS.PROFILE);
+            } catch (e) {
+                console.warn("Logout storage warning:", e);
             }
-            return { name: itemText, qty: "" };
+            activeProfile = null;
+            activeRole = null;
+            if (pollTimer) clearInterval(pollTimer);
+
+            const appShell = document.getElementById("app-shell");
+            const loginSec = document.getElementById("login-screen");
+            if (appShell) appShell.classList.add("hidden");
+            if (loginSec) loginSec.classList.remove("hidden");
+            refreshIcons();
         }
 
-        function parsePackedFlags(flagsRaw, expectedLen) {
+        // --- DATA NORMALIZATION & STORAGE ---
+        function splitOrderItems(itemsStr) {
+            if (!itemsStr) return [];
+            const sep = itemsStr.includes(" | ") ? " | " : ", ";
+            return itemsStr.split(sep).map(s => s.trim()).filter(Boolean);
+        }
+
+        function parseProductEntry(entry) {
+            const m = entry.match(/^(.*?)\s*\(([^()]+)\)\s*$/);
+            if (m) return { name: m[1].trim(), qty: m[2].trim() };
+            return { name: entry.trim(), qty: "" };
+        }
+
+        function normalizeFlags(rawFlags, count) {
             let arr = [];
-            if (Array.isArray(flagsRaw)) {
-                arr = flagsRaw.map(Boolean);
-            } else if (typeof flagsRaw === "string" && flagsRaw.trim()) {
+            if (Array.isArray(rawFlags)) {
+                arr = rawFlags.map(Boolean);
+            } else if (typeof rawFlags === "string" && rawFlags.trim()) {
                 try {
-                    const parsed = JSON.parse(flagsRaw);
+                    const parsed = JSON.parse(rawFlags);
                     if (Array.isArray(parsed)) arr = parsed.map(Boolean);
-                } catch {
-                    arr = flagsRaw.split(",").map(v => v.trim() === "true" || v.trim() === "1");
+                } catch (e) {
+                    arr = rawFlags.split(",").map(v => v.trim() === "true" || v.trim() === "1");
                 }
             }
-            while (arr.length < expectedLen) arr.push(false);
-            return arr.slice(0, expectedLen);
+            while (arr.length < count) arr.push(false);
+            return arr.slice(0, count);
         }
 
-        function normalizePackingStatus(st) {
+        function normalizeStatus(st) {
             if (!st) return "Pending";
             if (st === "Pending Packing") return "Pending";
             return st;
         }
 
-        function normalizeOrder(o, index = 0) {
-            const parsedItems = parseItemsArray(o.items);
-            const count = parsedItems.length || Number(o.itemCount) || 1;
-            const flags = parsePackedFlags(o.packedFlags, count);
-            const uid = o.uid || `u_${(o.createdAt || "").replace(/\W+/g, "")}_${(o.customerName || "").replace(/\W+/g, "")}_${index}`;
+        function normalizeOrder(raw, index = 0) {
+            const parsedList = splitOrderItems(raw.items);
+            const itemCount = parsedList.length > 0 ? parsedList.length : (Number(raw.itemCount) || 1);
+            const packedFlags = normalizeFlags(raw.packedFlags, itemCount);
+            const uid = raw.uid || `ord_${index}_${String(raw.createdAt || "").replace(/\W+/g, "")}_${String(raw.customerName || "").replace(/\W+/g, "")}`;
+
             return {
                 uid,
-                createdAt: o.createdAt || formatNow(),
-                customerName: o.customerName || "",
-                contactNo: o.contactNo || "",
-                companyName: o.companyName || "",
-                taxId: o.taxId || "",
-                address: o.address || "",
-                items: o.items || "",
-                itemCount: count,
+                createdAt: raw.createdAt || formatTimestamp(),
+                customerName: String(raw.customerName || "").trim(),
+                contactNo: String(raw.contactNo || "").trim(),
+                companyName: String(raw.companyName || "").trim(),
+                taxId: String(raw.taxId || "").trim().toUpperCase(),
+                address: String(raw.address || "").trim(),
+                items: String(raw.items || "").trim(),
+                itemCount,
                 paymentStatus: "Success",
-                packingStatus: normalizePackingStatus(o.packingStatus),
-                packedFlags: flags,
-                weightBox: o.weightBox || "",
-                courierName: o.courierName || "",
-                trackingId: o.trackingId || "",
-                remarks: o.remarks || ""
+                packingStatus: normalizeStatus(raw.packingStatus),
+                packedFlags,
+                weightBox: String(raw.weightBox || "").trim(),
+                courierName: String(raw.courierName || "").trim(),
+                trackingId: String(raw.trackingId || "").trim(),
+                remarks: String(raw.remarks || "").trim()
             };
         }
 
-        // --- STORAGE & GOOGLE SHEETS SYNC ---
-        function loadLocalOrders() {
-            const raw = localStorage.getItem(STORAGE_KEYS.ORDERS);
-            if (raw) {
-                try {
+        function loadOrdersFromStorage() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEYS.ORDERS);
+                if (raw) {
                     const parsed = JSON.parse(raw);
                     orders = Array.isArray(parsed) && parsed.length > 0
-                        ? parsed.map((o, i) => normalizeOrder(o, i))
-                        : [...SAMPLE_ORDERS];
-                } catch {
-                    orders = [...SAMPLE_ORDERS];
+                        ? parsed.map((o, idx) => normalizeOrder(o, idx))
+                        : INITIAL_ORDERS.map((o, idx) => normalizeOrder(o, idx));
+                } else {
+                    orders = INITIAL_ORDERS.map((o, idx) => normalizeOrder(o, idx));
+                    saveOrdersToStorage();
                 }
-            } else {
-                orders = [...SAMPLE_ORDERS];
-                saveLocalOrders();
+            } catch (e) {
+                console.warn("Load orders fallback:", e);
+                orders = INITIAL_ORDERS.map((o, idx) => normalizeOrder(o, idx));
             }
         }
 
-        function saveLocalOrders() {
-            localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(orders));
+        function saveOrdersToStorage() {
+            try {
+                localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(orders));
+            } catch (e) {
+                console.warn("Save orders warning:", e);
+            }
         }
 
-        function getSheetsUrl() {
-            return (localStorage.getItem(STORAGE_KEYS.SHEETS_URL) || DEFAULT_SHEETS_URL).trim();
+        function getConfiguredSheetsUrl() {
+            try {
+                return (localStorage.getItem(STORAGE_KEYS.SHEETS_URL) || DEFAULT_SHEETS_URL).trim();
+            } catch (e) {
+                return DEFAULT_SHEETS_URL;
+            }
         }
 
+        // --- SAFE GOOGLE SHEETS SYNC ---
         async function syncFromGoogleSheets(silent = false) {
-            const url = getSheetsUrl();
+            const url = getConfiguredSheetsUrl();
             if (!url) return;
 
-            const refreshIcon = document.querySelector("#refresh-btn i");
-            if (refreshIcon) refreshIcon.classList.add("animate-spin");
+            const icon = document.querySelector("#refresh-btn i");
+            if (icon) icon.classList.add("animate-spin");
 
             try {
-                const res = await fetch(url);
-                const data = await res.json();
-                if (data && data.status === "ok" && Array.isArray(data.orders)) {
-                    if (data.orders.length > 0) {
-                        orders = data.orders.map((o, i) => normalizeOrder(o, i));
-                        saveLocalOrders();
-                        renderAll();
-                    }
-                    if (!silent) showToast("Synced with Google Sheets!", "success");
+                const response = await fetch(url);
+                if (!response.ok) throw new Error("HTTP " + response.status);
+                const data = await response.json();
+                if (data && data.status === "ok" && Array.isArray(data.orders) && data.orders.length > 0) {
+                    orders = data.orders.map((o, idx) => normalizeOrder(o, idx));
+                    saveOrdersToStorage();
+                    renderWorkspace();
                 }
+                if (!silent) showToast("Synced with Google Sheets", "success");
             } catch (err) {
-                console.warn("Google Sheets GET sync fallback to local cache:", err);
-                if (!silent) showToast("Local cache synced (Check Sheet Web App access: Anyone)", "info");
+                console.warn("Sheets GET skipped/fallback:", err);
+                if (!silent) showToast("Showing latest saved orders", "info");
             } finally {
-                if (refreshIcon) refreshIcon.classList.remove("animate-spin");
+                if (icon) icon.classList.remove("animate-spin");
             }
         }
 
-        async function pushToGoogleSheets(payload) {
-            const url = getSheetsUrl();
+        async function pushOrderAction(payload) {
+            const url = getConfiguredSheetsUrl();
             if (!url) return;
 
             try {
@@ -1221,46 +1220,51 @@ function doPost(e) {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)
                 });
-                setTimeout(() => syncFromGoogleSheets(true), 2000);
+                setTimeout(() => {
+                    syncFromGoogleSheets(true);
+                }, 1800);
             } catch (err) {
-                console.warn("Push error:", err);
-                showToast("Saved locally (Offline / Sync retry queued)", "info");
+                console.warn("Sheets POST warning:", err);
+                showToast("Saved locally; will sync when online", "info");
             }
         }
 
-        function startAutoPolling() {
-            if (syncInterval) clearInterval(syncInterval);
-            syncInterval = setInterval(() => {
-                if (getSheetsUrl()) {
+        function startPolling() {
+            if (pollTimer) clearInterval(pollTimer);
+            pollTimer = setInterval(() => {
+                if (activeProfile && getConfiguredSheetsUrl()) {
                     syncFromGoogleSheets(true);
                 }
-            }, 20000);
+            }, 25000);
         }
 
         function manualRefresh() {
             syncFromGoogleSheets(false);
-            renderAll();
+            renderWorkspace();
         }
 
-        // --- ORDER TEAM: DYNAMIC ITEMS & CREATE ORDER ---
-        function buildProductOptionsHTML(selectedVal = "") {
-            const defaultOpt = `<option value="" disabled ${!selectedVal ? "selected" : ""}>Select Product...</option>`;
-            return defaultOpt + PRODUCT_LIST.map(item =>
-                `<option value="${item}" ${item === selectedVal ? "selected" : ""}>${item}</option>`
+        // --- ITEM BUILDER & AUTOMATIC QUANTITY COUNT ---
+        function buildProductSelectHTML(selectedName = "") {
+            const placeholder = `<option value="" disabled ${!selectedName ? "selected" : ""}>Select Cleaning Product...</option>`;
+            return placeholder + CLEANING_PRODUCTS.map(prod =>
+                `<option value="${escapeAttr(prod)}" ${prod === selectedName ? "selected" : ""}>${escapeHTML(prod)}</option>`
             ).join("");
         }
 
-        function buildQuantityOptionsHTML(selectedQty = "") {
+        function buildQtySelectHTML(selectedQty = "") {
             const isPreset = QUANTITY_PRESETS.includes(selectedQty);
-            const hasCustom = selectedQty && !isPreset;
+            const isCustom = Boolean(selectedQty && !isPreset);
             return QUANTITY_PRESETS.map(q =>
-                `<option value="${q}" ${q === selectedQty ? "selected" : ""}>${q}</option>`
-            ).join("") + `<option value="CUSTOM" ${hasCustom ? "selected" : ""}>Custom Quantity...</option>`;
+                `<option value="${escapeAttr(q)}" ${q === selectedQty ? "selected" : ""}>${escapeHTML(q)}</option>`
+            ).join("") + `<option value="CUSTOM" ${isCustom ? "selected" : ""}>Custom Qty...</option>`;
         }
 
-        function handleQtySelectChange(selectEl) {
+        function onQtyDropdownChange(selectEl) {
             const row = selectEl.closest(".item-row");
+            if (!row) return;
             const customInput = row.querySelector(".item-custom-qty");
+            if (!customInput) return;
+
             if (selectEl.value === "CUSTOM") {
                 customInput.classList.remove("hidden");
                 customInput.required = true;
@@ -1270,160 +1274,167 @@ function doPost(e) {
                 customInput.required = false;
                 customInput.value = "";
             }
+            updateCountBadge(row.parentElement.id, row.parentElement.dataset.badgeId);
         }
 
-        function updateItemCountBadge(containerId, badgeId) {
+        function updateCountBadge(containerId, badgeId) {
             const container = document.getElementById(containerId);
             const badge = document.getElementById(badgeId);
             if (!container || !badge) return;
-            const count = container.querySelectorAll(".item-row").length;
-            badge.textContent = `${count} ${count === 1 ? "Item" : "Items"}`;
+            const total = container.querySelectorAll(".item-row").length;
+            badge.textContent = `${total} ${total === 1 ? "Item" : "Items"}`;
         }
 
-        function addItemRow(containerId, badgeId, presetData = null, isFirst = false) {
+        function addItemRow(containerId, badgeId, presetObj = null, lockFirstRemove = false) {
             const container = document.getElementById(containerId);
+            if (!container) return;
+            container.dataset.badgeId = badgeId;
+
+            const prodName = presetObj ? presetObj.name : "";
+            const qtyVal = presetObj ? presetObj.qty : "";
+            const isCustom = Boolean(qtyVal && !QUANTITY_PRESETS.includes(qtyVal));
+
             const row = document.createElement("div");
             row.className = "item-row bg-slate-50 p-2.5 rounded-xl border border-slate-200/90 space-y-2";
-
-            const prodVal = presetData ? presetData.name : "";
-            const qtyVal = presetData ? presetData.qty : "";
-            const isCustom = qtyVal && !QUANTITY_PRESETS.includes(qtyVal);
-
             row.innerHTML = `
                 <div class="flex items-center gap-2">
-                    <select required class="item-name flex-1 min-w-0 px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:border-brand-600">
-                        ${buildProductOptionsHTML(prodVal)}
+                    <select required onchange="updateCountBadge('${containerId}', '${badgeId}')" class="item-name flex-1 min-w-0 px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:border-brand-600">
+                        ${buildProductSelectHTML(prodName)}
                     </select>
-                    <select onchange="handleQtySelectChange(this)" class="item-qty-select w-36 shrink-0 px-2.5 py-2 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 focus:outline-none focus:border-brand-600">
-                        ${buildQuantityOptionsHTML(qtyVal)}
+                    <select onchange="onQtyDropdownChange(this)" class="item-qty-select w-36 shrink-0 px-2.5 py-2 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 focus:outline-none focus:border-brand-600">
+                        ${buildQtySelectHTML(qtyVal)}
                     </select>
-                    ${!isFirst ? `
-                        <button type="button" onclick="removeItemRow(this, '${containerId}', '${badgeId}')" title="Remove item" class="p-2 text-slate-400 hover:text-red-600 rounded-lg transition shrink-0">
+                    ${!lockFirstRemove ? `
+                        <button type="button" onclick="removeItemRow(this, '${containerId}', '${badgeId}')" title="Remove item" class="p-2 text-slate-400 hover:text-red-600 rounded-lg transition shrink-0 cursor-pointer">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                         </button>
-                    ` : ''}
+                    ` : ""}
                 </div>
-                <input type="text" value="${isCustom ? qtyVal : ""}" ${isCustom ? "required" : ""} placeholder="Enter custom quantity (e.g. 200 Litre, 15 Bottles)..." class="item-custom-qty ${isCustom ? "" : "hidden"} w-full px-3 py-2 bg-white border border-brand-300 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600">
+                <input type="text" value="${escapeAttr(isCustom ? qtyVal : "")}" ${isCustom ? "required" : ""} oninput="updateCountBadge('${containerId}', '${badgeId}')" placeholder="Enter custom quantity (e.g. 150 Litre, 10 Cans)..." class="item-custom-qty ${isCustom ? "" : "hidden"} w-full px-3 py-2 bg-white border border-brand-300 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600">
             `;
+
             container.appendChild(row);
-            updateItemCountBadge(containerId, badgeId);
-            lucide.createIcons();
+            updateCountBadge(containerId, badgeId);
+            refreshIcons();
         }
 
-        function removeItemRow(btnEl, containerId, badgeId) {
-            btnEl.closest(".item-row").remove();
-            updateItemCountBadge(containerId, badgeId);
+        function removeItemRow(btn, containerId, badgeId) {
+            const row = btn.closest(".item-row");
+            if (row) row.remove();
+            updateCountBadge(containerId, badgeId);
         }
 
-        function resetCreateItemRows() {
+        function resetCreateItems() {
             const container = document.getElementById("create-items-container");
             if (!container) return;
             container.innerHTML = "";
             addItemRow("create-items-container", "create-item-count-badge", null, true);
         }
 
-        function extractItemsFromContainer(containerId) {
-            const itemRows = document.querySelectorAll(`#${containerId} .item-row`);
-            const itemParts = [];
-            let hasError = false;
+        function collectOrderItems(containerId) {
+            const rows = document.querySelectorAll(`#${containerId} .item-row`);
+            const entries = [];
+            let invalid = false;
 
-            itemRows.forEach(row => {
+            rows.forEach(row => {
                 const name = row.querySelector(".item-name").value.trim();
-                const qtySelect = row.querySelector(".item-qty-select").value;
-                const customQty = row.querySelector(".item-custom-qty").value.trim();
-                const finalQty = qtySelect === "CUSTOM" ? customQty : qtySelect;
+                const qSel = row.querySelector(".item-qty-select").value;
+                const qCustom = row.querySelector(".item-custom-qty").value.trim();
+                const finalQty = qSel === "CUSTOM" ? qCustom : qSel;
 
                 if (!name || !finalQty) {
-                    hasError = true;
+                    invalid = true;
                     return;
                 }
-                itemParts.push(`${name} (${finalQty})`);
+                entries.push(`${name} (${finalQty})`);
             });
 
-            return { hasError, itemParts };
+            return { invalid, entries };
         }
 
-        function formatNow() {
-            const now = new Date();
-            return now.toLocaleDateString("en-IN", { day: "2-digit", month: "short" }) + ", " +
-                   now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true });
+        function formatTimestamp() {
+            const d = new Date();
+            return d.toLocaleDateString("en-IN", { day: "2-digit", month: "short" }) + ", " +
+                   d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true });
         }
 
-        async function submitNewOrder(e) {
-            e.preventDefault();
+        // --- CREATE ORDER ---
+        async function submitNewOrder(event) {
+            event.preventDefault();
             const customerName = document.getElementById("cust-name").value.trim();
             const contactNo = document.getElementById("cust-phone").value.trim();
             const companyName = document.getElementById("cust-company").value.trim();
             const taxId = document.getElementById("cust-tax-id").value.trim().toUpperCase();
             const address = document.getElementById("cust-address").value.trim();
 
-            const { hasError, itemParts } = extractItemsFromContainer("create-items-container");
-            if (hasError || itemParts.length === 0) {
-                showToast("Saare items aur unki quantity sahi se select/type karein", "error");
+            const { invalid, entries } = collectOrderItems("create-items-container");
+            if (invalid || entries.length === 0) {
+                showToast("Please select a product and quantity for every item", "error");
                 return;
             }
 
-            const newOrder = normalizeOrder({
-                uid: `u_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
-                createdAt: formatNow(),
+            const created = normalizeOrder({
+                uid: `ord_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+                createdAt: formatTimestamp(),
                 customerName,
                 contactNo,
                 companyName,
                 taxId,
                 address,
-                items: itemParts.join(" | "),
-                itemCount: itemParts.length,
+                items: entries.join(" | "),
+                itemCount: entries.length,
                 paymentStatus: "Success",
                 packingStatus: "Pending",
-                packedFlags: itemParts.map(() => false),
+                packedFlags: entries.map(() => false),
                 weightBox: "",
                 courierName: "",
                 trackingId: "",
                 remarks: ""
             });
 
-            orders.unshift(newOrder);
-            saveLocalOrders();
-            renderAll();
+            orders.unshift(created);
+            saveOrdersToStorage();
+            renderWorkspace();
 
             document.getElementById("new-order-form").reset();
-            resetCreateItemRows();
+            resetCreateItems();
+            showToast(`Order added (${created.itemCount} ${created.itemCount === 1 ? "item" : "items"})`, "success");
 
-            showToast(`Order for ${newOrder.customerName} (${newOrder.itemCount} items) submitted!`, "success");
-            await pushToGoogleSheets({
+            await pushOrderAction({
                 action: "create",
                 order: {
-                    ...newOrder,
-                    packedFlags: JSON.stringify(newOrder.packedFlags)
+                    ...created,
+                    packedFlags: JSON.stringify(created.packedFlags)
                 }
             });
         }
 
-        // --- EDIT ORDER MODAL ---
+        // --- EDIT EXISTING ORDER ---
         function openEditOrderModal(uid) {
-            const order = orders.find(o => o.uid === uid);
-            if (!order) return;
+            const found = orders.find(o => o.uid === uid);
+            if (!found) return;
+            const o = normalizeOrder(found);
 
-            document.getElementById("edit-order-uid").value = order.uid;
-            document.getElementById("edit-cust-name").value = order.customerName || "";
-            document.getElementById("edit-cust-phone").value = order.contactNo || "";
-            document.getElementById("edit-cust-company").value = order.companyName || "";
-            document.getElementById("edit-cust-tax-id").value = order.taxId || "";
-            document.getElementById("edit-cust-address").value = order.address || "";
+            document.getElementById("edit-order-uid").value = o.uid;
+            document.getElementById("edit-cust-name").value = o.customerName;
+            document.getElementById("edit-cust-phone").value = o.contactNo;
+            document.getElementById("edit-cust-company").value = o.companyName;
+            document.getElementById("edit-cust-tax-id").value = o.taxId;
+            document.getElementById("edit-cust-address").value = o.address;
 
             const container = document.getElementById("edit-items-container");
             container.innerHTML = "";
-            const rawList = parseItemsArray(order.items);
-            if (rawList.length === 0) {
+            const rawItems = splitOrderItems(o.items);
+            if (rawItems.length === 0) {
                 addItemRow("edit-items-container", "edit-item-count-badge", null, true);
             } else {
-                rawList.forEach((itemStr, idx) => {
-                    addItemRow("edit-items-container", "edit-item-count-badge", parseSingleItem(itemStr), idx === 0);
+                rawItems.forEach((txt, idx) => {
+                    addItemRow("edit-items-container", "edit-item-count-badge", parseProductEntry(txt), idx === 0);
                 });
             }
 
             document.getElementById("edit-order-modal").classList.remove("hidden");
-            lucide.createIcons();
+            refreshIcons();
         }
 
         function closeEditOrderModal() {
@@ -1436,8 +1447,8 @@ function doPost(e) {
             openEditOrderModal(uid);
         }
 
-        async function saveEditedOrder(e) {
-            e.preventDefault();
+        async function saveEditedOrder(event) {
+            event.preventDefault();
             const uid = document.getElementById("edit-order-uid").value;
             const customerName = document.getElementById("edit-cust-name").value.trim();
             const contactNo = document.getElementById("edit-cust-phone").value.trim();
@@ -1445,18 +1456,18 @@ function doPost(e) {
             const taxId = document.getElementById("edit-cust-tax-id").value.trim().toUpperCase();
             const address = document.getElementById("edit-cust-address").value.trim();
 
-            const { hasError, itemParts } = extractItemsFromContainer("edit-items-container");
-            if (hasError || itemParts.length === 0) {
-                showToast("Saare items aur quantities fill karein", "error");
+            const { invalid, entries } = collectOrderItems("edit-items-container");
+            if (invalid || entries.length === 0) {
+                showToast("Please complete all products and quantities", "error");
                 return;
             }
 
             const idx = orders.findIndex(o => o.uid === uid);
             if (idx === -1) return;
 
-            const prevName = orders[idx].customerName;
+            const previousName = orders[idx].customerName;
             const oldFlags = orders[idx].packedFlags || [];
-            const newFlags = itemParts.map((_, i) => Boolean(oldFlags[i]));
+            const nextFlags = entries.map((_, i) => Boolean(oldFlags[i]));
 
             orders[idx] = {
                 ...orders[idx],
@@ -1465,156 +1476,129 @@ function doPost(e) {
                 companyName,
                 taxId,
                 address,
-                items: itemParts.join(" | "),
-                itemCount: itemParts.length,
-                packedFlags: newFlags
+                items: entries.join(" | "),
+                itemCount: entries.length,
+                packedFlags: nextFlags
             };
 
-            saveLocalOrders();
+            saveOrdersToStorage();
             closeEditOrderModal();
-            renderAll();
-            showToast(`Order updated & synced!`, "success");
+            renderWorkspace();
+            showToast("Order updated and synced", "success");
 
-            await pushToGoogleSheets({
+            await pushOrderAction({
                 action: "editOrder",
                 createdAt: orders[idx].createdAt,
-                matchCustomerName: prevName,
+                matchCustomerName: previousName,
                 order: {
                     ...orders[idx],
-                    packedFlags: JSON.stringify(newFlags)
+                    packedFlags: JSON.stringify(nextFlags)
                 }
             });
         }
 
-        // --- PACKING & DISPATCH MODAL & CHECKLIST ---
-        function setOrderStatusFilter(filter) {
-            orderStatusFilter = filter;
-            document.querySelectorAll(".ofilter-btn").forEach(btn => {
-                const isActive = btn.dataset.ofilter === filter;
-                btn.className = isActive
-                    ? "ofilter-btn px-3 py-1.5 rounded-xl text-xs font-bold border border-brand-600 bg-brand-600 text-white transition whitespace-nowrap"
-                    : "ofilter-btn px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 transition whitespace-nowrap";
-            });
-            renderAll();
-        }
-
-        function setDispatchFilter(filter) {
-            dispatchFilter = filter;
-            document.querySelectorAll(".dfilter-btn").forEach(btn => {
-                const isActive = btn.dataset.dfilter === filter;
-                btn.className = isActive
-                    ? "dfilter-btn px-3.5 py-2 rounded-xl text-xs font-bold border border-purple-600 bg-purple-600 text-white transition whitespace-nowrap"
-                    : "dfilter-btn px-3.5 py-2 rounded-xl text-xs font-bold border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 transition whitespace-nowrap";
-            });
-            renderAll();
-        }
-
+        // --- PACKING CHECKLIST, REMARKS & DISPATCH MODAL ---
         function openDispatchModal(uid) {
-            const rawOrder = orders.find(o => o.uid === uid);
-            if (!rawOrder) return;
-            const order = normalizeOrder(rawOrder);
+            const found = orders.find(o => o.uid === uid);
+            if (!found) return;
+            const o = normalizeOrder(found);
 
-            document.getElementById("edit-dispatch-uid").value = order.uid;
-            document.getElementById("modal-cust-title").textContent = order.customerName;
-            document.getElementById("modal-cust-name").textContent = order.customerName;
-            document.getElementById("modal-cust-phone").textContent = "📞 " + order.contactNo;
+            document.getElementById("edit-dispatch-uid").value = o.uid;
+            document.getElementById("modal-cust-title").textContent = o.customerName;
+            document.getElementById("modal-cust-name").textContent = o.customerName;
+            document.getElementById("modal-cust-phone").textContent = o.contactNo;
 
-            const extraParts = [];
-            if (order.companyName) extraParts.push(`🏢 ${order.companyName}`);
-            if (order.taxId) extraParts.push(`🪪 ${order.taxId}`);
+            const extraLine = [];
+            if (o.companyName) extraLine.push(`Company: ${o.companyName}`);
+            if (o.taxId) extraLine.push(`Aadhaar / GST: ${o.taxId}`);
             const extraEl = document.getElementById("modal-cust-extra");
-            if (extraParts.length > 0) {
-                extraEl.textContent = extraParts.join("  •  ");
+            if (extraLine.length > 0) {
+                extraEl.textContent = extraLine.join(" • ");
                 extraEl.classList.remove("hidden");
             } else {
                 extraEl.classList.add("hidden");
             }
 
-            document.getElementById("modal-cust-address").textContent = "📍 " + order.address;
-            document.getElementById("edit-packing-status").value = order.packingStatus || "Pending";
-            document.getElementById("edit-weight-box").value = order.weightBox || "";
-            document.getElementById("edit-courier").value = order.courierName || "";
-            document.getElementById("edit-tracking").value = order.trackingId || "";
-            document.getElementById("edit-remarks").value = order.remarks || "";
+            document.getElementById("modal-cust-address").textContent = o.address;
+            document.getElementById("edit-packing-status").value = o.packingStatus;
+            document.getElementById("edit-weight-box").value = o.weightBox;
+            document.getElementById("edit-courier").value = o.courierName;
+            document.getElementById("edit-tracking").value = o.trackingId;
+            document.getElementById("edit-remarks").value = o.remarks;
 
-            const itemsArr = parseItemsArray(order.items);
-            const checklistContainer = document.getElementById("modal-checklist-container");
-            checklistContainer.innerHTML = itemsArr.map((itemText, idx) => {
-                const isChecked = Boolean(order.packedFlags[idx]);
-                const parsed = parseSingleItem(itemText);
+            const itemsList = splitOrderItems(o.items);
+            const checklistEl = document.getElementById("modal-checklist-container");
+            checklistEl.innerHTML = itemsList.map((itemStr, idx) => {
+                const packed = Boolean(o.packedFlags[idx]);
+                const parsed = parseProductEntry(itemStr);
                 return `
-                    <label class="flex items-center justify-between gap-3 p-3 rounded-xl border ${isChecked ? 'bg-emerald-50/80 border-emerald-300' : 'bg-amber-50/50 border-amber-200'} cursor-pointer transition">
+                    <label class="flex items-center justify-between gap-3 p-3 rounded-xl border ${packed ? "bg-emerald-50/80 border-emerald-300" : "bg-amber-50/50 border-amber-200"} cursor-pointer transition">
                         <div class="flex items-center gap-3">
-                            <input type="checkbox" data-item-idx="${idx}" ${isChecked ? "checked" : ""} onchange="handleChecklistChange()" class="checklist-cb w-4 h-4 accent-emerald-600 rounded cursor-pointer">
+                            <input type="checkbox" data-idx="${idx}" ${packed ? "checked" : ""} onchange="syncChecklistState(true)" class="pack-checkbox w-4 h-4 accent-emerald-600 rounded cursor-pointer">
                             <div>
-                                <span class="text-sm font-bold ${isChecked ? 'line-through text-emerald-900' : 'text-slate-900'} block">${parsed.name}</span>
-                                ${parsed.qty ? `<span class="text-xs font-semibold ${isChecked ? 'text-emerald-700' : 'text-amber-800'}">Qty: ${parsed.qty}</span>` : ''}
+                                <span class="pack-item-name text-sm font-bold ${packed ? "line-through text-emerald-900" : "text-slate-900"} block">${escapeHTML(parsed.name)}</span>
+                                ${parsed.qty ? `<span class="text-xs font-semibold ${packed ? "text-emerald-700" : "text-amber-800"}">Qty: ${escapeHTML(parsed.qty)}</span>` : ""}
                             </div>
                         </div>
-                        <span class="checklist-status-pill px-2.5 py-0.5 rounded-full text-[11px] font-bold ${isChecked ? 'bg-emerald-600 text-white' : 'bg-amber-100 text-amber-800'}">
-                            ${isChecked ? 'Packed ✓' : 'Pending'}
+                        <span class="pack-item-badge px-2.5 py-0.5 rounded-full text-[11px] font-bold ${packed ? "bg-emerald-600 text-white" : "bg-amber-100 text-amber-800"}">
+                            ${packed ? "Packed" : "Pending"}
                         </span>
                     </label>
                 `;
             }).join("");
 
-            updateChecklistVisuals(false);
+            syncChecklistState(false);
             document.getElementById("dispatch-modal").classList.remove("hidden");
-            lucide.createIcons();
+            refreshIcons();
         }
 
-        function handleChecklistChange() {
-            updateChecklistVisuals(true);
-        }
-
-        function toggleAllChecklist(checkState) {
-            document.querySelectorAll(".checklist-cb").forEach(cb => {
-                cb.checked = checkState;
+        function setAllChecklist(checkedState) {
+            document.querySelectorAll(".pack-checkbox").forEach(cb => {
+                cb.checked = checkedState;
             });
-            updateChecklistVisuals(true);
+            syncChecklistState(true);
         }
 
-        function updateChecklistVisuals(autoUpdateStatus = false) {
-            const checkboxes = Array.from(document.querySelectorAll(".checklist-cb"));
-            const total = checkboxes.length;
-            const checkedCount = checkboxes.filter(cb => cb.checked).length;
+        function syncChecklistState(autoAdjustStatus) {
+            const boxes = Array.from(document.querySelectorAll(".pack-checkbox"));
+            const total = boxes.length;
+            const packedCount = boxes.filter(b => b.checked).length;
 
-            checkboxes.forEach(cb => {
+            boxes.forEach(cb => {
                 const label = cb.closest("label");
-                const nameSpan = label.querySelector("span.block");
-                const pill = label.querySelector(".checklist-status-pill");
+                const nameSpan = label.querySelector(".pack-item-name");
+                const badge = label.querySelector(".pack-item-badge");
                 if (cb.checked) {
                     label.className = "flex items-center justify-between gap-3 p-3 rounded-xl border bg-emerald-50/80 border-emerald-300 cursor-pointer transition";
-                    if (nameSpan) nameSpan.className = "text-sm font-bold line-through text-emerald-900 block";
-                    if (pill) {
-                        pill.className = "checklist-status-pill px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-600 text-white";
-                        pill.textContent = "Packed ✓";
+                    if (nameSpan) nameSpan.className = "pack-item-name text-sm font-bold line-through text-emerald-900 block";
+                    if (badge) {
+                        badge.className = "pack-item-badge px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-600 text-white";
+                        badge.textContent = "Packed";
                     }
                 } else {
                     label.className = "flex items-center justify-between gap-3 p-3 rounded-xl border bg-amber-50/50 border-amber-200 cursor-pointer transition";
-                    if (nameSpan) nameSpan.className = "text-sm font-bold text-slate-900 block";
-                    if (pill) {
-                        pill.className = "checklist-status-pill px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800";
-                        pill.textContent = "Pending";
+                    if (nameSpan) nameSpan.className = "pack-item-name text-sm font-bold text-slate-900 block";
+                    if (badge) {
+                        badge.className = "pack-item-badge px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800";
+                        badge.textContent = "Pending";
                     }
                 }
             });
 
-            document.getElementById("modal-item-summary").textContent = `${checkedCount}/${total} Packed`;
-            const pct = total > 0 ? Math.round((checkedCount / total) * 100) : 0;
-            document.getElementById("checklist-progress-bar").style.width = `${pct}%`;
+            const summaryEl = document.getElementById("modal-item-summary");
+            const barEl = document.getElementById("checklist-progress-bar");
+            if (summaryEl) summaryEl.textContent = `${packedCount}/${total} Packed`;
+            if (barEl) {
+                const pct = total > 0 ? Math.round((packedCount / total) * 100) : 0;
+                barEl.style.width = `${pct}%`;
+            }
 
-            // Auto-update Packing Status: Pending -> Packing -> Packed
-            if (autoUpdateStatus && total > 0) {
-                const statusSelect = document.getElementById("edit-packing-status");
-                if (statusSelect.value !== "Dispatched") {
-                    if (checkedCount === 0) {
-                        statusSelect.value = "Pending";
-                    } else if (checkedCount < total) {
-                        statusSelect.value = "Packing";
-                    } else {
-                        statusSelect.value = "Packed";
-                    }
+            if (autoAdjustStatus && total > 0) {
+                const statusSel = document.getElementById("edit-packing-status");
+                if (statusSel && statusSel.value !== "Dispatched") {
+                    if (packedCount === 0) statusSel.value = "Pending";
+                    else if (packedCount < total) statusSel.value = "Packing";
+                    else statusSel.value = "Packed";
                 }
             }
         }
@@ -1623,20 +1607,20 @@ function doPost(e) {
             document.getElementById("dispatch-modal").classList.add("hidden");
         }
 
-        function setCourier(name) {
-            document.getElementById("edit-courier").value = name;
+        function setCourierPreset(name) {
+            const input = document.getElementById("edit-courier");
+            if (input) input.value = name;
         }
 
-        async function saveDispatchUpdate(e) {
-            e.preventDefault();
+        async function saveDispatchUpdate(event) {
+            event.preventDefault();
             const uid = document.getElementById("edit-dispatch-uid").value;
             const packingStatus = document.getElementById("edit-packing-status").value;
             const weightBox = document.getElementById("edit-weight-box").value.trim();
             const courierName = document.getElementById("edit-courier").value.trim();
             const trackingId = document.getElementById("edit-tracking").value.trim();
             const remarks = document.getElementById("edit-remarks").value.trim();
-
-            const packedFlags = Array.from(document.querySelectorAll(".checklist-cb")).map(cb => cb.checked);
+            const packedFlags = Array.from(document.querySelectorAll(".pack-checkbox")).map(b => b.checked);
 
             const idx = orders.findIndex(o => o.uid === uid);
             if (idx === -1) return;
@@ -1651,12 +1635,12 @@ function doPost(e) {
                 remarks
             };
 
-            saveLocalOrders();
+            saveOrdersToStorage();
             closeDispatchModal();
-            renderAll();
-            showToast(`Updated (${packingStatus}) & synced!`, "success");
+            renderWorkspace();
+            showToast(`Saved (${packingStatus})`, "success");
 
-            await pushToGoogleSheets({
+            await pushOrderAction({
                 action: "update",
                 createdAt: orders[idx].createdAt,
                 customerName: orders[idx].customerName,
@@ -1669,12 +1653,12 @@ function doPost(e) {
             });
         }
 
-        // --- BILL / INVOICE MODAL, PRINT & DOWNLOAD ---
+        // --- BILL / INVOICE PRINT & DOWNLOAD ---
         function openBillModal(uid) {
-            const raw = orders.find(o => o.uid === uid);
-            if (!raw) return;
-            const o = normalizeOrder(raw);
-            activeBillOrderUid = o.uid;
+            const found = orders.find(o => o.uid === uid);
+            if (!found) return;
+            const o = normalizeOrder(found);
+            currentBillUid = o.uid;
 
             document.getElementById("bill-date").textContent = "Date: " + o.createdAt;
             document.getElementById("bill-cust-name").textContent = o.customerName;
@@ -1695,7 +1679,7 @@ function doPost(e) {
                 taxEl.classList.add("hidden");
             }
 
-            document.getElementById("bill-cust-phone").textContent = "Contact: " + o.contactNo;
+            document.getElementById("bill-cust-phone").textContent = "Phone: " + o.contactNo;
             document.getElementById("bill-cust-address").textContent = o.address;
 
             document.getElementById("bill-status").textContent = o.packingStatus;
@@ -1703,18 +1687,18 @@ function doPost(e) {
             document.getElementById("bill-awb").textContent = o.trackingId || "—";
             document.getElementById("bill-weight").textContent = o.weightBox || "—";
 
-            const itemsArr = parseItemsArray(o.items);
+            const itemsList = splitOrderItems(o.items);
             const tbody = document.getElementById("bill-items-tbody");
-            tbody.innerHTML = itemsArr.map((itemText, i) => {
-                const parsed = parseSingleItem(itemText);
+            tbody.innerHTML = itemsList.map((itemStr, i) => {
+                const parsed = parseProductEntry(itemStr);
                 const isPacked = Boolean(o.packedFlags[i]);
                 return `
                     <tr>
                         <td class="py-2.5 px-3 font-bold text-slate-600">${i + 1}</td>
-                        <td class="py-2.5 px-3 font-bold text-slate-900">${parsed.name}</td>
-                        <td class="py-2.5 px-3 font-semibold text-slate-800">${parsed.qty || "—"}</td>
-                        <td class="py-2.5 px-3 text-right font-bold ${isPacked ? 'text-emerald-700' : 'text-amber-700'}">
-                            ${isPacked ? 'Packed' : 'Pending'}
+                        <td class="py-2.5 px-3 font-bold text-slate-900">${escapeHTML(parsed.name)}</td>
+                        <td class="py-2.5 px-3 font-semibold text-slate-800">${escapeHTML(parsed.qty || "—")}</td>
+                        <td class="py-2.5 px-3 text-right font-bold ${isPacked ? "text-emerald-700" : "text-amber-700"}">
+                            ${isPacked ? "Packed" : "Pending"}
                         </td>
                     </tr>
                 `;
@@ -1728,138 +1712,146 @@ function doPost(e) {
                 remSec.classList.add("hidden");
             }
 
+            document.getElementById("bill-total-count-footer").textContent =
+                `Total Items: ${o.itemCount} ${o.itemCount === 1 ? "Item" : "Items"}`;
+
             document.getElementById("bill-modal").classList.remove("hidden");
-            lucide.createIcons();
+            refreshIcons();
         }
 
         function closeBillModal() {
             document.getElementById("bill-modal").classList.add("hidden");
         }
 
-        function downloadBillHTML() {
-            const raw = orders.find(o => o.uid === activeBillOrderUid);
-            if (!raw) return;
-            const o = normalizeOrder(raw);
-            const itemsArr = parseItemsArray(o.items);
+        function downloadBillFile() {
+            const found = orders.find(o => o.uid === currentBillUid);
+            if (!found) return;
+            const o = normalizeOrder(found);
+            const itemsList = splitOrderItems(o.items);
 
-            const rowsHTML = itemsArr.map((itemText, i) => {
-                const parsed = parseSingleItem(itemText);
-                const isPacked = Boolean(o.packedFlags[i]);
+            const rowsHtml = itemsList.map((itemStr, i) => {
+                const parsed = parseProductEntry(itemStr);
+                const packed = Boolean(o.packedFlags[i]);
                 return `
                     <tr>
-                        <td style="padding:10px;border:1px solid #cbd5e1;">${i + 1}</td>
-                        <td style="padding:10px;border:1px solid #cbd5e1;font-weight:700;">${parsed.name}</td>
-                        <td style="padding:10px;border:1px solid #cbd5e1;">${parsed.qty || "—"}</td>
-                        <td style="padding:10px;border:1px solid #cbd5e1;text-align:right;font-weight:700;color:${isPacked ? '#047857' : '#b45309'};">${isPacked ? 'Packed' : 'Pending'}</td>
+                        <td style="padding:9px;border:1px solid #cbd5e1;">${i + 1}</td>
+                        <td style="padding:9px;border:1px solid #cbd5e1;font-weight:700;">${escapeHTML(parsed.name)}</td>
+                        <td style="padding:9px;border:1px solid #cbd5e1;">${escapeHTML(parsed.qty || "—")}</td>
+                        <td style="padding:9px;border:1px solid #cbd5e1;text-align:right;font-weight:700;color:${packed ? "#047857" : "#b45309"};">${packed ? "Packed" : "Pending"}</td>
                     </tr>
                 `;
             }).join("");
 
-            const htmlContent = `<!DOCTYPE html>
+            const docHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Khushali Logistic Panel - Bill - ${o.customerName}</title>
+<title>Khushali Logistic Panel - Bill - ${escapeHTML(o.customerName)}</title>
 <style>
-  body { font-family: Arial, sans-serif; padding: 30px; color: #0f172a; }
-  .box { max-width: 720px; margin: 0 auto; border: 2px solid #0f172a; border-radius: 12px; padding: 24px; }
-  .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0f172a; padding-bottom: 14px; margin-bottom: 18px; }
-  .badge { background: #059669; color: #fff; padding: 5px 10px; border-radius: 6px; font-weight: bold; font-size: 12px; }
+  body { font-family: Arial, sans-serif; padding: 28px; color: #0f172a; }
+  .sheet { max-width: 720px; margin: 0 auto; border: 2px solid #0f172a; border-radius: 12px; padding: 24px; }
+  .top { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0f172a; padding-bottom: 14px; margin-bottom: 18px; }
+  .paid { background: #059669; color: #fff; padding: 5px 10px; border-radius: 6px; font-weight: bold; font-size: 12px; }
   .grid { display: flex; gap: 16px; margin-bottom: 18px; }
-  .card { flex: 1; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; font-size: 13px; line-height: 1.5; }
+  .box { flex: 1; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; font-size: 13px; line-height: 1.5; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px; }
   th { background: #0f172a; color: #fff; padding: 10px; text-align: left; border: 1px solid #0f172a; }
   .remarks { background: #fffbeb; border: 1px solid #fde68a; padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 14px; }
-  .footer { border-top: 1px solid #cbd5e1; padding-top: 10px; display: flex; justify-content: space-between; font-size: 12px; color: #64748b; }
+  .foot { border-top: 1px solid #cbd5e1; padding-top: 10px; display: flex; justify-content: space-between; font-size: 12px; color: #64748b; }
 </style>
 </head>
 <body>
-  <div class="box">
-    <div class="header">
+  <div class="sheet">
+    <div class="top">
       <div>
         <h1 style="margin:0;font-size:22px;text-transform:uppercase;">Khushali Logistic Panel</h1>
-        <p style="margin:4px 0 0;font-size:12px;color:#475569;">Order Dispatch Bill & Packing Challan</p>
+        <p style="margin:4px 0 0;font-size:12px;color:#475569;">Bill / Invoice & Dispatch Slip</p>
       </div>
       <div style="text-align:right;">
-        <span class="badge">PAYMENT: SUCCESS</span>
-        <p style="margin:6px 0 0;font-size:12px;font-weight:bold;">Date: ${o.createdAt}</p>
+        <span class="paid">PAYMENT: SUCCESS</span>
+        <p style="margin:6px 0 0;font-size:12px;font-weight:bold;">Date: ${escapeHTML(o.createdAt)}</p>
       </div>
     </div>
     <div class="grid">
-      <div class="card">
-        <div style="font-size:10px;font-weight:bold;color:#64748b;text-transform:uppercase;">Billed & Shipped To</div>
-        <div style="font-size:15px;font-weight:bold;">${o.customerName}</div>
-        ${o.companyName ? `<div><strong>Company:</strong> ${o.companyName}</div>` : ''}
-        ${o.taxId ? `<div><strong>Aadhaar / GST No:</strong> ${o.taxId}</div>` : ''}
-        <div><strong>Contact:</strong> ${o.contactNo}</div>
-        <div><strong>Address:</strong> ${o.address}</div>
+      <div class="box">
+        <div style="font-size:10px;font-weight:bold;color:#64748b;text-transform:uppercase;">Customer Details</div>
+        <div style="font-size:15px;font-weight:bold;">${escapeHTML(o.customerName)}</div>
+        ${o.companyName ? `<div><strong>Company:</strong> ${escapeHTML(o.companyName)}</div>` : ""}
+        ${o.taxId ? `<div><strong>Aadhaar / GST No:</strong> ${escapeHTML(o.taxId)}</div>` : ""}
+        <div><strong>Phone:</strong> ${escapeHTML(o.contactNo)}</div>
+        <div><strong>Address:</strong> ${escapeHTML(o.address)}</div>
       </div>
-      <div class="card">
+      <div class="box">
         <div style="font-size:10px;font-weight:bold;color:#64748b;text-transform:uppercase;">Dispatch Details</div>
-        <div><strong>Status:</strong> ${o.packingStatus}</div>
-        <div><strong>Courier:</strong> ${o.courierName || "—"}</div>
-        <div><strong>Tracking / AWB:</strong> ${o.trackingId || "—"}</div>
-        <div><strong>Weight / Box:</strong> ${o.weightBox || "—"}</div>
+        <div><strong>Status:</strong> ${escapeHTML(o.packingStatus)}</div>
+        <div><strong>Courier / Transport:</strong> ${escapeHTML(o.courierName || "—")}</div>
+        <div><strong>Tracking / AWB / LR:</strong> ${escapeHTML(o.trackingId || "—")}</div>
+        <div><strong>Box / Weight:</strong> ${escapeHTML(o.weightBox || "—")}</div>
       </div>
     </div>
     <table>
       <thead>
         <tr>
           <th style="width:45px;">Sr.</th>
-          <th>Item Name</th>
+          <th>Product</th>
           <th>Quantity</th>
-          <th style="text-align:right;">Packing Status</th>
+          <th style="text-align:right;">Packing</th>
         </tr>
       </thead>
-      <tbody>${rowsHTML}</tbody>
+      <tbody>${rowsHtml}</tbody>
     </table>
-    ${o.remarks ? `<div class="remarks"><strong>Remarks:</strong> ${o.remarks}</div>` : ''}
-    <div class="footer">
-      <span>Generated by <strong>Khushali Logistic Panel</strong></span>
-      <span>Authorized Dispatch Copy</span>
+    ${o.remarks ? `<div class="remarks"><strong>Remarks:</strong> ${escapeHTML(o.remarks)}</div>` : ""}
+    <div class="foot">
+      <span><strong>Khushali Logistic Panel</strong></span>
+      <span>Total Items: ${o.itemCount}</span>
     </div>
   </div>
 </body>
 </html>`;
 
-            const blob = new Blob([htmlContent], { type: "text/html" });
+            const blob = new Blob([docHtml], { type: "text/html" });
             const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            const safeCust = (o.customerName || "Customer").replace(/[^a-zA-Z0-9_-]/g, "_");
-            a.href = url;
-            a.download = `Khushali-Bill-${safeCust}.html`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            const link = document.createElement("a");
+            const safeName = (o.customerName || "Customer").replace(/[^a-zA-Z0-9_-]/g, "_");
+            link.href = url;
+            link.download = `Khushali-Logistic-Panel-Bill-${safeName}.html`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
             URL.revokeObjectURL(url);
-            showToast(`Downloaded Khushali-Bill-${safeCust}.html`, "success");
+            showToast(`Downloaded Bill for ${o.customerName}`, "success");
         }
 
-        // --- STRUCTURED ITEM LIST & RENDERING ---
-        function buildStructuredItemsListHTML(order) {
-            const itemsArr = parseItemsArray(order.items);
-            const flags = parsePackedFlags(order.packedFlags, itemsArr.length);
-
-            return `
-                <ul class="space-y-1.5 mt-1.5">
-                    ${itemsArr.map((itemText, i) => {
-                        const parsed = parseSingleItem(itemText);
-                        const isPacked = Boolean(flags[i]);
-                        return `
-                            <li class="flex items-center justify-between gap-2 text-xs bg-white px-2.5 py-1.5 rounded-lg border border-slate-200/80">
-                                <span class="font-bold ${isPacked ? 'line-through text-emerald-800' : 'text-slate-900'}">
-                                    ${isPacked ? '✅ ' : '⏳ '}${parsed.name}
-                                </span>
-                                ${parsed.qty ? `<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-800 font-bold text-[11px] shrink-0">${parsed.qty}</span>` : ''}
-                            </li>
-                        `;
-                    }).join("")}
-                </ul>
-            `;
+        // --- FILTERS & RENDERING ---
+        function handleSearchInput(val) {
+            searchTerm = String(val || "").toLowerCase().trim();
+            renderWorkspace();
         }
 
-        function getStatusBadgeHTML(status) {
-            const st = normalizePackingStatus(status);
+        function setOrderFilter(filter) {
+            orderFilter = filter;
+            document.querySelectorAll(".ofilter-btn").forEach(btn => {
+                const active = btn.dataset.ofilter === filter;
+                btn.className = active
+                    ? "ofilter-btn px-3 py-1.5 rounded-xl text-xs font-bold border border-brand-600 bg-brand-600 text-white transition whitespace-nowrap cursor-pointer"
+                    : "ofilter-btn px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 transition whitespace-nowrap cursor-pointer";
+            });
+            renderWorkspace();
+        }
+
+        function setDispatchFilter(filter) {
+            dispatchFilter = filter;
+            document.querySelectorAll(".dfilter-btn").forEach(btn => {
+                const active = btn.dataset.dfilter === filter;
+                btn.className = active
+                    ? "dfilter-btn px-3.5 py-2 rounded-xl text-xs font-bold border border-purple-600 bg-purple-600 text-white transition whitespace-nowrap cursor-pointer"
+                    : "dfilter-btn px-3.5 py-2 rounded-xl text-xs font-bold border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 transition whitespace-nowrap cursor-pointer";
+            });
+            renderWorkspace();
+        }
+
+        function getStatusPillHTML(status) {
+            const st = normalizeStatus(status);
             if (st === "Dispatched") {
                 return `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Dispatched
@@ -1880,59 +1872,72 @@ function doPost(e) {
             </span>`;
         }
 
-        function filterOrders(q) {
-            searchQuery = q.toLowerCase().trim();
-            renderAll();
+        function renderStructuredItemsHTML(order) {
+            const itemsList = splitOrderItems(order.items);
+            const flags = normalizeFlags(order.packedFlags, itemsList.length);
+
+            return `
+                <ul class="space-y-1.5 mt-1.5">
+                    ${itemsList.map((itemStr, idx) => {
+                        const parsed = parseProductEntry(itemStr);
+                        const packed = Boolean(flags[idx]);
+                        return `
+                            <li class="flex items-center justify-between gap-2 text-xs bg-white px-2.5 py-1.5 rounded-lg border border-slate-200/80">
+                                <span class="font-bold ${packed ? "line-through text-emerald-800" : "text-slate-900"}">
+                                    ${packed ? "✓ " : "• "}${escapeHTML(parsed.name)}
+                                </span>
+                                ${parsed.qty ? `<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-800 font-bold text-[11px] shrink-0">${escapeHTML(parsed.qty)}</span>` : ""}
+                            </li>
+                        `;
+                    }).join("")}
+                </ul>
+            `;
         }
 
-        function renderAll() {
-            const pendingCount = orders.filter(o => normalizePackingStatus(o.packingStatus) === "Pending").length;
-            const packingCount = orders.filter(o => normalizePackingStatus(o.packingStatus) === "Packing").length;
-            const packedCount = orders.filter(o => normalizePackingStatus(o.packingStatus) === "Packed").length;
-            const dispatchedCount = orders.filter(o => normalizePackingStatus(o.packingStatus) === "Dispatched").length;
+        function renderWorkspace() {
+            const pending = orders.filter(o => normalizeStatus(o.packingStatus) === "Pending").length;
+            const packing = orders.filter(o => normalizeStatus(o.packingStatus) === "Packing").length;
+            const packed = orders.filter(o => normalizeStatus(o.packingStatus) === "Packed").length;
+            const dispatched = orders.filter(o => normalizeStatus(o.packingStatus) === "Dispatched").length;
 
-            document.getElementById("count-pending").textContent = pendingCount;
-            document.getElementById("count-packing").textContent = packingCount;
-            document.getElementById("count-packed").textContent = packedCount;
-            document.getElementById("count-dispatched").textContent = dispatchedCount;
+            document.getElementById("count-pending").textContent = pending;
+            document.getElementById("count-packing").textContent = packing;
+            document.getElementById("count-packed").textContent = packed;
+            document.getElementById("count-dispatched").textContent = dispatched;
 
-            const searched = orders.filter(o => {
-                if (!searchQuery) return true;
+            const matching = orders.filter(o => {
+                if (!searchTerm) return true;
                 return (
-                    (o.customerName || "").toLowerCase().includes(searchQuery) ||
-                    (o.contactNo || "").toLowerCase().includes(searchQuery) ||
-                    (o.companyName || "").toLowerCase().includes(searchQuery) ||
-                    (o.taxId || "").toLowerCase().includes(searchQuery) ||
-                    (o.items || "").toLowerCase().includes(searchQuery) ||
-                    (o.trackingId || "").toLowerCase().includes(searchQuery) ||
-                    (o.remarks || "").toLowerCase().includes(searchQuery)
+                    (o.customerName || "").toLowerCase().includes(searchTerm) ||
+                    (o.contactNo || "").toLowerCase().includes(searchTerm) ||
+                    (o.companyName || "").toLowerCase().includes(searchTerm) ||
+                    (o.taxId || "").toLowerCase().includes(searchTerm) ||
+                    (o.items || "").toLowerCase().includes(searchTerm) ||
+                    (o.trackingId || "").toLowerCase().includes(searchTerm) ||
+                    (o.remarks || "").toLowerCase().includes(searchTerm)
                 );
             });
 
-            if (currentDept === "order") {
-                renderOrderTeamList(searched);
-            } else if (currentDept === "dispatch") {
-                renderDispatchTeamList(searched);
-            } else if (currentDept === "manager") {
-                renderOrderTeamList(searched);
-                renderDispatchTeamList(searched);
+            if (activeRole === "order" || activeRole === "manager") {
+                renderOrderCards(matching);
+            }
+            if (activeRole === "dispatch" || activeRole === "manager") {
+                renderDispatchCards(matching);
             }
 
-            lucide.createIcons();
+            refreshIcons();
         }
 
-        function renderOrderTeamList(list) {
-            const filtered = list.filter(o => {
-                if (orderStatusFilter === "ALL") return true;
-                return normalizePackingStatus(o.packingStatus) === orderStatusFilter;
-            });
-
+        function renderOrderCards(list) {
+            const filtered = list.filter(o => orderFilter === "ALL" || normalizeStatus(o.packingStatus) === orderFilter);
             const container = document.getElementById("order-team-list");
+            if (!container) return;
+
             if (filtered.length === 0) {
                 container.innerHTML = `
                     <div class="bg-white rounded-2xl border border-slate-200 p-8 text-center">
-                        <p class="text-sm font-bold text-slate-700">Koi order nahi mila</p>
-                        <p class="text-xs text-slate-500 mt-1">Left form se naya order add karein ya filter change karein.</p>
+                        <p class="text-sm font-bold text-slate-700">No matching orders found</p>
+                        <p class="text-xs text-slate-500 mt-1">Create a new order or adjust filters.</p>
                     </div>`;
                 return;
             }
@@ -1942,156 +1947,150 @@ function doPost(e) {
                 const packedCount = o.packedFlags.filter(Boolean).length;
 
                 return `
-                <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs hover:border-slate-300 transition space-y-3">
-                    <div class="flex flex-wrap items-center justify-between gap-2">
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs text-slate-500 font-semibold">🕒 ${o.createdAt}</span>
-                        </div>
-                        <div class="flex items-center gap-1.5 flex-wrap">
-                            <button onclick="openEditOrderModal('${o.uid}')" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-brand-50 hover:text-brand-700 hover:border-brand-200 text-slate-700 text-xs font-bold transition">
-                                <i data-lucide="pencil" class="w-3 h-3"></i>
-                                Edit Order
-                            </button>
-                            <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold">
-                                Payment: Success
-                            </span>
-                            ${getStatusBadgeHTML(o.packingStatus)}
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 text-xs">
-                        <div class="sm:col-span-5 space-y-1">
-                            <p class="font-extrabold text-slate-900 text-sm">${o.customerName}</p>
-                            ${o.companyName ? `<p class="font-bold text-slate-700">🏢 ${o.companyName}</p>` : ''}
-                            ${o.taxId ? `<p class="font-mono text-[11px] font-semibold text-slate-600">🪪 ${o.taxId}</p>` : ''}
-                            <p class="text-slate-700 font-semibold">📞 ${o.contactNo}</p>
-                            <p class="text-slate-500 leading-relaxed">📍 ${o.address}</p>
-                        </div>
-                        <div class="sm:col-span-7 bg-slate-50 rounded-xl p-2.5 border border-slate-200/80">
-                            <div class="flex items-center justify-between">
-                                <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
-                                    Items (${o.itemCount} ${o.itemCount === 1 ? "Item" : "Items"})
+                    <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs hover:border-slate-300 transition space-y-3">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <span class="text-xs text-slate-500 font-semibold">${escapeHTML(o.createdAt)}</span>
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <button type="button" onclick="openEditOrderModal('${o.uid}')" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-brand-50 hover:text-brand-700 hover:border-brand-200 text-slate-700 text-xs font-bold transition cursor-pointer">
+                                    <i data-lucide="pencil" class="w-3 h-3"></i>
+                                    Edit Order
+                                </button>
+                                <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold">
+                                    Paid: Success
                                 </span>
-                                <span class="text-[11px] font-bold text-purple-700">${packedCount}/${o.itemCount} Packed</span>
+                                ${getStatusPillHTML(o.packingStatus)}
                             </div>
-                            ${buildStructuredItemsListHTML(o)}
-                        </div>
-                    </div>
-
-                    ${o.remarks ? `
-                        <div class="bg-amber-50/70 border border-amber-200/70 rounded-xl px-3 py-2 text-xs text-amber-950">
-                            <strong class="font-bold">Remark:</strong> ${o.remarks}
-                        </div>
-                    ` : ''}
-
-                    ${(o.courierName || o.trackingId || o.weightBox) ? `
-                        <div class="pt-2.5 border-t border-slate-100 flex flex-wrap items-center gap-3 text-xs text-slate-700">
-                            ${o.courierName ? `<span>🚚 <strong>${o.courierName}</strong></span>` : ''}
-                            ${o.trackingId ? `<span class="font-mono bg-slate-100 px-2 py-0.5 rounded font-bold text-slate-900">AWB: ${o.trackingId}</span>` : ''}
-                            ${o.weightBox ? `<span class="text-slate-500">📦 ${o.weightBox}</span>` : ''}
-                        </div>
-                    ` : ''}
-                </div>
-            `}).join("");
-        }
-
-        function renderDispatchTeamList(list) {
-            const filtered = list.filter(o => {
-                if (dispatchFilter === "ALL") return true;
-                return normalizePackingStatus(o.packingStatus) === dispatchFilter;
-            });
-
-            const container = document.getElementById("dispatch-team-list");
-            if (filtered.length === 0) {
-                container.innerHTML = `
-                    <div class="col-span-full bg-white rounded-2xl border border-slate-200 p-10 text-center">
-                        <p class="text-sm font-bold text-slate-700">Is filter mein koi order nahi hai</p>
-                        <p class="text-xs text-slate-500 mt-1">Dusra status tab check karein ya Refresh dabayein.</p>
-                    </div>`;
-                return;
-            }
-
-            container.innerHTML = filtered.map((raw, i) => {
-                const o = normalizeOrder(raw, i);
-                const packedCount = o.packedFlags.filter(Boolean).length;
-
-                return `
-                <div onclick="openDispatchModal('${o.uid}')" class="bg-white rounded-2xl border ${o.packingStatus === 'Pending' ? 'border-amber-300' : 'border-slate-200'} p-4 sm:p-5 shadow-xs hover:border-purple-400 hover:shadow-md cursor-pointer transition flex flex-col justify-between space-y-4">
-                    <div class="space-y-3">
-                        <!-- Top Row -->
-                        <div class="flex items-center justify-between gap-2">
-                            <span class="text-xs text-slate-500 font-semibold">🕒 ${o.createdAt}</span>
-                            ${getStatusBadgeHTML(o.packingStatus)}
                         </div>
 
-                        <!-- Customer Details -->
-                        <div>
-                            <div class="flex items-center justify-between gap-2">
-                                <h3 class="text-base font-extrabold text-slate-900">${o.customerName}</h3>
-                                <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-200">Paid: Success</span>
+                        <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 text-xs">
+                            <div class="sm:col-span-5 space-y-1">
+                                <p class="font-extrabold text-slate-900 text-sm">${escapeHTML(o.customerName)}</p>
+                                ${o.companyName ? `<p class="font-bold text-slate-700">Company: ${escapeHTML(o.companyName)}</p>` : ""}
+                                ${o.taxId ? `<p class="font-mono text-[11px] font-semibold text-slate-600">ID / GST: ${escapeHTML(o.taxId)}</p>` : ""}
+                                <p class="text-slate-700 font-semibold">Phone: ${escapeHTML(o.contactNo)}</p>
+                                <p class="text-slate-500 leading-relaxed">${escapeHTML(o.address)}</p>
                             </div>
-                            ${o.companyName ? `<p class="text-xs font-bold text-slate-700 mt-0.5">🏢 ${o.companyName}</p>` : ''}
-                            ${o.taxId ? `<p class="text-[11px] font-mono font-semibold text-slate-600">🪪 ${o.taxId}</p>` : ''}
-                            <p class="text-xs font-semibold text-brand-600 mt-0.5">📞 ${o.contactNo}</p>
-                            <p class="text-xs text-slate-600 mt-1 leading-relaxed">📍 ${o.address}</p>
-                        </div>
-
-                        <!-- Structured Items Checklist Preview -->
-                        <div class="bg-amber-50/60 border border-amber-200/80 rounded-xl p-3">
-                            <div class="flex items-center justify-between">
-                                <span class="text-[10px] font-extrabold uppercase tracking-wider text-amber-900">
-                                    Items (${o.itemCount}) • Click to Tick Checklist
-                                </span>
-                                <span class="px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-purple-100 text-purple-800">
-                                    ${packedCount}/${o.itemCount} Packed
-                                </span>
+                            <div class="sm:col-span-7 bg-slate-50 rounded-xl p-2.5 border border-slate-200/80">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
+                                        Items (${o.itemCount} ${o.itemCount === 1 ? "Item" : "Items"})
+                                    </span>
+                                    <span class="text-[11px] font-bold text-purple-700">${packedCount}/${o.itemCount} Packed</span>
+                                </div>
+                                ${renderStructuredItemsHTML(o)}
                             </div>
-                            ${buildStructuredItemsListHTML(o)}
                         </div>
 
                         ${o.remarks ? `
-                            <div class="bg-slate-50 border border-slate-200/80 rounded-xl px-3 py-2 text-xs text-slate-700">
-                                <strong class="font-bold text-slate-900">Remark:</strong> ${o.remarks}
+                            <div class="bg-amber-50/70 border border-amber-200/70 rounded-xl px-3 py-2 text-xs text-amber-950">
+                                <strong class="font-bold">Remarks:</strong> ${escapeHTML(o.remarks)}
                             </div>
-                        ` : ''}
+                        ` : ""}
 
-                        <!-- Dispatch Metadata -->
-                        <div class="grid grid-cols-3 gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200/70 text-[11px]">
-                            <div>
-                                <span class="text-slate-400 block font-semibold">Weight / Box</span>
-                                <span class="font-bold text-slate-800">${o.weightBox || '—'}</span>
+                        ${(o.courierName || o.trackingId || o.weightBox) ? `
+                            <div class="pt-2.5 border-t border-slate-100 flex flex-wrap items-center gap-3 text-xs text-slate-700">
+                                ${o.courierName ? `<span>Courier: <strong>${escapeHTML(o.courierName)}</strong></span>` : ""}
+                                ${o.trackingId ? `<span class="font-mono bg-slate-100 px-2 py-0.5 rounded font-bold text-slate-900">AWB/LR: ${escapeHTML(o.trackingId)}</span>` : ""}
+                                ${o.weightBox ? `<span class="text-slate-500">${escapeHTML(o.weightBox)}</span>` : ""}
                             </div>
-                            <div>
-                                <span class="text-slate-400 block font-semibold">Courier</span>
-                                <span class="font-bold text-slate-800">${o.courierName || '—'}</span>
-                            </div>
-                            <div>
-                                <span class="text-slate-400 block font-semibold">Tracking / AWB</span>
-                                <span class="font-mono font-bold text-slate-900 break-all">${o.trackingId || '—'}</span>
-                            </div>
-                        </div>
+                        ` : ""}
                     </div>
-
-                    <!-- Action Buttons -->
-                    <div onclick="event.stopPropagation()" class="pt-2 flex items-center gap-2">
-                        <button type="button" onclick="openBillModal('${o.uid}')" class="px-3.5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-800 text-xs font-bold flex items-center gap-1.5 transition">
-                            <i data-lucide="file-text" class="w-4 h-4 text-brand-600"></i>
-                            <span>Bill / Invoice</span>
-                        </button>
-                        <button type="button" onclick="openDispatchModal('${o.uid}')" class="flex-1 py-2.5 px-4 rounded-xl bg-purple-600 hover:bg-purple-700 active:scale-[0.99] text-white text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition">
-                            <i data-lucide="list-checks" class="w-4 h-4"></i>
-                            <span>Checklist & Dispatch</span>
-                        </button>
-                    </div>
-                </div>
-            `}).join("");
+                `;
+            }).join("");
         }
 
-        // --- SYNC SETUP MODAL ---
+        function renderDispatchCards(list) {
+            const filtered = list.filter(o => dispatchFilter === "ALL" || normalizeStatus(o.packingStatus) === dispatchFilter);
+            const container = document.getElementById("dispatch-team-list");
+            if (!container) return;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full bg-white rounded-2xl border border-slate-200 p-10 text-center">
+                        <p class="text-sm font-bold text-slate-700">No orders in this status</p>
+                        <p class="text-xs text-slate-500 mt-1">Select another status tab or refresh.</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map((raw, i) => {
+                const o = normalizeOrder(raw, i);
+                const packedCount = o.packedFlags.filter(Boolean).length;
+
+                return `
+                    <div onclick="openDispatchModal('${o.uid}')" class="bg-white rounded-2xl border ${o.packingStatus === "Pending" ? "border-amber-300" : "border-slate-200"} p-4 sm:p-5 shadow-xs hover:border-purple-400 hover:shadow-md cursor-pointer transition flex flex-col justify-between space-y-4">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="text-xs text-slate-500 font-semibold">${escapeHTML(o.createdAt)}</span>
+                                ${getStatusPillHTML(o.packingStatus)}
+                            </div>
+
+                            <div>
+                                <div class="flex items-center justify-between gap-2">
+                                    <h3 class="text-base font-extrabold text-slate-900">${escapeHTML(o.customerName)}</h3>
+                                    <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-200">Paid: Success</span>
+                                </div>
+                                ${o.companyName ? `<p class="text-xs font-bold text-slate-700 mt-0.5">Company: ${escapeHTML(o.companyName)}</p>` : ""}
+                                ${o.taxId ? `<p class="text-[11px] font-mono font-semibold text-slate-600">ID / GST: ${escapeHTML(o.taxId)}</p>` : ""}
+                                <p class="text-xs font-semibold text-brand-600 mt-0.5">Phone: ${escapeHTML(o.contactNo)}</p>
+                                <p class="text-xs text-slate-600 mt-1 leading-relaxed">${escapeHTML(o.address)}</p>
+                            </div>
+
+                            <div class="bg-amber-50/60 border border-amber-200/80 rounded-xl p-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[10px] font-extrabold uppercase tracking-wider text-amber-900">
+                                        Items (${o.itemCount}) • Click Card for Checklist
+                                    </span>
+                                    <span class="px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-purple-100 text-purple-800">
+                                        ${packedCount}/${o.itemCount} Packed
+                                    </span>
+                                </div>
+                                ${renderStructuredItemsHTML(o)}
+                            </div>
+
+                            ${o.remarks ? `
+                                <div class="bg-slate-50 border border-slate-200/80 rounded-xl px-3 py-2 text-xs text-slate-700">
+                                    <strong class="font-bold text-slate-900">Remarks:</strong> ${escapeHTML(o.remarks)}
+                                </div>
+                            ` : ""}
+
+                            <div class="grid grid-cols-3 gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200/70 text-[11px]">
+                                <div>
+                                    <span class="text-slate-400 block font-semibold">Box / Weight</span>
+                                    <span class="font-bold text-slate-800">${escapeHTML(o.weightBox || "—")}</span>
+                                </div>
+                                <div>
+                                    <span class="text-slate-400 block font-semibold">Courier</span>
+                                    <span class="font-bold text-slate-800">${escapeHTML(o.courierName || "—")}</span>
+                                </div>
+                                <div>
+                                    <span class="text-slate-400 block font-semibold">AWB / LR</span>
+                                    <span class="font-mono font-bold text-slate-900 break-all">${escapeHTML(o.trackingId || "—")}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div onclick="event.stopPropagation()" class="pt-2 flex items-center gap-2">
+                            <button type="button" onclick="openBillModal('${o.uid}')" class="px-3.5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-800 text-xs font-bold flex items-center gap-1.5 transition cursor-pointer">
+                                <i data-lucide="file-text" class="w-4 h-4 text-brand-600"></i>
+                                <span>Bill</span>
+                            </button>
+                            <button type="button" onclick="openDispatchModal('${o.uid}')" class="flex-1 py-2.5 px-4 rounded-xl bg-purple-600 hover:bg-purple-700 active:scale-[0.99] text-white text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition cursor-pointer">
+                                <i data-lucide="list-checks" class="w-4 h-4"></i>
+                                <span>Checklist & Dispatch</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        // --- SYNC MODAL ---
         function openSyncModal() {
-            document.getElementById("sheets-url-input").value = getSheetsUrl();
+            const input = document.getElementById("sheets-url-input");
+            if (input) input.value = getConfiguredSheetsUrl();
             document.getElementById("sync-modal").classList.remove("hidden");
-            lucide.createIcons();
+            refreshIcons();
         }
 
         function closeSyncModal() {
@@ -2099,52 +2098,85 @@ function doPost(e) {
         }
 
         function saveAndSyncNow() {
-            const val = document.getElementById("sheets-url-input").value.trim();
+            const val = (document.getElementById("sheets-url-input").value || "").trim();
             if (!val) {
-                showToast("Valid Apps Script Web App URL paste karein", "error");
+                showToast("Please enter a valid Apps Script Web App URL", "error");
                 return;
             }
-            localStorage.setItem(STORAGE_KEYS.SHEETS_URL, val);
+            try {
+                localStorage.setItem(STORAGE_KEYS.SHEETS_URL, val);
+            } catch (e) {
+                console.warn("Save URL warning:", e);
+            }
             closeSyncModal();
             syncFromGoogleSheets(false);
         }
 
-        function resetToDefaultSheetsUrl() {
-            localStorage.setItem(STORAGE_KEYS.SHEETS_URL, DEFAULT_SHEETS_URL);
-            document.getElementById("sheets-url-input").value = DEFAULT_SHEETS_URL;
-            showToast("Default Google Sheets URL restored", "info");
+        function restoreDefaultSheetsUrl() {
+            try {
+                localStorage.setItem(STORAGE_KEYS.SHEETS_URL, DEFAULT_SHEETS_URL);
+            } catch (e) {
+                console.warn("Restore URL warning:", e);
+            }
+            const input = document.getElementById("sheets-url-input");
+            if (input) input.value = DEFAULT_SHEETS_URL;
+            showToast("Restored default Google Sheets URL", "info");
         }
 
-        function copyAppsScript() {
-            const code = document.getElementById("apps-script-code").innerText;
-            const temp = document.createElement("textarea");
-            temp.value = code;
-            document.body.appendChild(temp);
-            temp.select();
+        function copyAppsScriptCode() {
+            const pre = document.getElementById("apps-script-code");
+            if (!pre) return;
+            const ta = document.createElement("textarea");
+            ta.value = pre.innerText;
+            document.body.appendChild(ta);
+            ta.select();
             document.execCommand("copy");
-            document.body.removeChild(temp);
-            showToast("Apps Script code copied!", "success");
+            document.body.removeChild(ta);
+            showToast("Apps Script code copied", "success");
         }
 
-        // --- TOAST NOTIFICATION ---
-        function showToast(message, type = "info") {
-            const container = document.getElementById("toast-container");
-            const toast = document.createElement("div");
+        // --- HELPERS ---
+        function refreshIcons() {
+            try {
+                if (typeof lucide !== "undefined") {
+                    lucide.createIcons();
+                }
+            } catch (e) {
+                // Ignore icon refresh errors
+            }
+        }
 
-            const colors = {
+        function escapeHTML(str) {
+            return String(str || "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function escapeAttr(str) {
+            return escapeHTML(str);
+        }
+
+        function showToast(msg, type = "info") {
+            const container = document.getElementById("toast-container");
+            if (!container) return;
+
+            const el = document.createElement("div");
+            const palette = {
                 success: "bg-slate-900 text-white border-emerald-500",
                 error: "bg-red-600 text-white border-red-400",
                 info: "bg-slate-800 text-white border-slate-600"
             };
+            el.className = `pointer-events-auto px-4 py-3 rounded-2xl shadow-xl border-l-4 text-xs font-bold transition-all duration-300 ${palette[type] || palette.info}`;
+            el.textContent = msg;
 
-            toast.className = `pointer-events-auto px-4 py-3 rounded-2xl shadow-xl border-l-4 text-xs font-bold flex items-center justify-between gap-3 transition-all duration-300 ${colors[type] || colors.info}`;
-            toast.innerHTML = `<span>${message}</span>`;
-
-            container.appendChild(toast);
+            container.appendChild(el);
             setTimeout(() => {
-                toast.style.opacity = "0";
-                setTimeout(() => toast.remove(), 300);
-            }, 3200);
+                el.style.opacity = "0";
+                setTimeout(() => el.remove(), 300);
+            }, 3000);
         }
     </script>
 </body>
