@@ -86,7 +86,7 @@
 <body class="min-h-screen flex flex-col">
 
     <!-- ==================== TOAST NOTIFICATION CONTAINER ==================== -->
-    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+    <div id="toast-container" class="fixed bottom-4 right-4 z-[70] flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
 
     <!-- ==================== LOGIN SCREEN ==================== -->
     <div id="login-screen" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-slate-800 to-brand-900">
@@ -113,7 +113,7 @@
                                     <i data-lucide="clipboard-edit" class="w-5 h-5"></i>
                                 </div>
                                 <span class="text-xs sm:text-sm font-bold text-slate-900">Order Team</span>
-                                <span class="text-[11px] text-slate-500 leading-tight">Take & track orders</span>
+                                <span class="text-[11px] text-slate-500 leading-tight">Take, edit & track orders</span>
                             </div>
                         </label>
 
@@ -124,7 +124,7 @@
                                     <i data-lucide="boxes" class="w-5 h-5"></i>
                                 </div>
                                 <span class="text-xs sm:text-sm font-bold text-slate-900">Packing & Dispatch</span>
-                                <span class="text-[11px] text-slate-500 leading-tight">Pack & add AWB</span>
+                                <span class="text-[11px] text-slate-500 leading-tight">Checklist, remarks & AWB</span>
                             </div>
                         </label>
                     </div>
@@ -138,12 +138,12 @@
                     </div>
                     <div class="relative">
                         <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
-                        <input 
-                            type="password" 
-                            id="login-pin" 
+                        <input
+                            type="password"
+                            id="login-pin"
                             maxlength="12"
                             inputmode="numeric"
-                            placeholder="••••••" 
+                            placeholder="••••••"
                             required
                             class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-base font-bold tracking-widest focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-600 transition"
                         >
@@ -170,7 +170,7 @@
         <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
                 <div class="flex flex-wrap items-center justify-between gap-3">
-                    
+
                     <!-- Left: Brand + Active Department Badge -->
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center shadow-sm">
@@ -191,8 +191,8 @@
                     <div class="flex items-center gap-2">
                         <!-- Google Sheets Sync Status Button -->
                         <button onclick="openSyncModal()" id="sync-status-btn" class="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold border transition">
-                            <span id="sync-dot" class="w-2 h-2 rounded-full bg-amber-500"></span>
-                            <span id="sync-label">Local Mode (Setup Sheet)</span>
+                            <span id="sync-dot" class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            <span id="sync-label">Google Sheets Live</span>
                             <i data-lucide="settings" class="w-3.5 h-3.5 opacity-70"></i>
                         </button>
 
@@ -227,7 +227,7 @@
 
                 <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-purple-200/80 shadow-xs">
                     <div class="flex items-center justify-between">
-                        <span class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-purple-700">Packed</span>
+                        <span class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-purple-700">Packed / Partial</span>
                         <i data-lucide="package" class="w-4 h-4 text-purple-600"></i>
                     </div>
                     <p id="count-packed" class="text-xl sm:text-2xl font-extrabold text-purple-600 mt-1">0</p>
@@ -244,7 +244,7 @@
 
             <!-- ==================== VIEW 1: ORDER TAKING TEAM ==================== -->
             <div id="order-team-view" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                
+
                 <!-- Left Column: Create New Order Form -->
                 <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
                     <div class="bg-slate-50 px-5 py-4 border-b border-slate-200 flex items-center justify-between">
@@ -283,16 +283,21 @@
                             <textarea id="cust-address" rows="2" required placeholder="House/Shop No, Area, City, State - Pincode" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-600"></textarea>
                         </div>
 
-                        <!-- Dynamic Items & Quantity Builder -->
+                        <!-- Dynamic Items & Quantity Builder + Automatic Item Counter -->
                         <div>
-                            <div class="flex items-center justify-between mb-1.5">
-                                <label class="block text-xs font-bold text-slate-700">Items & Quantity <span class="text-red-500">*</span></label>
-                                <button type="button" onclick="addItemRow()" class="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1">
+                            <div class="flex items-center justify-between gap-2 mb-1.5">
+                                <div class="flex items-center gap-2">
+                                    <label class="block text-xs font-bold text-slate-700">Items & Quantity <span class="text-red-500">*</span></label>
+                                    <span id="create-item-count-badge" class="px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-brand-50 text-brand-700 border border-brand-200">
+                                        1 Item
+                                    </span>
+                                </div>
+                                <button type="button" onclick="addItemRow('create-items-container', 'create-item-count-badge')" class="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1">
                                     <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
                                     Add More Item
                                 </button>
                             </div>
-                            <div id="items-container" class="space-y-2.5">
+                            <div id="create-items-container" class="space-y-2.5">
                                 <!-- Initial Item Row injected via JS -->
                             </div>
                         </div>
@@ -321,7 +326,7 @@
                     <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div>
                             <h2 class="text-base font-bold text-slate-900">Submitted Orders & Dispatch Status</h2>
-                            <p class="text-xs text-slate-500">Jaise hi packing team AWB dalegi, yahan live dikhega</p>
+                            <p class="text-xs text-slate-500">Kuch galat type ho jaye toh "Edit Order" se turant theek karein</p>
                         </div>
                         <div class="relative w-full sm:w-64">
                             <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
@@ -337,7 +342,7 @@
 
             <!-- ==================== VIEW 2: PACKING & DISPATCH TEAM ==================== -->
             <div id="dispatch-team-view" class="hidden space-y-4">
-                
+
                 <!-- Filter Tabs & Search -->
                 <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
                     <!-- Status Filter Pills -->
@@ -346,7 +351,7 @@
                             Pending Packing
                         </button>
                         <button onclick="setDispatchFilter('PACKED')" data-dfilter="PACKED" class="dfilter-btn px-3.5 py-2 rounded-xl text-xs font-bold border transition whitespace-nowrap">
-                            Packed (Ready)
+                            Packed / Partial
                         </button>
                         <button onclick="setDispatchFilter('DISPATCHED')" data-dfilter="DISPATCHED" class="dfilter-btn px-3.5 py-2 rounded-xl text-xs font-bold border transition whitespace-nowrap">
                             Dispatched
@@ -372,35 +377,126 @@
         </main>
     </div>
 
-    <!-- ==================== MODAL: UPDATE PACKING & DISPATCH ==================== -->
-    <div id="dispatch-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+    <!-- ==================== MODAL: EDIT ORDER DETAILS (FOR CORRECTIONS) ==================== -->
+    <div id="edit-order-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-8">
             <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
                 <div>
-                    <span id="modal-order-id" class="text-xs font-extrabold text-purple-600 uppercase tracking-wider">ORD-101</span>
-                    <h3 class="text-base font-bold text-slate-900">Update Packing & Dispatch Details</h3>
+                    <span id="edit-modal-order-id" class="text-xs font-extrabold text-brand-600 uppercase tracking-wider">ORD-1001</span>
+                    <h3 class="text-base font-bold text-slate-900">Edit Order Details</h3>
                 </div>
-                <button onclick="closeDispatchModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition">
+                <button onclick="closeEditOrderModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
 
-            <form id="dispatch-form" onsubmit="saveDispatchUpdate(event)" class="p-6 space-y-4">
-                <input type="hidden" id="edit-order-id">
+            <form id="edit-order-form" onsubmit="saveEditedOrder(event)" class="p-6 space-y-4 max-h-[82vh] overflow-y-auto">
+                <input type="hidden" id="edit-order-id-input">
 
-                <!-- Order Summary Box -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Customer Name <span class="text-red-500">*</span></label>
+                    <input type="text" id="edit-cust-name" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-brand-600">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Contact Number <span class="text-red-500">*</span></label>
+                    <input type="tel" id="edit-cust-phone" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-brand-600">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Delivery Address <span class="text-red-500">*</span></label>
+                    <textarea id="edit-cust-address" rows="2" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-brand-600"></textarea>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between gap-2 mb-1.5">
+                        <div class="flex items-center gap-2">
+                            <label class="block text-xs font-bold text-slate-700">Items & Quantity <span class="text-red-500">*</span></label>
+                            <span id="edit-item-count-badge" class="px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-brand-50 text-brand-700 border border-brand-200">
+                                1 Item
+                            </span>
+                        </div>
+                        <button type="button" onclick="addItemRow('edit-items-container', 'edit-item-count-badge')" class="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1">
+                            <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+                            Add Item
+                        </button>
+                    </div>
+                    <div id="edit-items-container" class="space-y-2.5"></div>
+                </div>
+
+                <div class="pt-2 flex items-center gap-3">
+                    <button type="button" onclick="closeEditOrderModal()" class="flex-1 py-3 px-4 rounded-xl border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 transition">
+                        Cancel
+                    </button>
+                    <button type="submit" class="flex-2 py-3 px-6 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs sm:text-sm shadow-md transition">
+                        Save Changes & Sync
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: INTERACTIVE PACKING CHECKLIST & DISPATCH ==================== -->
+    <div id="dispatch-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white w-full max-w-xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-8">
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span id="modal-order-id" class="text-xs font-extrabold text-purple-600 uppercase tracking-wider">ORD-1003</span>
+                        <span id="modal-item-summary" class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-purple-100 text-purple-800">0/0 Packed</span>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-900 mt-0.5">Packing Checklist & Dispatch</h3>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <button type="button" onclick="openEditOrderFromDispatch()" title="Edit Order Details" class="px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold flex items-center gap-1 transition">
+                        <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                        <span>Edit Order</span>
+                    </button>
+                    <button onclick="closeDispatchModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <form id="dispatch-form" onsubmit="saveDispatchUpdate(event)" class="p-6 space-y-4 max-h-[82vh] overflow-y-auto">
+                <input type="hidden" id="edit-dispatch-order-id">
+
+                <!-- Customer Summary Box -->
                 <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 text-xs space-y-1">
                     <div class="flex justify-between font-bold text-slate-900">
                         <span id="modal-cust-name">Customer Name</span>
                         <span id="modal-cust-phone" class="text-brand-600">9876543210</span>
                     </div>
-                    <p id="modal-cust-items" class="text-slate-700 font-medium"></p>
                     <p id="modal-cust-address" class="text-slate-500"></p>
                 </div>
 
-                <!-- 1. Packing Status -->
+                <!-- Interactive Item-by-Item Packing Checklist -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-700">
+                            Item Packing Checklist (Tick Packed Items)
+                        </label>
+                        <button type="button" onclick="toggleAllChecklist(true)" class="text-[11px] font-bold text-purple-600 hover:underline">
+                            Tick All Packed
+                        </button>
+                    </div>
+                    <!-- Progress Bar -->
+                    <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                        <div id="checklist-progress-bar" class="h-full bg-purple-600 transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                    <!-- Checklist Container -->
+                    <div id="modal-checklist-container" class="space-y-2 pt-1"></div>
+                </div>
+
+                <!-- Remarks Field -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Packing Status <span class="text-red-500">*</span></label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Packing / Dispatch Remarks</label>
+                    <textarea id="edit-remarks" rows="2" placeholder="e.g. Bubble wrap kiya hai, 1 item kal subah bhejenge, fragile seal lagayi..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-purple-600"></textarea>
+                </div>
+
+                <!-- Packing / Dispatch Status -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Order Dispatch Status <span class="text-red-500">*</span></label>
                     <div class="grid grid-cols-3 gap-2">
                         <label class="cursor-pointer">
                             <input type="radio" name="packingStatus" value="Pending Packing" class="peer sr-only">
@@ -423,26 +519,28 @@
                     </div>
                 </div>
 
-                <!-- 2. Weight / Box Size -->
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Weight / Box Size</label>
-                    <input type="text" id="edit-weight-box" placeholder="e.g. 1.2 kg / Medium Box (12x10x6)" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-purple-600">
-                </div>
-
-                <!-- 3. Courier Name + Quick Presets -->
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Courier Name</label>
-                    <input type="text" id="edit-courier" placeholder="e.g. Delhivery, BlueDart, DTDC..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-purple-600">
-                    <div class="flex flex-wrap gap-1.5 mt-2">
-                        <button type="button" onclick="setCourier('Delhivery')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700">Delhivery</button>
-                        <button type="button" onclick="setCourier('BlueDart')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700">BlueDart</button>
-                        <button type="button" onclick="setCourier('DTDC')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700">DTDC</button>
-                        <button type="button" onclick="setCourier('Shiprocket')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700">Shiprocket</button>
-                        <button type="button" onclick="setCourier('India Post')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700">India Post</button>
+                <!-- Weight / Box Size & Courier -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Weight / Box Size</label>
+                        <input type="text" id="edit-weight-box" placeholder="e.g. 12 kg / Large Box" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-purple-600">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Courier Name</label>
+                        <input type="text" id="edit-courier" placeholder="e.g. Delhivery, BlueDart..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-purple-600">
                     </div>
                 </div>
 
-                <!-- 4. Tracking ID / AWB -->
+                <!-- Quick Courier Chips -->
+                <div class="flex flex-wrap gap-1.5 -mt-1">
+                    <button type="button" onclick="setCourier('Delhivery')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700">Delhivery</button>
+                    <button type="button" onclick="setCourier('BlueDart')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700">BlueDart</button>
+                    <button type="button" onclick="setCourier('DTDC')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700">DTDC</button>
+                    <button type="button" onclick="setCourier('Shiprocket')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700">Shiprocket</button>
+                    <button type="button" onclick="setCourier('India Post')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700">India Post</button>
+                </div>
+
+                <!-- Tracking ID / AWB -->
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Tracking ID / AWB Number</label>
                     <input type="text" id="edit-tracking" placeholder="e.g. 149283749201" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-mono font-semibold focus:outline-none focus:border-purple-600">
@@ -453,7 +551,7 @@
                         Cancel
                     </button>
                     <button type="submit" id="save-dispatch-btn" class="flex-2 py-3 px-6 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs sm:text-sm shadow-md shadow-purple-600/20 transition">
-                        Save & Sync Status
+                        Save Checklist & Sync
                     </button>
                 </div>
             </form>
@@ -470,7 +568,7 @@
                     </div>
                     <div>
                         <h3 class="text-base font-bold text-slate-900">Google Sheets Live Storage Setup</h3>
-                        <p class="text-xs text-slate-500">Connect your Google Sheet in 2 minutes (Free & Serverless)</p>
+                        <p class="text-xs text-slate-500">Default URL pre-filled — update or sync anytime</p>
                     </div>
                 </div>
                 <button onclick="closeSyncModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60">
@@ -491,29 +589,15 @@
                         </button>
                     </div>
                     <div class="flex items-center justify-between text-[11px] text-slate-600">
-                        <span>URL khali chhodenge toh Local Demo Mode chalega.</span>
-                        <button onclick="disconnectSheetsUrl()" class="text-red-600 font-semibold hover:underline">Disconnect</button>
+                        <span>Pre-configured URL active hai. Zaroorat pade toh reset ya update karein.</span>
+                        <button onclick="resetToDefaultSheetsUrl()" class="text-brand-700 font-semibold hover:underline">Reset Default URL</button>
                     </div>
                 </div>
 
-                <!-- Step 2: Instructions -->
-                <div class="space-y-2 text-xs text-slate-700">
-                    <h4 class="font-bold text-slate-900 text-sm">Google Sheet kaise connect karein? (4 Easy Steps)</h4>
-                    <ol class="list-decimal list-inside space-y-1.5 bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                        <li>Ek nayi <strong>Google Sheet</strong> banayein (e.g., <em>OrderFlow Data</em>).</li>
-                        <li>Top menu mein <strong>Extensions → Apps Script</strong> par click karein.</li>
-                        <li>Neeche diya gaya <strong>Apps Script Code</strong> copy karke wahan paste karein aur Save karein.</li>
-                        <li>Top right mein <strong>Deploy → New deployment → Web app</strong> select karein:
-                            <span class="block pl-5 text-slate-500 mt-0.5">• Execute as: <strong>Me</strong> | Who has access: <strong>Anyone</strong></span>
-                        </li>
-                        <li>Jo <strong>Web App URL</strong> milega, use upar paste karke <strong>Connect & Sync</strong> dabayein!</li>
-                    </ol>
-                </div>
-
-                <!-- Step 3: Copyable Apps Script -->
+                <!-- Step 2: Copyable Apps Script -->
                 <div>
                     <div class="flex items-center justify-between mb-1.5">
-                        <span class="text-xs font-bold text-slate-800">Google Apps Script (Code.gs)</span>
+                        <span class="text-xs font-bold text-slate-800">Google Apps Script (Code.gs) — With Checklist, Remarks & Edit Support</span>
                         <button onclick="copyAppsScript()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition">
                             <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                             <span>Copy Script Code</span>
@@ -535,13 +619,16 @@ function setupSheet() {
       "Contact No",
       "Address",
       "Items & Quantity",
+      "Total Items",
       "Payment Status",
       "Packing Status",
+      "Packed Checklist",
+      "Remarks",
       "Weight / Box Size",
       "Courier Name",
       "Tracking ID / AWB"
     ]);
-    sheet.getRange(1, 1, 1, 11).setFontWeight("bold");
+    sheet.getRange(1, 1, 1, 14).setFontWeight("bold");
   }
   return sheet;
 }
@@ -560,11 +647,14 @@ function doGet(e) {
       contactNo: String(row[3]),
       address: String(row[4]),
       items: String(row[5]),
-      paymentStatus: String(row[6] || "Success"),
-      packingStatus: String(row[7] || "Pending Packing"),
-      weightBox: String(row[8] || ""),
-      courierName: String(row[9] || ""),
-      trackingId: String(row[10] || "")
+      itemCount: Number(row[6] || 1),
+      paymentStatus: String(row[7] || "Success"),
+      packingStatus: String(row[8] || "Pending Packing"),
+      packedFlags: String(row[9] || ""),
+      remarks: String(row[10] || ""),
+      weightBox: String(row[11] || ""),
+      courierName: String(row[12] || ""),
+      trackingId: String(row[13] || "")
     });
   }
   return ContentService.createTextOutput(JSON.stringify({ status: "ok", orders: orders.reverse() }))
@@ -574,7 +664,7 @@ function doGet(e) {
 function doPost(e) {
   const sheet = setupSheet();
   const payload = JSON.parse(e.postData.contents);
-  
+
   if (payload.action === "create") {
     const o = payload.order;
     sheet.appendRow([
@@ -584,8 +674,11 @@ function doPost(e) {
       o.contactNo,
       o.address,
       o.items,
+      o.itemCount || 1,
       "Success",
       "Pending Packing",
+      o.packedFlags || "",
+      o.remarks || "",
       "",
       "",
       ""
@@ -593,16 +686,37 @@ function doPost(e) {
     return ContentService.createTextOutput(JSON.stringify({ status: "ok" }))
       .setMimeType(ContentService.MimeType.JSON);
   }
-  
+
+  if (payload.action === "editOrder") {
+    const o = payload.order;
+    const data = sheet.getDataRange().getValues();
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]) === String(o.id)) {
+        const rowNum = i + 1;
+        sheet.getRange(rowNum, 3).setValue(o.customerName);
+        sheet.getRange(rowNum, 4).setValue(o.contactNo);
+        sheet.getRange(rowNum, 5).setValue(o.address);
+        sheet.getRange(rowNum, 6).setValue(o.items);
+        sheet.getRange(rowNum, 7).setValue(o.itemCount || 1);
+        sheet.getRange(rowNum, 10).setValue(o.packedFlags || "");
+        break;
+      }
+    }
+    return ContentService.createTextOutput(JSON.stringify({ status: "ok" }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
   if (payload.action === "update") {
     const data = sheet.getDataRange().getValues();
     for (let i = 1; i < data.length; i++) {
       if (String(data[i][0]) === String(payload.id)) {
         const rowNum = i + 1;
-        sheet.getRange(rowNum, 8).setValue(payload.packingStatus);
-        sheet.getRange(rowNum, 9).setValue(payload.weightBox);
-        sheet.getRange(rowNum, 10).setValue(payload.courierName);
-        sheet.getRange(rowNum, 11).setValue(payload.trackingId);
+        sheet.getRange(rowNum, 9).setValue(payload.packingStatus);
+        sheet.getRange(rowNum, 10).setValue(payload.packedFlags || "");
+        sheet.getRange(rowNum, 11).setValue(payload.remarks || "");
+        sheet.getRange(rowNum, 12).setValue(payload.weightBox || "");
+        sheet.getRange(rowNum, 13).setValue(payload.courierName || "");
+        sheet.getRange(rowNum, 14).setValue(payload.trackingId || "");
         break;
       }
     }
@@ -610,14 +724,6 @@ function doPost(e) {
       .setMimeType(ContentService.MimeType.JSON);
   }
 }</pre>
-                </div>
-
-                <!-- Vercel Deployment Note -->
-                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 text-xs text-slate-600 flex items-start gap-2.5">
-                    <i data-lucide="cloud-upload" class="w-4 h-4 text-slate-800 shrink-0 mt-0.5"></i>
-                    <div>
-                        <strong class="text-slate-900">Vercel Deployment Ready:</strong> Is single <code class="bg-slate-200 px-1 rounded">index.html</code> file ko GitHub repo mein push karein ya Vercel CLI (<code class="bg-slate-200 px-1 rounded">vercel --prod</code>) se deploy karein — zero build config required!
-                    </div>
                 </div>
             </div>
         </div>
@@ -639,7 +745,7 @@ function doPost(e) {
                     <div class="flex items-center justify-between border-b-2 border-slate-900 pb-2.5">
                         <div>
                             <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500">PACKING SLIP</p>
-                            <h3 id="slip-order-id" class="text-xl font-black text-slate-900">ORD-101</h3>
+                            <h3 id="slip-order-id" class="text-xl font-black text-slate-900">ORD-1001</h3>
                         </div>
                         <div class="text-right">
                             <span class="px-2 py-0.5 border border-slate-900 text-[11px] font-extrabold uppercase">PREPAID / SUCCESS</span>
@@ -655,8 +761,15 @@ function doPost(e) {
                     </div>
 
                     <div class="border-t border-dashed border-slate-400 pt-2.5">
-                        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">ITEMS & QUANTITY:</p>
-                        <p id="slip-items" class="text-sm font-bold text-slate-900"></p>
+                        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                            ITEMS LIST (<span id="slip-item-count">0</span>):
+                        </p>
+                        <ul id="slip-items-list" class="text-xs font-bold text-slate-900 space-y-1 list-disc list-inside"></ul>
+                    </div>
+
+                    <div id="slip-remarks-box" class="hidden border-t border-slate-300 pt-2 text-xs">
+                        <span class="text-slate-500 block text-[10px] uppercase font-bold">Remarks</span>
+                        <span id="slip-remarks" class="font-semibold text-slate-800"></span>
                     </div>
 
                     <div id="slip-dispatch-meta" class="border-t border-slate-300 pt-2.5 grid grid-cols-2 gap-2 text-xs">
@@ -688,6 +801,8 @@ function doPost(e) {
     <script>
         // --- STATE & CONSTANTS ---
         const DEFAULT_PIN = "000000";
+        const DEFAULT_SHEETS_URL = "https://script.google.com/macros/s/AKfycbxdw3b-wUh284AjYOZ5cT08liAU8aY-gKtl6GFevQUHJ6ncHzgr2rI75YiS06H9iormTA/exec";
+
         const PRODUCT_LIST = [
             "Toilet Cleaner",
             "Bathroom Cleaner",
@@ -708,6 +823,7 @@ function doPost(e) {
             "Black Phenyl"
         ];
         const QUANTITY_PRESETS = ["100 ML", "1Kg", "5Kg", "25Kg", "50Kg"];
+
         const STORAGE_KEYS = {
             SESSION: "orderflow_session_dept",
             ORDERS: "orderflow_orders_data",
@@ -728,9 +844,12 @@ function doPost(e) {
                 customerName: "Vikramaditya Singh",
                 contactNo: "9829011223",
                 address: "42, Vaishali Nagar, Near Amrapali Circle, Jaipur, Rajasthan - 302021",
-                items: "Toilet Cleaner (5Kg), Black Phenyl (25Kg)",
+                items: "Toilet Cleaner (5Kg) | Black Phenyl (25Kg)",
+                itemCount: 2,
                 paymentStatus: "Success",
                 packingStatus: "Pending Packing",
+                packedFlags: [false, false],
+                remarks: "",
                 weightBox: "",
                 courierName: "",
                 trackingId: ""
@@ -741,9 +860,12 @@ function doPost(e) {
                 customerName: "Ananya Enterprises",
                 contactNo: "9811223344",
                 address: "Shop 14, Karol Bagh Main Market, New Delhi - 110005",
-                items: "Hand Wash (Rose) (5Kg), Floor Cleaner (Lemon) (25Kg)",
+                items: "Hand Wash (Rose) (5Kg) | Floor Cleaner (Lemon) (25Kg)",
+                itemCount: 2,
                 paymentStatus: "Success",
                 packingStatus: "Packed",
+                packedFlags: [true, true],
+                remarks: "Both cans sealed properly",
                 weightBox: "30 kg / 2 Cans",
                 courierName: "Delhivery",
                 trackingId: ""
@@ -754,9 +876,12 @@ function doPost(e) {
                 customerName: "Mehta Traders",
                 contactNo: "9765432109",
                 address: "204 MG Road, Camp Area, Pune, Maharashtra - 411001",
-                items: "Dish Wash (50Kg), Room Freshener (Lavender) (1Kg)",
+                items: "Dish Wash (50Kg) | Room Freshener (Lavender) (1Kg)",
+                itemCount: 2,
                 paymentStatus: "Success",
                 packingStatus: "Dispatched",
+                packedFlags: [true, true],
+                remarks: "Handed over to pickup executive",
                 weightBox: "51 kg / Drum + Box",
                 courierName: "BlueDart",
                 trackingId: "BD782910482"
@@ -765,7 +890,12 @@ function doPost(e) {
 
         // --- INITIALIZATION ---
         window.addEventListener("DOMContentLoaded", () => {
-            resetItemRows();
+            // Ensure default Google Sheets URL is set on first load
+            if (!localStorage.getItem(STORAGE_KEYS.SHEETS_URL)) {
+                localStorage.setItem(STORAGE_KEYS.SHEETS_URL, DEFAULT_SHEETS_URL);
+            }
+
+            resetCreateItemRows();
             lucide.createIcons();
             loadLocalOrders();
             updateSyncBadge();
@@ -827,12 +957,58 @@ function doPost(e) {
             document.getElementById("login-screen").classList.remove("hidden");
         }
 
+        // --- ITEM PARSING & FORMATTING HELPERS ---
+        function parseItemsArray(itemsStr) {
+            if (!itemsStr) return [];
+            // Support both " | " and ", " delimiters cleanly
+            const delimiter = itemsStr.includes(" | ") ? " | " : ", ";
+            return itemsStr.split(delimiter).map(s => s.trim()).filter(Boolean);
+        }
+
+        function parseSingleItem(itemText) {
+            // Expected format: "Product Name (Quantity)"
+            const match = itemText.match(/^(.*?)\s*\(([^()]+)\)\s*$/);
+            if (match) {
+                return { name: match[1].trim(), qty: match[2].trim() };
+            }
+            return { name: itemText, qty: "" };
+        }
+
+        function parsePackedFlags(flagsRaw, expectedLen) {
+            let arr = [];
+            if (Array.isArray(flagsRaw)) {
+                arr = flagsRaw.map(Boolean);
+            } else if (typeof flagsRaw === "string" && flagsRaw.trim()) {
+                try {
+                    const parsed = JSON.parse(flagsRaw);
+                    if (Array.isArray(parsed)) arr = parsed.map(Boolean);
+                } catch {
+                    arr = flagsRaw.split(",").map(v => v.trim() === "true" || v.trim() === "1" || v.trim() === "✓");
+                }
+            }
+            while (arr.length < expectedLen) arr.push(false);
+            return arr.slice(0, expectedLen);
+        }
+
+        function normalizeOrder(o) {
+            const parsedItems = parseItemsArray(o.items);
+            const count = parsedItems.length || Number(o.itemCount) || 1;
+            const flags = parsePackedFlags(o.packedFlags, count);
+            return {
+                ...o,
+                itemCount: count,
+                packedFlags: flags,
+                remarks: o.remarks || ""
+            };
+        }
+
         // --- DATA STORAGE & GOOGLE SHEETS SYNC ---
         function loadLocalOrders() {
             const raw = localStorage.getItem(STORAGE_KEYS.ORDERS);
             if (raw) {
                 try {
-                    orders = JSON.parse(raw);
+                    const parsed = JSON.parse(raw);
+                    orders = Array.isArray(parsed) ? parsed.map(normalizeOrder) : [...SAMPLE_ORDERS];
                 } catch {
                     orders = [...SAMPLE_ORDERS];
                 }
@@ -847,7 +1023,7 @@ function doPost(e) {
         }
 
         function getSheetsUrl() {
-            return (localStorage.getItem(STORAGE_KEYS.SHEETS_URL) || "").trim();
+            return (localStorage.getItem(STORAGE_KEYS.SHEETS_URL) || DEFAULT_SHEETS_URL).trim();
         }
 
         function updateSyncBadge() {
@@ -863,7 +1039,7 @@ function doPost(e) {
             } else {
                 btn.className = "flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold border border-amber-200 bg-amber-50 text-amber-800 hover:bg-amber-100 transition";
                 dot.className = "w-2 h-2 rounded-full bg-amber-500";
-                label.textContent = "Connect Google Sheet";
+                label.textContent = "Local Mode";
             }
         }
 
@@ -878,7 +1054,7 @@ function doPost(e) {
                 const res = await fetch(url);
                 const data = await res.json();
                 if (data && data.status === "ok" && Array.isArray(data.orders)) {
-                    orders = data.orders;
+                    orders = data.orders.map(normalizeOrder);
                     saveLocalOrders();
                     renderAll();
                     if (!silent) showToast("Synced with Google Sheets!", "success");
@@ -898,11 +1074,10 @@ function doPost(e) {
             try {
                 await fetch(url, {
                     method: "POST",
-                    mode: "no-cors", // Ensures smooth delivery to Google Apps Script from Vercel
+                    mode: "no-cors",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)
                 });
-                // Re-fetch after a short delay to confirm sheet state
                 setTimeout(() => syncFromGoogleSheets(true), 1800);
             } catch (err) {
                 console.error("Push error:", err);
@@ -916,7 +1091,7 @@ function doPost(e) {
                 if (getSheetsUrl()) {
                     syncFromGoogleSheets(true);
                 }
-            }, 15000); // Auto-sync every 15 seconds
+            }, 15000);
         }
 
         function manualRefresh() {
@@ -928,15 +1103,20 @@ function doPost(e) {
             }
         }
 
-        // --- ORDER TEAM: DYNAMIC ITEMS & CREATE ORDER ---
-        function buildProductOptionsHTML() {
-            return `<option value="" disabled selected>Select Product...</option>` +
-                PRODUCT_LIST.map(item => `<option value="${item}">${item}</option>`).join("");
+        // --- ORDER TEAM: DYNAMIC ITEMS, AUTO COUNT & CREATE ORDER ---
+        function buildProductOptionsHTML(selectedVal = "") {
+            const defaultOpt = `<option value="" disabled ${!selectedVal ? "selected" : ""}>Select Product...</option>`;
+            return defaultOpt + PRODUCT_LIST.map(item =>
+                `<option value="${item}" ${item === selectedVal ? "selected" : ""}>${item}</option>`
+            ).join("");
         }
 
-        function buildQuantityOptionsHTML() {
-            return QUANTITY_PRESETS.map(q => `<option value="${q}">${q}</option>`).join("") +
-                `<option value="CUSTOM">Custom Quantity...</option>`;
+        function buildQuantityOptionsHTML(selectedQty = "") {
+            const isPreset = QUANTITY_PRESETS.includes(selectedQty);
+            const hasCustom = selectedQty && !isPreset;
+            return QUANTITY_PRESETS.map(q =>
+                `<option value="${q}" ${q === selectedQty ? "selected" : ""}>${q}</option>`
+            ).join("") + `<option value="CUSTOM" ${hasCustom ? "selected" : ""}>Custom Quantity...</option>`;
         }
 
         function handleQtySelectChange(selectEl) {
@@ -953,35 +1133,75 @@ function doPost(e) {
             }
         }
 
-        function addItemRow(isFirst = false) {
-            const container = document.getElementById("items-container");
+        function updateItemCountBadge(containerId, badgeId) {
+            const container = document.getElementById(containerId);
+            const badge = document.getElementById(badgeId);
+            if (!container || !badge) return;
+            const count = container.querySelectorAll(".item-row").length;
+            badge.textContent = `${count} ${count === 1 ? "Item" : "Items"}`;
+        }
+
+        function addItemRow(containerId, badgeId, presetData = null, isFirst = false) {
+            const container = document.getElementById(containerId);
             const row = document.createElement("div");
             row.className = "item-row bg-slate-50 p-2.5 rounded-xl border border-slate-200/90 space-y-2";
+
+            const prodVal = presetData ? presetData.name : "";
+            const qtyVal = presetData ? presetData.qty : "";
+            const isCustom = qtyVal && !QUANTITY_PRESETS.includes(qtyVal);
+
             row.innerHTML = `
                 <div class="flex items-center gap-2">
                     <select required class="item-name flex-1 px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:border-brand-600">
-                        ${buildProductOptionsHTML()}
+                        ${buildProductOptionsHTML(prodVal)}
                     </select>
                     <select onchange="handleQtySelectChange(this)" class="item-qty-select w-36 px-2.5 py-2 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 focus:outline-none focus:border-brand-600">
-                        ${buildQuantityOptionsHTML()}
+                        ${buildQuantityOptionsHTML(qtyVal)}
                     </select>
                     ${!isFirst ? `
-                        <button type="button" onclick="this.closest('.item-row').remove()" title="Remove item" class="p-2 text-slate-400 hover:text-red-600 rounded-lg transition">
+                        <button type="button" onclick="removeItemRow(this, '${containerId}', '${badgeId}')" title="Remove item" class="p-2 text-slate-400 hover:text-red-600 rounded-lg transition">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                         </button>
                     ` : ''}
                 </div>
-                <input type="text" placeholder="Enter custom quantity (e.g. 200 Litre, 15 Bottles, 2x 5Kg)..." class="item-custom-qty hidden w-full px-3 py-2 bg-white border border-brand-300 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600">
+                <input type="text" value="${isCustom ? qtyVal : ""}" ${isCustom ? "required" : ""} placeholder="Enter custom quantity (e.g. 200 Litre, 15 Bottles)..." class="item-custom-qty ${isCustom ? "" : "hidden"} w-full px-3 py-2 bg-white border border-brand-300 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600">
             `;
             container.appendChild(row);
+            updateItemCountBadge(containerId, badgeId);
             lucide.createIcons();
         }
 
-        function resetItemRows() {
-            const container = document.getElementById("items-container");
+        function removeItemRow(btnEl, containerId, badgeId) {
+            btnEl.closest(".item-row").remove();
+            updateItemCountBadge(containerId, badgeId);
+        }
+
+        function resetCreateItemRows() {
+            const container = document.getElementById("create-items-container");
             if (!container) return;
             container.innerHTML = "";
-            addItemRow(true);
+            addItemRow("create-items-container", "create-item-count-badge", null, true);
+        }
+
+        function extractItemsFromContainer(containerId) {
+            const itemRows = document.querySelectorAll(`#${containerId} .item-row`);
+            const itemParts = [];
+            let hasError = false;
+
+            itemRows.forEach(row => {
+                const name = row.querySelector(".item-name").value.trim();
+                const qtySelect = row.querySelector(".item-qty-select").value;
+                const customQty = row.querySelector(".item-custom-qty").value.trim();
+                const finalQty = qtySelect === "CUSTOM" ? customQty : qtySelect;
+
+                if (!name || !finalQty) {
+                    hasError = true;
+                    return;
+                }
+                itemParts.push(`${name} (${finalQty})`);
+            });
+
+            return { hasError, itemParts };
         }
 
         function formatNow() {
@@ -1004,55 +1224,117 @@ function doPost(e) {
             const contactNo = document.getElementById("cust-phone").value.trim();
             const address = document.getElementById("cust-address").value.trim();
 
-            const itemRows = document.querySelectorAll("#items-container .item-row");
-            const itemParts = [];
-            let hasValidationError = false;
-
-            itemRows.forEach(row => {
-                const name = row.querySelector(".item-name").value.trim();
-                const qtySelect = row.querySelector(".item-qty-select").value;
-                const customQty = row.querySelector(".item-custom-qty").value.trim();
-                const finalQty = qtySelect === "CUSTOM" ? customQty : qtySelect;
-
-                if (!name || !finalQty) {
-                    hasValidationError = true;
-                    return;
-                }
-                itemParts.push(`${name} (${finalQty})`);
-            });
-
-            if (hasValidationError || itemParts.length === 0) {
+            const { hasError, itemParts } = extractItemsFromContainer("create-items-container");
+            if (hasError || itemParts.length === 0) {
                 showToast("Saare items aur unki quantity sahi se select/type karein", "error");
                 return;
             }
 
-            const newOrder = {
+            const newOrder = normalizeOrder({
                 id: generateOrderId(),
                 createdAt: formatNow(),
                 customerName,
                 contactNo,
                 address,
-                items: itemParts.join(", "),
-                paymentStatus: "Success", // Always default Success
+                items: itemParts.join(" | "),
+                itemCount: itemParts.length,
+                paymentStatus: "Success",
                 packingStatus: "Pending Packing",
+                packedFlags: itemParts.map(() => false),
+                remarks: "",
                 weightBox: "",
                 courierName: "",
                 trackingId: ""
-            };
+            });
 
             orders.unshift(newOrder);
             saveLocalOrders();
             renderAll();
 
-            // Reset Form cleanly
             document.getElementById("new-order-form").reset();
-            resetItemRows();
+            resetCreateItemRows();
 
-            showToast(`Order ${newOrder.id} Created & Sent to Packing!`, "success");
+            showToast(`Order ${newOrder.id} (${newOrder.itemCount} items) created!`, "success");
             await pushToGoogleSheets({ action: "create", order: newOrder });
         }
 
-        // --- PACKING & DISPATCH TEAM ACTIONS ---
+        // --- EDIT EXISTING ORDER (CORRECTIONS) ---
+        function openEditOrderModal(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (!order) return;
+
+            document.getElementById("edit-order-id-input").value = order.id;
+            document.getElementById("edit-modal-order-id").textContent = order.id;
+            document.getElementById("edit-cust-name").value = order.customerName || "";
+            document.getElementById("edit-cust-phone").value = order.contactNo || "";
+            document.getElementById("edit-cust-address").value = order.address || "";
+
+            const container = document.getElementById("edit-items-container");
+            container.innerHTML = "";
+            const rawList = parseItemsArray(order.items);
+            if (rawList.length === 0) {
+                addItemRow("edit-items-container", "edit-item-count-badge", null, true);
+            } else {
+                rawList.forEach((itemStr, idx) => {
+                    addItemRow("edit-items-container", "edit-item-count-badge", parseSingleItem(itemStr), idx === 0);
+                });
+            }
+
+            document.getElementById("edit-order-modal").classList.remove("hidden");
+            lucide.createIcons();
+        }
+
+        function closeEditOrderModal() {
+            document.getElementById("edit-order-modal").classList.add("hidden");
+        }
+
+        function openEditOrderFromDispatch() {
+            const id = document.getElementById("edit-dispatch-order-id").value;
+            closeDispatchModal();
+            openEditOrderModal(id);
+        }
+
+        async function saveEditedOrder(e) {
+            e.preventDefault();
+            const id = document.getElementById("edit-order-id-input").value;
+            const customerName = document.getElementById("edit-cust-name").value.trim();
+            const contactNo = document.getElementById("edit-cust-phone").value.trim();
+            const address = document.getElementById("edit-cust-address").value.trim();
+
+            const { hasError, itemParts } = extractItemsFromContainer("edit-items-container");
+            if (hasError || itemParts.length === 0) {
+                showToast("Saare items aur quantities fill karein", "error");
+                return;
+            }
+
+            const idx = orders.findIndex(o => o.id === id);
+            if (idx === -1) return;
+
+            const oldFlags = orders[idx].packedFlags || [];
+            const newFlags = itemParts.map((_, i) => Boolean(oldFlags[i]));
+
+            orders[idx] = {
+                ...orders[idx],
+                customerName,
+                contactNo,
+                address,
+                items: itemParts.join(" | "),
+                itemCount: itemParts.length,
+                packedFlags: newFlags
+            };
+
+            saveLocalOrders();
+            closeEditOrderModal();
+            renderAll();
+            showToast(`${id} details updated & synced!`, "success");
+
+            await pushToGoogleSheets({
+                action: "editOrder",
+                order: orders[idx]
+            });
+        }
+
+        // --- PACKING & DISPATCH TEAM: CHECKLIST MODAL & ACTIONS ---
         function setDispatchFilter(filter) {
             dispatchFilter = filter;
             document.querySelectorAll(".dfilter-btn").forEach(btn => {
@@ -1067,27 +1349,102 @@ function doPost(e) {
         }
 
         function openDispatchModal(orderId) {
-            const order = orders.find(o => o.id === orderId);
-            if (!order) return;
+            const rawOrder = orders.find(o => o.id === orderId);
+            if (!rawOrder) return;
+            const order = normalizeOrder(rawOrder);
 
-            document.getElementById("edit-order-id").value = order.id;
+            document.getElementById("edit-dispatch-order-id").value = order.id;
             document.getElementById("modal-order-id").textContent = order.id;
             document.getElementById("modal-cust-name").textContent = order.customerName;
             document.getElementById("modal-cust-phone").textContent = order.contactNo;
-            document.getElementById("modal-cust-items").textContent = "Items: " + order.items;
-            document.getElementById("modal-cust-address").textContent = "Address: " + order.address;
+            document.getElementById("modal-cust-address").textContent = "📍 " + order.address;
+            document.getElementById("edit-remarks").value = order.remarks || "";
+            document.getElementById("edit-weight-box").value = order.weightBox || "";
+            document.getElementById("edit-courier").value = order.courierName || "";
+            document.getElementById("edit-tracking").value = order.trackingId || "";
 
-            // Set radio status
+            const itemsArr = parseItemsArray(order.items);
+            const checklistContainer = document.getElementById("modal-checklist-container");
+            checklistContainer.innerHTML = itemsArr.map((itemText, idx) => {
+                const isChecked = Boolean(order.packedFlags[idx]);
+                const parsed = parseSingleItem(itemText);
+                return `
+                    <label class="flex items-center justify-between gap-3 p-3 rounded-xl border ${isChecked ? 'bg-emerald-50/80 border-emerald-300' : 'bg-amber-50/50 border-amber-200'} cursor-pointer transition">
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" data-item-idx="${idx}" ${isChecked ? "checked" : ""} onchange="handleChecklistChange()" class="checklist-cb w-4 h-4 accent-emerald-600 rounded cursor-pointer">
+                            <div>
+                                <span class="text-sm font-bold ${isChecked ? 'line-through text-emerald-900' : 'text-slate-900'} block">${parsed.name}</span>
+                                ${parsed.qty ? `<span class="text-xs font-semibold ${isChecked ? 'text-emerald-700' : 'text-amber-800'}">Qty: ${parsed.qty}</span>` : ''}
+                            </div>
+                        </div>
+                        <span class="checklist-status-pill px-2 py-0.5 rounded-full text-[11px] font-bold ${isChecked ? 'bg-emerald-600 text-white' : 'bg-amber-100 text-amber-800'}">
+                            ${isChecked ? 'Packed ✓' : 'Pending'}
+                        </span>
+                    </label>
+                `;
+            }).join("");
+
             const radios = document.querySelectorAll('input[name="packingStatus"]');
             radios.forEach(r => {
                 r.checked = (r.value === (order.packingStatus || "Pending Packing"));
             });
 
-            document.getElementById("edit-weight-box").value = order.weightBox || "";
-            document.getElementById("edit-courier").value = order.courierName || "";
-            document.getElementById("edit-tracking").value = order.trackingId || "";
-
+            updateChecklistVisuals(false);
             document.getElementById("dispatch-modal").classList.remove("hidden");
+            lucide.createIcons();
+        }
+
+        function handleChecklistChange() {
+            updateChecklistVisuals(true);
+        }
+
+        function toggleAllChecklist(checkState) {
+            document.querySelectorAll(".checklist-cb").forEach(cb => {
+                cb.checked = checkState;
+            });
+            updateChecklistVisuals(true);
+        }
+
+        function updateChecklistVisuals(autoSelectStatus = false) {
+            const checkboxes = Array.from(document.querySelectorAll(".checklist-cb"));
+            const total = checkboxes.length;
+            const checkedCount = checkboxes.filter(cb => cb.checked).length;
+
+            // Update each row style & pill
+            checkboxes.forEach(cb => {
+                const label = cb.closest("label");
+                const nameSpan = label.querySelector("span.block");
+                const pill = label.querySelector(".checklist-status-pill");
+                if (cb.checked) {
+                    label.className = "flex items-center justify-between gap-3 p-3 rounded-xl border bg-emerald-50/80 border-emerald-300 cursor-pointer transition";
+                    if (nameSpan) nameSpan.className = "text-sm font-bold line-through text-emerald-900 block";
+                    if (pill) {
+                        pill.className = "checklist-status-pill px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-600 text-white";
+                        pill.textContent = "Packed ✓";
+                    }
+                } else {
+                    label.className = "flex items-center justify-between gap-3 p-3 rounded-xl border bg-amber-50/50 border-amber-200 cursor-pointer transition";
+                    if (nameSpan) nameSpan.className = "text-sm font-bold text-slate-900 block";
+                    if (pill) {
+                        pill.className = "checklist-status-pill px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800";
+                        pill.textContent = "Pending";
+                    }
+                }
+            });
+
+            document.getElementById("modal-item-summary").textContent = `${checkedCount}/${total} Packed`;
+            const pct = total > 0 ? Math.round((checkedCount / total) * 100) : 0;
+            document.getElementById("checklist-progress-bar").style.width = `${pct}%`;
+
+            if (autoSelectStatus && total > 0) {
+                const currentStatus = document.querySelector('input[name="packingStatus"]:checked')?.value;
+                if (currentStatus !== "Dispatched") {
+                    const targetStatus = checkedCount === total ? "Packed" : "Pending Packing";
+                    document.querySelectorAll('input[name="packingStatus"]').forEach(r => {
+                        r.checked = (r.value === targetStatus);
+                    });
+                }
+            }
         }
 
         function closeDispatchModal() {
@@ -1100,11 +1457,14 @@ function doPost(e) {
 
         async function saveDispatchUpdate(e) {
             e.preventDefault();
-            const id = document.getElementById("edit-order-id").value;
+            const id = document.getElementById("edit-dispatch-order-id").value;
             const packingStatus = document.querySelector('input[name="packingStatus"]:checked')?.value || "Pending Packing";
+            const remarks = document.getElementById("edit-remarks").value.trim();
             const weightBox = document.getElementById("edit-weight-box").value.trim();
             const courierName = document.getElementById("edit-courier").value.trim();
             const trackingId = document.getElementById("edit-tracking").value.trim();
+
+            const packedFlags = Array.from(document.querySelectorAll(".checklist-cb")).map(cb => cb.checked);
 
             const idx = orders.findIndex(o => o.id === id);
             if (idx === -1) return;
@@ -1112,6 +1472,8 @@ function doPost(e) {
             orders[idx] = {
                 ...orders[idx],
                 packingStatus,
+                packedFlags,
+                remarks,
                 weightBox,
                 courierName,
                 trackingId
@@ -1120,29 +1482,69 @@ function doPost(e) {
             saveLocalOrders();
             closeDispatchModal();
             renderAll();
-            showToast(`${id} updated to "${packingStatus}"`, "success");
+            showToast(`${id} updated (${packingStatus}) & synced!`, "success");
 
             await pushToGoogleSheets({
                 action: "update",
                 id,
                 packingStatus,
+                packedFlags: JSON.stringify(packedFlags),
+                remarks,
                 weightBox,
                 courierName,
                 trackingId
             });
         }
 
+        // --- STRUCTURED ITEM LIST RENDERER ---
+        function buildStructuredItemsListHTML(order, showCheckState = false) {
+            const itemsArr = parseItemsArray(order.items);
+            const flags = parsePackedFlags(order.packedFlags, itemsArr.length);
+
+            return `
+                <ul class="space-y-1.5 mt-1.5">
+                    ${itemsArr.map((itemText, i) => {
+                        const parsed = parseSingleItem(itemText);
+                        const isPacked = Boolean(flags[i]);
+                        return `
+                            <li class="flex items-center justify-between gap-2 text-xs bg-white/90 px-2.5 py-1.5 rounded-lg border border-slate-200/80">
+                                <span class="font-bold ${showCheckState && isPacked ? 'line-through text-emerald-800' : 'text-slate-900'}">
+                                    ${showCheckState ? (isPacked ? '✅ ' : '⏳ ') : '• '}${parsed.name}
+                                </span>
+                                ${parsed.qty ? `<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-800 font-bold text-[11px] shrink-0">${parsed.qty}</span>` : ''}
+                            </li>
+                        `;
+                    }).join("")}
+                </ul>
+            `;
+        }
+
         // --- PRINT SLIP & COPY TRACKING ---
         function openPrintModal(orderId) {
-            const o = orders.find(item => item.id === orderId);
-            if (!o) return;
+            const raw = orders.find(item => item.id === orderId);
+            if (!raw) return;
+            const o = normalizeOrder(raw);
+            const itemsArr = parseItemsArray(o.items);
 
             document.getElementById("slip-order-id").textContent = o.id;
             document.getElementById("slip-date").textContent = o.createdAt;
             document.getElementById("slip-name").textContent = o.customerName;
             document.getElementById("slip-phone").textContent = "Ph: " + o.contactNo;
             document.getElementById("slip-address").textContent = o.address;
-            document.getElementById("slip-items").textContent = o.items;
+            document.getElementById("slip-item-count").textContent = `${itemsArr.length} ${itemsArr.length === 1 ? "Item" : "Items"}`;
+
+            document.getElementById("slip-items-list").innerHTML = itemsArr
+                .map(itemText => `<li>${itemText}</li>`)
+                .join("");
+
+            const remarksBox = document.getElementById("slip-remarks-box");
+            if (o.remarks) {
+                remarksBox.classList.remove("hidden");
+                document.getElementById("slip-remarks").textContent = o.remarks;
+            } else {
+                remarksBox.classList.add("hidden");
+            }
+
             document.getElementById("slip-courier-awb").textContent = (o.courierName || o.trackingId)
                 ? `${o.courierName || 'Courier'} ${o.trackingId ? '(' + o.trackingId + ')' : ''}`
                 : "Pending";
@@ -1159,10 +1561,12 @@ function doPost(e) {
         function copyTrackingText(orderId) {
             const o = orders.find(item => item.id === orderId);
             if (!o) return;
+            const itemsFormatted = parseItemsArray(o.items).join(", ");
 
-            const msg = `Hello ${o.customerName}, your order (${o.id}) for ${o.items} has been ${o.packingStatus}!` +
+            const msg = `Hello ${o.customerName}, your order (${o.id}) for ${itemsFormatted} has been ${o.packingStatus}!` +
                 (o.courierName ? `\nCourier: ${o.courierName}` : "") +
-                (o.trackingId ? `\nTracking / AWB: ${o.trackingId}` : "");
+                (o.trackingId ? `\nTracking / AWB: ${o.trackingId}` : "") +
+                (o.remarks ? `\nNote: ${o.remarks}` : "");
 
             const tempArea = document.createElement("textarea");
             tempArea.value = msg;
@@ -1197,7 +1601,6 @@ function doPost(e) {
         }
 
         function renderAll() {
-            // Update Top Counts
             const pendingCount = orders.filter(o => (o.packingStatus || "Pending Packing") === "Pending Packing").length;
             const packedCount = orders.filter(o => o.packingStatus === "Packed").length;
             const dispatchedCount = orders.filter(o => o.packingStatus === "Dispatched").length;
@@ -1206,7 +1609,6 @@ function doPost(e) {
             document.getElementById("count-packed").textContent = packedCount;
             document.getElementById("count-dispatched").textContent = dispatchedCount;
 
-            // Search filter
             const searched = orders.filter(o => {
                 if (!searchQuery) return true;
                 return (
@@ -1214,7 +1616,8 @@ function doPost(e) {
                     (o.customerName || "").toLowerCase().includes(searchQuery) ||
                     (o.contactNo || "").toLowerCase().includes(searchQuery) ||
                     (o.items || "").toLowerCase().includes(searchQuery) ||
-                    (o.trackingId || "").toLowerCase().includes(searchQuery)
+                    (o.trackingId || "").toLowerCase().includes(searchQuery) ||
+                    (o.remarks || "").toLowerCase().includes(searchQuery)
                 );
             });
 
@@ -1238,14 +1641,22 @@ function doPost(e) {
                 return;
             }
 
-            container.innerHTML = list.map(o => `
+            container.innerHTML = list.map(raw => {
+                const o = normalizeOrder(raw);
+                const packedCount = o.packedFlags.filter(Boolean).length;
+
+                return `
                 <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs hover:border-slate-300 transition space-y-3">
                     <div class="flex flex-wrap items-center justify-between gap-2">
                         <div class="flex items-center gap-2">
                             <span class="px-2.5 py-1 rounded-lg bg-slate-900 text-white text-xs font-extrabold">${o.id}</span>
                             <span class="text-xs text-slate-500 font-medium">${o.createdAt}</span>
                         </div>
-                        <div class="flex items-center gap-1.5">
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            <button onclick="openEditOrderModal('${o.id}')" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-brand-50 hover:text-brand-700 hover:border-brand-200 text-slate-700 text-xs font-bold transition">
+                                <i data-lucide="pencil" class="w-3 h-3"></i>
+                                Edit Order
+                            </button>
                             <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold">
                                 Payment: ${o.paymentStatus || 'Success'}
                             </span>
@@ -1253,17 +1664,28 @@ function doPost(e) {
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                        <div>
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 text-xs">
+                        <div class="sm:col-span-5">
                             <p class="font-bold text-slate-900 text-sm">${o.customerName}</p>
                             <p class="text-slate-600 font-medium mt-0.5">📞 ${o.contactNo}</p>
-                            <p class="text-slate-500 mt-1 line-clamp-2">📍 ${o.address}</p>
+                            <p class="text-slate-500 mt-1 leading-relaxed">📍 ${o.address}</p>
                         </div>
-                        <div class="bg-slate-50 rounded-xl p-2.5 border border-slate-200/80">
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Items & Qty</span>
-                            <p class="font-semibold text-slate-800 mt-0.5">${o.items}</p>
+                        <div class="sm:col-span-7 bg-slate-50 rounded-xl p-2.5 border border-slate-200/80">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
+                                    Items List (${o.itemCount} ${o.itemCount === 1 ? "Item" : "Items"})
+                                </span>
+                                <span class="text-[11px] font-bold text-purple-700">${packedCount}/${o.itemCount} Packed</span>
+                            </div>
+                            ${buildStructuredItemsListHTML(o, true)}
                         </div>
                     </div>
+
+                    ${o.remarks ? `
+                        <div class="bg-amber-50/70 border border-amber-200/70 rounded-xl px-3 py-2 text-xs text-amber-950">
+                            <strong class="font-bold">Packing Remark:</strong> ${o.remarks}
+                        </div>
+                    ` : ''}
 
                     ${(o.courierName || o.trackingId || o.weightBox) ? `
                         <div class="pt-2.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
@@ -1279,7 +1701,7 @@ function doPost(e) {
                         </div>
                     ` : ''}
                 </div>
-            `).join("");
+            `}).join("");
         }
 
         function renderDispatchTeamList(list) {
@@ -1301,8 +1723,12 @@ function doPost(e) {
                 return;
             }
 
-            container.innerHTML = filtered.map(o => `
-                <div class="bg-white rounded-2xl border ${o.packingStatus === 'Pending Packing' ? 'border-amber-300' : 'border-slate-200'} p-4 sm:p-5 shadow-xs flex flex-col justify-between space-y-4">
+            container.innerHTML = filtered.map(raw => {
+                const o = normalizeOrder(raw);
+                const packedCount = o.packedFlags.filter(Boolean).length;
+
+                return `
+                <div onclick="openDispatchModal('${o.id}')" class="bg-white rounded-2xl border ${o.packingStatus === 'Pending Packing' ? 'border-amber-300' : 'border-slate-200'} p-4 sm:p-5 shadow-xs hover:border-purple-400 hover:shadow-md cursor-pointer transition flex flex-col justify-between space-y-4">
                     <div class="space-y-3">
                         <!-- Top Row -->
                         <div class="flex items-center justify-between gap-2">
@@ -1315,7 +1741,7 @@ function doPost(e) {
 
                         <!-- Customer Details -->
                         <div>
-                            <div class="flex items-center justify-between">
+                            <div class="flex items-center justify-between gap-2">
                                 <h3 class="text-base font-extrabold text-slate-900">${o.customerName}</h3>
                                 <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-200">Paid: Success</span>
                             </div>
@@ -1323,11 +1749,24 @@ function doPost(e) {
                             <p class="text-xs text-slate-600 mt-1 leading-relaxed">📍 ${o.address}</p>
                         </div>
 
-                        <!-- Items Highlight Box -->
-                        <div class="bg-amber-50/70 border border-amber-200/80 rounded-xl p-3">
-                            <span class="text-[10px] font-extrabold uppercase tracking-wider text-amber-800 block">Pack These Items:</span>
-                            <p class="text-sm font-bold text-slate-900 mt-0.5">${o.items}</p>
+                        <!-- Structured Items Checklist Preview -->
+                        <div class="bg-amber-50/60 border border-amber-200/80 rounded-xl p-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] font-extrabold uppercase tracking-wider text-amber-900">
+                                    Items (${o.itemCount}) • Click to Tick Checklist
+                                </span>
+                                <span class="px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-purple-100 text-purple-800">
+                                    ${packedCount}/${o.itemCount} Packed
+                                </span>
+                            </div>
+                            ${buildStructuredItemsListHTML(o, true)}
                         </div>
+
+                        ${o.remarks ? `
+                            <div class="bg-slate-50 border border-slate-200/80 rounded-xl px-3 py-2 text-xs text-slate-700">
+                                <strong class="font-bold text-slate-900">Remark:</strong> ${o.remarks}
+                            </div>
+                        ` : ''}
 
                         <!-- Dispatch Metadata if entered -->
                         <div class="grid grid-cols-3 gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200/70 text-[11px]">
@@ -1346,19 +1785,19 @@ function doPost(e) {
                         </div>
                     </div>
 
-                    <!-- Action Buttons -->
-                    <div class="pt-2 flex items-center gap-2">
-                        <button onclick="openPrintModal('${o.id}')" class="px-3.5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition">
+                    <!-- Action Buttons (stopPropagation so Slip/Edit don't double-trigger) -->
+                    <div onclick="event.stopPropagation()" class="pt-2 flex items-center gap-2">
+                        <button type="button" onclick="openPrintModal('${o.id}')" class="px-3.5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition">
                             <i data-lucide="printer" class="w-4 h-4"></i>
                             <span>Slip</span>
                         </button>
-                        <button onclick="openDispatchModal('${o.id}')" class="flex-1 py-2.5 px-4 rounded-xl bg-purple-600 hover:bg-purple-700 active:scale-[0.99] text-white text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition">
-                            <i data-lucide="edit-3" class="w-4 h-4"></i>
-                            <span>Update Pack / Dispatch</span>
+                        <button type="button" onclick="openDispatchModal('${o.id}')" class="flex-1 py-2.5 px-4 rounded-xl bg-purple-600 hover:bg-purple-700 active:scale-[0.99] text-white text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition">
+                            <i data-lucide="list-checks" class="w-4 h-4"></i>
+                            <span>Checklist & Dispatch</span>
                         </button>
                     </div>
                 </div>
-            `).join("");
+            `}).join("");
         }
 
         // --- SYNC SETUP MODAL ---
@@ -1384,11 +1823,11 @@ function doPost(e) {
             syncFromGoogleSheets(false);
         }
 
-        function disconnectSheetsUrl() {
-            localStorage.removeItem(STORAGE_KEYS.SHEETS_URL);
-            document.getElementById("sheets-url-input").value = "";
+        function resetToDefaultSheetsUrl() {
+            localStorage.setItem(STORAGE_KEYS.SHEETS_URL, DEFAULT_SHEETS_URL);
+            document.getElementById("sheets-url-input").value = DEFAULT_SHEETS_URL;
             updateSyncBadge();
-            showToast("Disconnected — switched to Local Mode", "info");
+            showToast("Default Google Sheets URL restored", "info");
         }
 
         function copyAppsScript() {
