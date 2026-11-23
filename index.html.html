@@ -1,68 +1,81 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Khushali Logistic Panel — Order & Dispatch Management</title>
+    <title>Khushali Logistic Panel</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
                     }
                 }
             }
         };
     </script>
     <style>
-        /* Base dark mode styling */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #020617;
-            color: #f1f5f9;
+            background-color: #f8fafc;
+            color: #0f172a;
+            -webkit-tap-highlight-color: transparent;
         }
-
-        /* Custom scrollbar for dark panels */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #0f172a;
+            background: #f1f5f9;
         }
         ::-webkit-scrollbar-thumb {
-            background: #334155;
+            background: #cbd5e1;
             border-radius: 9999px;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #475569;
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
         }
-
-        /* Crisp white A4 tax invoice printing */
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Print layout dedicated to the Khushali Logistic Panel bill */
         @media print {
             body * {
-                visibility: hidden !important;
+                visibility: hidden;
             }
-            #invoicePrintableArea, #invoicePrintableArea * {
-                visibility: visible !important;
+            #bill-print-area, #bill-print-area * {
+                visibility: visible;
             }
-            #invoicePrintableArea {
-                position: fixed !important;
-                left: 0 !important;
-                top: 0 !important;
-                width: 100% !important;
-                margin: 0 !important;
-                padding: 8mm !important;
+            #bill-print-area {
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 16px;
                 background: #ffffff !important;
                 color: #000000 !important;
                 box-shadow: none !important;
-                border: 2px solid #000000 !important;
+                border: none !important;
             }
             .no-print {
                 display: none !important;
@@ -70,929 +83,2101 @@
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen antialiased selection:bg-indigo-500 selection:text-white">
+<body class="min-h-screen flex flex-col">
 
-    <!-- Toast Container -->
-    <div id="toastContainer" class="fixed bottom-4 right-4 z-[100] flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-[90] flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
 
-    <!-- Custom Confirmation Modal -->
-    <div id="confirmModal" class="hidden fixed inset-0 z-[95] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl">
-            <div class="flex items-center gap-3 mb-3">
-                <div class="w-10 h-10 rounded-xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                    </svg>
+    <!-- ==================== LOGIN SCREEN ==================== -->
+    <section id="login-screen" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-slate-800 to-brand-900">
+        <div class="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200/80 overflow-hidden">
+            <div class="bg-slate-50 px-6 py-6 border-b border-slate-200 text-center">
+                <div class="w-14 h-14 rounded-2xl bg-brand-600 text-white flex items-center justify-center mx-auto shadow-lg shadow-brand-600/30 mb-3">
+                    <i data-lucide="truck" class="w-7 h-7"></i>
                 </div>
-                <h3 id="confirmTitle" class="text-lg font-bold text-white">Confirm Action</h3>
-            </div>
-            <p id="confirmMessage" class="text-sm text-slate-300 mb-6 leading-relaxed">Are you sure you want to proceed?</p>
-            <div class="flex justify-end gap-3">
-                <button type="button" id="confirmCancelBtn" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium transition">Cancel</button>
-                <button type="button" id="confirmOkBtn" class="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-sm font-semibold shadow-lg shadow-rose-950/50 transition">Confirm</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- LOGIN SCREEN -->
-    <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950/40">
-        <div class="w-full max-w-lg bg-slate-900/95 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl">
-            <div class="text-center mb-7">
-                <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 mb-4 shadow-lg shadow-indigo-950/50">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                    </svg>
-                </div>
-                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">Khushali Logistic Panel</h1>
-                <p class="text-sm text-slate-400 mt-1.5">Select your team profile &amp; enter PIN to continue</p>
+                <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">Khushali Logistic Panel</h1>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1">Order Entry, Packing Checklist, Dispatch & Bill Management</p>
             </div>
 
-            <form id="loginForm" class="space-y-5">
+            <form id="login-form" onsubmit="handleLogin(event)" class="p-6 space-y-5">
+                <!-- 4 Selectable User / Role Profiles -->
                 <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2.5">Select Team Member</label>
-                    <div id="profileGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <button type="button" data-user="Piyush" data-role="Order Team" class="profile-btn text-left p-3.5 rounded-2xl border border-indigo-500 bg-indigo-600/15 transition flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white font-bold flex items-center justify-center shrink-0">P</div>
-                            <div>
-                                <div class="font-bold text-white text-sm">Piyush</div>
-                                <div class="text-xs text-indigo-300">Order Team</div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+                        1. Select Profile
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <label class="cursor-pointer block">
+                            <input type="radio" name="loginProfile" value="Piyush (Order Team)" class="peer sr-only" checked>
+                            <div class="p-3.5 rounded-2xl border-2 border-slate-200 peer-checked:border-brand-600 peer-checked:bg-brand-50/70 transition flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center shrink-0">
+                                    <i data-lucide="clipboard-plus" class="w-4 h-4"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <span class="text-xs sm:text-sm font-bold text-slate-900 block truncate">Piyush (Order Team)</span>
+                                    <span class="text-[11px] text-slate-500 block truncate">Create & edit orders</span>
+                                </div>
                             </div>
-                        </button>
+                        </label>
 
-                        <button type="button" data-user="Govardhan" data-role="Order Team" class="profile-btn text-left p-3.5 rounded-2xl border border-slate-800 bg-slate-950/60 hover:border-slate-700 transition flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-slate-800 text-slate-300 font-bold flex items-center justify-center shrink-0">G</div>
-                            <div>
-                                <div class="font-bold text-white text-sm">Govardhan</div>
-                                <div class="text-xs text-slate-400">Order Team</div>
+                        <label class="cursor-pointer block">
+                            <input type="radio" name="loginProfile" value="Govardhan (Order Team)" class="peer sr-only">
+                            <div class="p-3.5 rounded-2xl border-2 border-slate-200 peer-checked:border-brand-600 peer-checked:bg-brand-50/70 transition flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center shrink-0">
+                                    <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <span class="text-xs sm:text-sm font-bold text-slate-900 block truncate">Govardhan (Order Team)</span>
+                                    <span class="text-[11px] text-slate-500 block truncate">Create & edit orders</span>
+                                </div>
                             </div>
-                        </button>
+                        </label>
 
-                        <button type="button" data-user="Lokesh" data-role="Packaging Team" class="profile-btn text-left p-3.5 rounded-2xl border border-slate-800 bg-slate-950/60 hover:border-slate-700 transition flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-slate-800 text-slate-300 font-bold flex items-center justify-center shrink-0">L</div>
-                            <div>
-                                <div class="font-bold text-white text-sm">Lokesh</div>
-                                <div class="text-xs text-emerald-400">Packaging Team</div>
+                        <label class="cursor-pointer block">
+                            <input type="radio" name="loginProfile" value="Lokesh (Packaging Team)" class="peer sr-only">
+                            <div class="p-3.5 rounded-2xl border-2 border-slate-200 peer-checked:border-purple-600 peer-checked:bg-purple-50/70 transition flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
+                                    <i data-lucide="package-check" class="w-4 h-4"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <span class="text-xs sm:text-sm font-bold text-slate-900 block truncate">Lokesh (Packaging Team)</span>
+                                    <span class="text-[11px] text-slate-500 block truncate">Checklist, remarks & bills</span>
+                                </div>
                             </div>
-                        </button>
+                        </label>
 
-                        <button type="button" data-user="Manager" data-role="Manager" class="profile-btn text-left p-3.5 rounded-2xl border border-slate-800 bg-slate-950/60 hover:border-slate-700 transition flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-slate-800 text-slate-300 font-bold flex items-center justify-center shrink-0">M</div>
-                            <div>
-                                <div class="font-bold text-white text-sm">Manager</div>
-                                <div class="text-xs text-amber-400">Full Access</div>
+                        <label class="cursor-pointer block">
+                            <input type="radio" name="loginProfile" value="Manager" class="peer sr-only">
+                            <div class="p-3.5 rounded-2xl border-2 border-slate-200 peer-checked:border-emerald-600 peer-checked:bg-emerald-50/70 transition flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                                    <i data-lucide="shield-check" class="w-4 h-4"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <span class="text-xs sm:text-sm font-bold text-slate-900 block truncate">Manager</span>
+                                    <span class="text-[11px] text-slate-500 block truncate">Full panel & dispatch access</span>
+                                </div>
                             </div>
-                        </button>
+                        </label>
                     </div>
                 </div>
 
+                <!-- 6-Digit PIN -->
                 <div>
-                    <label for="pinInput" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Security PIN</label>
-                    <input id="pinInput" type="password" inputmode="numeric" maxlength="6" value="000000" placeholder="Enter 6-digit PIN" class="w-full px-4 py-3.5 rounded-2xl bg-slate-950 border border-slate-800 text-white text-center text-lg tracking-[0.4em] font-bold focus:outline-none focus:border-indigo-500 transition">
-                    <p id="loginError" class="hidden text-xs text-rose-400 mt-2 text-center font-medium">Invalid PIN. Please enter 000000.</p>
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label for="login-pin" class="block text-xs font-bold uppercase tracking-wider text-slate-500">2. Access PIN</label>
+                        <button type="button" onclick="fillDefaultPin()" class="text-[11px] font-bold text-brand-600 bg-brand-50 hover:bg-brand-100 px-2.5 py-0.5 rounded-md transition">
+                            Fill Default: 000000
+                        </button>
+                    </div>
+                    <div class="relative">
+                        <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                        <input
+                            type="password"
+                            id="login-pin"
+                            value="000000"
+                            maxlength="6"
+                            inputmode="numeric"
+                            placeholder="000000"
+                            required
+                            class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-base font-bold tracking-widest focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-600 transition"
+                        >
+                    </div>
+                    <p id="login-error" class="hidden text-xs font-semibold text-red-600 mt-1.5 flex items-center gap-1">
+                        <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i>
+                        <span>Invalid PIN. Use default PIN 000000.</span>
+                    </p>
                 </div>
 
-                <button type="submit" class="w-full py-3.5 px-5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 active:scale-[0.99] text-white font-bold text-sm shadow-lg shadow-indigo-950/60 transition flex items-center justify-center gap-2">
-                    <span>Enter Khushali Logistic Panel</span>
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-                    </svg>
+                <button type="submit" id="login-submit-btn" class="w-full py-3.5 px-4 bg-brand-600 hover:bg-brand-700 active:scale-[0.99] text-white font-bold text-sm rounded-xl shadow-lg shadow-brand-600/25 flex items-center justify-center gap-2 transition cursor-pointer">
+                    <span>Login to Khushali Logistic Panel</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </button>
             </form>
         </div>
-    </div>
+    </section>
 
-    <!-- MAIN APPLICATION -->
-    <div id="mainApp" class="hidden min-h-screen flex flex-col">
-        <!-- Header Bar -->
-        <header class="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <h1 class="text-base sm:text-lg font-extrabold text-white leading-tight">Khushali Logistic Panel</h1>
-                        <div class="flex items-center gap-2 text-xs text-slate-400">
-                            <span id="activeUserBadge" class="font-semibold text-indigo-400">Piyush</span>
-                            <span>•</span>
-                            <span id="activeRoleBadge" class="text-slate-300">Order Team</span>
+    <!-- ==================== MAIN APPLICATION SHELL ==================== -->
+    <div id="app-shell" class="hidden flex-1 flex flex-col">
+
+        <!-- Sticky Top Bar -->
+        <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center shadow-sm shrink-0">
+                            <i data-lucide="truck" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="text-base sm:text-lg font-extrabold tracking-tight text-slate-900">Khushali Logistic Panel</span>
+                                <span id="active-profile-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-brand-50 text-brand-700 border border-brand-200">
+                                    Piyush (Order Team)
+                                </span>
+                            </div>
+                            <p id="active-role-subtitle" class="text-[11px] text-slate-500 font-medium hidden sm:block">Order Entry & Edit Workspace</p>
                         </div>
                     </div>
-                </div>
 
-                <!-- Manager View Switcher -->
-                <div id="managerViewTabs" class="hidden flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800">
-                    <button type="button" data-view="order" class="view-tab-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white transition">Order Entry &amp; List</button>
-                    <button type="button" data-view="packing" class="view-tab-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition">Packing &amp; Dispatch</button>
-                </div>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="openSyncModal()" id="sync-status-btn" class="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold border border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 transition cursor-pointer">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span>Google Sheet Sync</span>
+                            <i data-lucide="settings" class="w-3.5 h-3.5 opacity-75"></i>
+                        </button>
 
-                <!-- Right Controls -->
-                <div class="flex items-center gap-2">
-                    <button type="button" id="openSheetSettingsBtn" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-emerald-400 flex items-center gap-1.5 transition" title="Google Sheets Sync Settings">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span class="hidden sm:inline">Sheet Sync</span>
-                    </button>
-                    <button type="button" id="logoutBtn" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-rose-950/60 border border-slate-700 hover:border-rose-800 text-xs font-semibold text-slate-300 hover:text-rose-300 transition">
-                        Logout
-                    </button>
+                        <button type="button" onclick="manualRefresh()" id="refresh-btn" title="Sync / Refresh" class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 transition cursor-pointer">
+                            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                        </button>
+
+                        <button type="button" onclick="handleLogout()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 hover:bg-red-50 hover:text-red-600 hover:border-red-200 text-slate-700 text-xs font-semibold transition cursor-pointer">
+                            <i data-lucide="log-out" class="w-4 h-4"></i>
+                            <span class="hidden sm:inline">Logout</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </header>
 
-        <!-- Stats & Filter Bar -->
-        <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 pt-5">
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
-                <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4">
-                    <div class="text-xs text-slate-400 font-medium">Total Orders</div>
-                    <div id="statTotal" class="text-2xl font-extrabold text-white mt-1">0</div>
-                </div>
-                <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4">
-                    <div class="text-xs text-amber-400 font-medium">Pending</div>
-                    <div id="statPending" class="text-2xl font-extrabold text-amber-400 mt-1">0</div>
-                </div>
-                <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4">
-                    <div class="text-xs text-indigo-400 font-medium">Packing / Packed</div>
-                    <div id="statPacked" class="text-2xl font-extrabold text-indigo-400 mt-1">0</div>
-                </div>
-                <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4">
-                    <div class="text-xs text-emerald-400 font-medium">Dispatched</div>
-                    <div id="statDispatched" class="text-2xl font-extrabold text-emerald-400 mt-1">0</div>
-                </div>
-            </div>
+        <!-- Main Workspace -->
+        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 space-y-6">
 
-            <!-- Search & Status Filter -->
-            <div class="flex flex-col sm:flex-row gap-3 mb-6">
-                <div class="relative flex-1">
-                    <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
-                    <input id="searchInput" type="text" placeholder="Search customer, phone, company, creator, or item..." class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+            <!-- Status Counters -->
+            <section class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-amber-200/80 shadow-xs">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-amber-700">Pending</span>
+                        <i data-lucide="clock" class="w-4 h-4 text-amber-600"></i>
+                    </div>
+                    <p id="count-pending" class="text-xl sm:text-2xl font-extrabold text-amber-600 mt-1">0</p>
                 </div>
-                <select id="statusFilter" class="px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
-                    <option value="ALL">All Statuses</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Packing">Packing</option>
-                    <option value="Packed">Packed</option>
-                    <option value="Dispatched">Dispatched</option>
-                </select>
-            </div>
-        </div>
 
-        <!-- MAIN WORKSPACE -->
-        <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 pb-12 flex-1">
-            <!-- ORDER TEAM / ORDER ENTRY VIEW -->
-            <div id="orderTeamSection" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- New Order Form -->
-                <div class="lg:col-span-5">
-                    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl lg:sticky lg:top-20">
-                        <div class="flex items-center justify-between mb-4">
-                            <div>
-                                <h2 class="text-lg font-bold text-white">Create New Order</h2>
-                                <p class="text-xs text-slate-400">Slab pricing (Incl. 18% GST) &amp; 100 ML sample rules applied</p>
+                <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-blue-200/80 shadow-xs">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-blue-700">Packing</span>
+                        <i data-lucide="loader" class="w-4 h-4 text-blue-600"></i>
+                    </div>
+                    <p id="count-packing" class="text-xl sm:text-2xl font-extrabold text-blue-600 mt-1">0</p>
+                </div>
+
+                <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-purple-200/80 shadow-xs">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-purple-700">Packed</span>
+                        <i data-lucide="package" class="w-4 h-4 text-purple-600"></i>
+                    </div>
+                    <p id="count-packed" class="text-xl sm:text-2xl font-extrabold text-purple-600 mt-1">0</p>
+                </div>
+
+                <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-emerald-200/80 shadow-xs">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700">Dispatched</span>
+                        <i data-lucide="truck" class="w-4 h-4 text-emerald-600"></i>
+                    </div>
+                    <p id="count-dispatched" class="text-xl sm:text-2xl font-extrabold text-emerald-600 mt-1">0</p>
+                </div>
+            </section>
+
+            <!-- ==================== ORDER TEAM / MANAGER ORDER SECTION ==================== -->
+            <section id="order-section" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <!-- Create New Order Form -->
+                <div id="create-order-card" class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+                    <div class="bg-slate-50 px-5 py-4 border-b border-slate-200 flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-brand-600 text-white flex items-center justify-center shrink-0">
+                                <i data-lucide="plus" class="w-4 h-4"></i>
                             </div>
-                            <span id="createItemCountBadge" class="px-3 py-1 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-300 text-xs font-bold">0 Items</span>
+                            <div>
+                                <h2 class="text-sm sm:text-base font-bold text-slate-900">Create New Order</h2>
+                                <p class="text-[11px] text-slate-500">Live sync with Packing & Google Sheet</p>
+                            </div>
+                        </div>
+                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
+                            Paid: Success
+                        </span>
+                    </div>
+
+                    <form id="new-order-form" onsubmit="submitNewOrder(event)" class="p-5 space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Customer Name <span class="text-red-500">*</span></label>
+                                <input type="text" id="cust-name" required placeholder="e.g. Rahul Sharma" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-600">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Contact Number <span class="text-red-500">*</span></label>
+                                <input type="tel" id="cust-phone" required placeholder="e.g. 9876543210" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-600">
+                            </div>
                         </div>
 
-                        <form id="createOrderForm" class="space-y-4">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <div>
-                                    <label class="block text-xs font-medium text-slate-400 mb-1">Customer Name *</label>
-                                    <input id="custName" type="text" required placeholder="Customer Name" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:border-indigo-500">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-medium text-slate-400 mb-1">Phone / Contact *</label>
-                                    <input id="custPhone" type="tel" required placeholder="Mobile Number" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:border-indigo-500">
-                                </div>
-                            </div>
-
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-xs font-medium text-slate-400 mb-1">Full Address *</label>
-                                <textarea id="custAddress" rows="2" required placeholder="Street, City, State, Pincode..." class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:border-indigo-500"></textarea>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Company Name <span class="text-slate-400 font-normal">(if any)</span></label>
+                                <input type="text" id="cust-company" placeholder="Optional company name" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-600">
                             </div>
-
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <div>
-                                    <label class="block text-xs font-medium text-slate-400 mb-1">Company Name (if any)</label>
-                                    <input id="custCompany" type="text" placeholder="Optional" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:border-indigo-500">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-medium text-slate-400 mb-1">GSTIN / ID No (if any)</label>
-                                    <input id="custTaxId" type="text" placeholder="GSTIN or ID No" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:border-indigo-500">
-                                </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Aadhaar / GST No <span class="text-slate-400 font-normal">(if any)</span></label>
+                                <input type="text" id="cust-tax-id" placeholder="Optional GSTIN or Aadhaar" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm uppercase focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-600">
                             </div>
+                        </div>
 
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <div>
-                                    <label class="block text-xs font-medium text-slate-400 mb-1">Payment Status</label>
-                                    <select id="custPayment" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:border-indigo-500">
-                                        <option value="Paid">Paid</option>
-                                        <option value="Pending / COD">Pending / COD</option>
-                                        <option value="Partial Paid">Partial Paid</option>
-                                    </select>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Delivery Address <span class="text-red-500">*</span></label>
+                            <textarea id="cust-address" rows="2" required placeholder="House/Shop No, Area, City, State - Pincode" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-600"></textarea>
+                        </div>
+
+                        <!-- Dynamic Product Items & Automatic Item Count -->
+                        <div>
+                            <div class="flex items-center justify-between gap-2 mb-1.5">
+                                <div class="flex items-center gap-2">
+                                    <label class="block text-xs font-bold text-slate-700">Products & Quantity <span class="text-red-500">*</span></label>
+                                    <span id="create-item-count-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-brand-50 text-brand-700 border border-brand-200">
+                                        1 Item
+                                    </span>
                                 </div>
-                                <div>
-                                    <label class="block text-xs font-medium text-slate-400 mb-1">Upload Image / Slip</label>
-                                    <input id="createImageInput" type="file" accept="image/*" class="w-full text-xs text-slate-400 file:mr-2.5 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-indigo-300 hover:file:bg-slate-700 cursor-pointer">
-                                </div>
-                            </div>
-
-                            <!-- Create Image Preview -->
-                            <div id="createImagePreviewWrap" class="hidden relative w-24 h-24 rounded-xl overflow-hidden border border-slate-700">
-                                <img id="createImagePreview" src="" alt="Order Attachment Preview" class="w-full h-full object-cover">
-                                <button type="button" id="removeCreateImageBtn" class="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/80 text-white text-xs flex items-center justify-center hover:bg-rose-600">✕</button>
-                            </div>
-
-                            <!-- Item Builder -->
-                            <div class="p-3.5 rounded-2xl bg-slate-950/90 border border-slate-800 space-y-3">
-                                <div class="text-xs font-bold uppercase tracking-wider text-indigo-400">Select Item &amp; Quantity</div>
-
-                                <select id="productSelect" class="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-sm text-white focus:outline-none focus:border-indigo-500">
-                                    <!-- Populated by JS -->
-                                </select>
-
-                                <!-- Product Slab / Quantity Controls -->
-                                <div id="productQtyControls" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                    <select id="packSizeSelect" class="px-3 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-sm text-white focus:outline-none focus:border-indigo-500">
-                                        <option value="100 ML">100 ML (Sample Kit - No Bill)</option>
-                                        <option value="1">1 Kg</option>
-                                        <option value="5" selected>5 Kg</option>
-                                        <option value="10">10 Kg</option>
-                                        <option value="15">15 Kg</option>
-                                        <option value="25">25 Kg</option>
-                                        <option value="50">50 Kg</option>
-                                        <option value="custom">Custom Kg</option>
-                                    </select>
-                                    <input id="customQtyInput" type="number" min="0.5" step="0.5" placeholder="Enter Kg (e.g. 12)" class="hidden px-3 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-sm text-white focus:outline-none focus:border-indigo-500">
-                                </div>
-
-                                <!-- Packaging Charges Controls (Quantity 1, 2, 3... @ Rs. 20 default) -->
-                                <div id="packagingChargeControls" class="hidden grid grid-cols-2 gap-2">
-                                    <div>
-                                        <label class="block text-[11px] text-slate-400 mb-1">Quantity (1, 2, 3...)</label>
-                                        <input id="packagingQtyInput" type="number" min="1" step="1" value="1" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-sm text-white focus:outline-none focus:border-indigo-500">
-                                    </div>
-                                    <div>
-                                        <label class="block text-[11px] text-slate-400 mb-1">Rate / Unit (Rs.)</label>
-                                        <input id="packagingRateInput" type="number" min="0" step="1" value="20" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-sm text-white focus:outline-none focus:border-indigo-500">
-                                    </div>
-                                </div>
-
-                                <div id="liveRateHint" class="text-xs text-slate-400 flex items-center justify-between px-1">
-                                    <span>Slab: Rs. 255/Kg (Incl. 18% GST)</span>
-                                    <span class="font-semibold text-emerald-400">Est: Rs. 1,275.00</span>
-                                </div>
-
-                                <button type="button" id="addItemBtn" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-indigo-600 text-indigo-300 hover:text-white border border-slate-700 hover:border-indigo-500 text-xs font-bold transition flex items-center justify-center gap-1.5">
-                                    <span>+ Add Item to Order</span>
+                                <button type="button" onclick="addItemRow('create-items-container', 'create-item-count-badge')" class="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1 cursor-pointer">
+                                    <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+                                    Add Item
                                 </button>
-
-                                <!-- Draft Items -->
-                                <div id="draftItemsList" class="space-y-2 max-h-48 overflow-y-auto pt-1">
-                                    <p class="text-xs text-slate-500 text-center py-2">No items added yet.</p>
-                                </div>
                             </div>
+                            <div id="create-items-container" class="space-y-2.5"></div>
+                        </div>
 
-                            <button type="submit" class="w-full py-3.5 px-5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm shadow-lg shadow-indigo-950/60 transition">
-                                Submit Order &amp; Sync
-                            </button>
-                        </form>
+                        <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-3 flex items-center justify-between">
+                            <div>
+                                <span class="text-xs font-bold text-emerald-900 block">Payment Status</span>
+                                <span class="text-[11px] text-emerald-700">Confirmed order status</span>
+                            </div>
+                            <span class="px-3 py-1 rounded-lg bg-emerald-600 text-white text-xs font-extrabold tracking-wide uppercase">
+                                SUCCESS
+                            </span>
+                        </div>
+
+                        <button type="submit" class="w-full py-3.5 px-4 bg-brand-600 hover:bg-brand-700 active:scale-[0.99] text-white font-bold text-sm rounded-xl shadow-md shadow-brand-600/20 flex items-center justify-center gap-2 transition cursor-pointer">
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                            <span>Submit Order</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Orders List for Order Team / Manager -->
+                <div id="order-list-column" class="lg:col-span-7 space-y-4">
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex items-center gap-2.5 flex-wrap">
+                                <div>
+                                    <h2 class="text-base font-bold text-slate-900">Orders Directory</h2>
+                                    <p class="text-xs text-slate-500">Edit any order anytime if details need correction</p>
+                                </div>
+                                <button id="manager-toggle-form-btn" type="button" onclick="toggleOrderFormPanel()" class="hidden px-3 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold flex items-center gap-1.5 transition cursor-pointer">
+                                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                                    <span>New Order</span>
+                                </button>
+                            </div>
+                            <div class="relative w-full sm:w-64">
+                                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                                <input type="text" oninput="handleSearchInput(this.value)" placeholder="Search customer, phone, item..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-brand-600">
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1">
+                            <button type="button" onclick="setOrderFilter('ALL')" data-ofilter="ALL" class="ofilter-btn px-3 py-1.5 rounded-xl text-xs font-bold border transition whitespace-nowrap cursor-pointer">All</button>
+                            <button type="button" onclick="setOrderFilter('Pending')" data-ofilter="Pending" class="ofilter-btn px-3 py-1.5 rounded-xl text-xs font-bold border transition whitespace-nowrap cursor-pointer">Pending</button>
+                            <button type="button" onclick="setOrderFilter('Packing')" data-ofilter="Packing" class="ofilter-btn px-3 py-1.5 rounded-xl text-xs font-bold border transition whitespace-nowrap cursor-pointer">Packing</button>
+                            <button type="button" onclick="setOrderFilter('Packed')" data-ofilter="Packed" class="ofilter-btn px-3 py-1.5 rounded-xl text-xs font-bold border transition whitespace-nowrap cursor-pointer">Packed</button>
+                            <button type="button" onclick="setOrderFilter('Dispatched')" data-ofilter="Dispatched" class="ofilter-btn px-3 py-1.5 rounded-xl text-xs font-bold border transition whitespace-nowrap cursor-pointer">Dispatched</button>
+                        </div>
+                    </div>
+
+                    <div id="order-team-list" class="space-y-3"></div>
+                </div>
+            </section>
+
+            <!-- ==================== PACKAGING TEAM / MANAGER DISPATCH SECTION ==================== -->
+            <section id="dispatch-section" class="hidden space-y-4">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+                    <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+                        <button type="button" onclick="setDispatchFilter('ALL')" data-dfilter="ALL" class="dfilter-btn px-3.5 py-2 rounded-xl text-xs font-bold border transition whitespace-nowrap cursor-pointer">All Orders</button>
+                        <button type="button" onclick="setDispatchFilter('Pending')" data-dfilter="Pending" class="dfilter-btn px-3.5 py-2 rounded-xl text-xs font-bold border transition whitespace-nowrap cursor-pointer">Pending</button>
+                        <button type="button" onclick="setDispatchFilter('Packing')" data-dfilter="Packing" class="dfilter-btn px-3.5 py-2 rounded-xl text-xs font-bold border transition whitespace-nowrap cursor-pointer">Packing</button>
+                        <button type="button" onclick="setDispatchFilter('Packed')" data-dfilter="Packed" class="dfilter-btn px-3.5 py-2 rounded-xl text-xs font-bold border transition whitespace-nowrap cursor-pointer">Packed</button>
+                        <button type="button" onclick="setDispatchFilter('Dispatched')" data-dfilter="Dispatched" class="dfilter-btn px-3.5 py-2 rounded-xl text-xs font-bold border transition whitespace-nowrap cursor-pointer">Dispatched</button>
+                    </div>
+
+                    <div class="relative w-full md:w-72">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                        <input type="text" oninput="handleSearchInput(this.value)" placeholder="Search customer, company, AWB..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-purple-600">
                     </div>
                 </div>
 
-                <!-- Order Feed -->
-                <div class="lg:col-span-7 space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h2 class="text-lg font-bold text-white">Orders Feed</h2>
-                        <span class="text-xs text-slate-400">Order edit locks once Packed/Dispatched for Order Team</span>
-                    </div>
-                    <div id="orderTeamCardsContainer" class="space-y-4"></div>
-                </div>
-            </div>
+                <div id="dispatch-team-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </section>
 
-            <!-- PACKAGING & DISPATCH TEAM VIEW -->
-            <div id="packingTeamSection" class="hidden space-y-4">
-                <div class="flex flex-wrap items-center justify-between gap-2">
-                    <div>
-                        <h2 class="text-lg font-bold text-white">Packing &amp; Dispatch Queue</h2>
-                        <p class="text-xs text-slate-400">Tap any order card for item checklist, packing remarks, dispatch details, image proof &amp; Tax Invoice</p>
-                    </div>
-                </div>
-                <div id="packingCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-            </div>
         </main>
     </div>
 
-    <!-- EDIT ORDER MODAL (Order Team when not Packed/Dispatched, or Manager) -->
-    <div id="editOrderModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 shadow-2xl my-8">
-            <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
+    <!-- ==================== MODAL: EDIT ORDER ==================== -->
+    <div id="edit-order-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-8">
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
                 <div>
-                    <h3 class="text-lg font-bold text-white">Edit Order</h3>
-                    <p id="editModalMeta" class="text-xs text-slate-400 mt-0.5"></p>
+                    <span class="text-xs font-extrabold text-brand-600 uppercase tracking-wider">Khushali Logistic Panel</span>
+                    <h3 class="text-base font-bold text-slate-900">Edit Order Details</h3>
                 </div>
-                <button type="button" id="closeEditModalBtn" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center">✕</button>
+                <button type="button" onclick="closeEditOrderModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition cursor-pointer">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
             </div>
 
-            <form id="editOrderForm" class="space-y-4">
-                <input type="hidden" id="editOrderUid">
+            <form id="edit-order-form" onsubmit="saveEditedOrder(event)" class="p-6 space-y-4 max-h-[82vh] overflow-y-auto">
+                <input type="hidden" id="edit-order-uid">
+
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1">Customer Name *</label>
-                        <input id="editCustName" type="text" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Customer Name <span class="text-red-500">*</span></label>
+                        <input type="text" id="edit-cust-name" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-brand-600">
                     </div>
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1">Phone / Contact *</label>
-                        <input id="editCustPhone" type="tel" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Contact Number <span class="text-red-500">*</span></label>
+                        <input type="tel" id="edit-cust-phone" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-brand-600">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Company Name <span class="text-slate-400 font-normal">(if any)</span></label>
+                        <input type="text" id="edit-cust-company" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-brand-600">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Aadhaar / GST No <span class="text-slate-400 font-normal">(if any)</span></label>
+                        <input type="text" id="edit-cust-tax-id" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm uppercase focus:outline-none focus:border-brand-600">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">Full Address *</label>
-                    <textarea id="editCustAddress" rows="2" required class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white"></textarea>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Company Name</label>
-                        <input id="editCustCompany" type="text" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">GSTIN / ID No</label>
-                        <input id="editCustTaxId" type="text" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Payment Status</label>
-                        <select id="editCustPayment" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white">
-                            <option value="Paid">Paid</option>
-                            <option value="Pending / COD">Pending / COD</option>
-                            <option value="Partial Paid">Partial Paid</option>
-                        </select>
-                    </div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Delivery Address <span class="text-red-500">*</span></label>
+                    <textarea id="edit-cust-address" rows="2" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-brand-600"></textarea>
                 </div>
 
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">Order / Slip Image</label>
-                    <div class="flex items-center gap-3">
-                        <input id="editImageInput" type="file" accept="image/*" class="text-xs text-slate-400 file:mr-2.5 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-indigo-300">
-                        <img id="editImagePreview" src="" alt="" class="hidden w-12 h-12 rounded-lg object-cover border border-slate-700">
-                    </div>
-                </div>
-
-                <!-- Edit Items -->
-                <div class="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold uppercase text-indigo-400">Order Items</span>
-                        <span id="editItemCountBadge" class="text-xs font-bold text-indigo-300">0 Items</span>
-                    </div>
-
-                    <div class="space-y-2">
-                        <select id="editProductSelect" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white"></select>
-                        <div class="flex flex-wrap gap-2">
-                            <select id="editPackSizeSelect" class="flex-1 min-w-[130px] px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white">
-                                <option value="100 ML">100 ML (Sample Kit)</option>
-                                <option value="1">1 Kg</option>
-                                <option value="5" selected>5 Kg</option>
-                                <option value="10">10 Kg</option>
-                                <option value="15">15 Kg</option>
-                                <option value="25">25 Kg</option>
-                                <option value="50">50 Kg</option>
-                                <option value="custom">Custom Kg / Qty</option>
-                            </select>
-                            <input id="editCustomQtyInput" type="number" min="0.5" step="0.5" placeholder="Qty / Kg" class="hidden w-24 px-2.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white">
-                            <button type="button" id="editAddItemBtn" class="py-2 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold">+ Add</button>
+                    <div class="flex items-center justify-between gap-2 mb-1.5">
+                        <div class="flex items-center gap-2">
+                            <label class="block text-xs font-bold text-slate-700">Products & Quantity <span class="text-red-500">*</span></label>
+                            <span id="edit-item-count-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-brand-50 text-brand-700 border border-brand-200">
+                                1 Item
+                            </span>
                         </div>
+                        <button type="button" onclick="addItemRow('edit-items-container', 'edit-item-count-badge')" class="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1 cursor-pointer">
+                            <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+                            Add Item
+                        </button>
                     </div>
-
-                    <div id="editItemsList" class="space-y-2 max-h-44 overflow-y-auto"></div>
+                    <div id="edit-items-container" class="space-y-2.5"></div>
                 </div>
 
-                <div class="flex justify-end gap-3 pt-2">
-                    <button type="button" id="cancelEditBtn" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold">Cancel</button>
-                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold shadow-lg">Save Changes</button>
+                <div class="pt-2 flex items-center gap-3">
+                    <button type="button" onclick="closeEditOrderModal()" class="flex-1 py-3 px-4 rounded-xl border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 transition cursor-pointer">
+                        Cancel
+                    </button>
+                    <button type="submit" class="flex-2 py-3 px-6 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs sm:text-sm shadow-md transition cursor-pointer">
+                        Save & Sync Order
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- PACKING CHECKLIST & DISPATCH MODAL -->
-    <div id="packingModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 shadow-2xl my-8">
-            <div class="flex items-start justify-between pb-4 border-b border-slate-800 mb-4">
+    <!-- ==================== MODAL: PACKING CHECKLIST & DISPATCH ==================== -->
+    <div id="dispatch-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white w-full max-w-xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-8">
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between gap-2">
                 <div>
-                    <div class="flex items-center gap-2 flex-wrap">
-                        <h3 id="packModalCustomer" class="text-lg font-bold text-white">Customer Name</h3>
-                        <span id="packModalStatusBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/15 text-amber-300">Pending</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-extrabold text-purple-600 uppercase tracking-wider">Packing & Dispatch</span>
+                        <span id="modal-item-summary" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-purple-100 text-purple-800">0/0 Packed</span>
                     </div>
-                    <p id="packModalSub" class="text-xs text-slate-400 mt-1"></p>
+                    <h3 id="modal-cust-title" class="text-base font-bold text-slate-900 mt-0.5">Customer Order</h3>
                 </div>
-                <button type="button" id="closePackingModalBtn" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center">✕</button>
+                <div class="flex items-center gap-1.5">
+                    <button type="button" onclick="openEditOrderFromDispatch()" class="px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold flex items-center gap-1 transition cursor-pointer">
+                        <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                        <span>Edit</span>
+                    </button>
+                    <button type="button" onclick="closeDispatchModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition cursor-pointer">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
             </div>
 
-            <div class="space-y-5">
-                <!-- Interactive Checklist -->
-                <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Item-by-Item Packing Checklist</span>
-                        <span id="packProgressText" class="text-xs font-semibold text-slate-300">0 / 0 Packed</span>
+            <form id="dispatch-form" onsubmit="saveDispatchUpdate(event)" class="p-6 space-y-4 max-h-[82vh] overflow-y-auto">
+                <input type="hidden" id="edit-dispatch-uid">
+
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 text-xs space-y-1">
+                    <div class="flex flex-wrap justify-between gap-2 font-bold text-slate-900">
+                        <span id="modal-cust-name"></span>
+                        <span id="modal-cust-phone" class="text-brand-600"></span>
                     </div>
-                    <div class="w-full h-2 rounded-full bg-slate-800 overflow-hidden mb-3">
-                        <div id="packProgressBar" class="h-full bg-emerald-500 transition-all duration-300" style="width: 0%"></div>
-                    </div>
-                    <div id="packChecklistContainer" class="space-y-2 max-h-56 overflow-y-auto"></div>
+                    <div id="modal-cust-extra" class="text-slate-600 font-medium hidden"></div>
+                    <p id="modal-cust-address" class="text-slate-500"></p>
                 </div>
 
-                <!-- Remarks & Packing Photo -->
+                <!-- Interactive Item-by-Item Packing Checklist -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-700">
+                            Item Packing Checklist
+                        </label>
+                        <div class="flex items-center gap-3 text-[11px] font-bold">
+                            <button type="button" onclick="setAllChecklist(true)" class="text-emerald-700 hover:underline cursor-pointer">Tick All Packed</button>
+                            <button type="button" onclick="setAllChecklist(false)" class="text-amber-700 hover:underline cursor-pointer">Reset Pending</button>
+                        </div>
+                    </div>
+                    <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                        <div id="checklist-progress-bar" class="h-full bg-purple-600 transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                    <div id="modal-checklist-container" class="space-y-2 pt-1"></div>
+                </div>
+
+                <div>
+                    <label for="edit-packing-status" class="block text-xs font-bold text-slate-700 mb-1">Status <span class="text-red-500">*</span></label>
+                    <select id="edit-packing-status" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none focus:border-purple-600">
+                        <option value="Pending">Pending</option>
+                        <option value="Packing">Packing</option>
+                        <option value="Packed">Packed</option>
+                        <option value="Dispatched">Dispatched</option>
+                    </select>
+                </div>
+
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Packing / Shortage Remarks</label>
-                        <textarea id="packRemarksInput" rows="2" placeholder="Add packing notes or remarks..." class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:border-emerald-500"></textarea>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Box / Weight</label>
+                        <input type="text" id="edit-weight-box" placeholder="e.g. 12 Kg / 1 Box" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-purple-600">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Upload Parcel / Packing Image</label>
-                        <input id="packImageInput" type="file" accept="image/*" class="w-full text-xs text-slate-400 file:mr-2.5 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-emerald-300">
-                        <img id="packImagePreview" src="" alt="" class="hidden mt-2 w-16 h-16 rounded-xl object-cover border border-slate-700">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Courier / Transport Name</label>
+                        <input type="text" id="edit-courier" placeholder="e.g. Delhivery / BlueDart / Transport" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-purple-600">
                     </div>
                 </div>
 
-                <!-- Status & Dispatch Info -->
-                <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
-                    <div class="text-xs font-bold uppercase tracking-wider text-indigo-400">Packing Status &amp; Dispatch Details</div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-xs text-slate-400 mb-1">Status</label>
-                            <select id="packStatusSelect" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-sm text-white">
-                                <option value="Pending">Pending</option>
-                                <option value="Packing">Packing</option>
-                                <option value="Packed">Packed (Locks Order Team Edit)</option>
-                                <option value="Dispatched">Dispatched</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs text-slate-400 mb-1">Weight / Box Info</label>
-                            <input id="packWeightInput" type="text" placeholder="e.g. 25 Kg / 1 Box" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-sm text-white">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-slate-400 mb-1">Courier / Transport</label>
-                            <input id="packCourierInput" type="text" placeholder="e.g. VRL / Delhivery / Direct" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-sm text-white">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-slate-400 mb-1">Tracking / LR / AWB</label>
-                            <input id="packTrackingInput" type="text" placeholder="Tracking Number" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-sm text-white">
-                        </div>
-                    </div>
+                <div class="flex flex-wrap gap-1.5 -mt-1">
+                    <button type="button" onclick="setCourierPreset('Delhivery')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700 cursor-pointer">Delhivery</button>
+                    <button type="button" onclick="setCourierPreset('BlueDart')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700 cursor-pointer">BlueDart</button>
+                    <button type="button" onclick="setCourierPreset('DTDC')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700 cursor-pointer">DTDC</button>
+                    <button type="button" onclick="setCourierPreset('Transport')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700 cursor-pointer">Transport</button>
+                    <button type="button" onclick="setCourierPreset('Self Pickup')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700 cursor-pointer">Self Pickup</button>
                 </div>
 
-                <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
-                    <button type="button" id="openInvoiceFromPackBtn" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-indigo-300 text-xs font-bold flex items-center gap-1.5">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                        </svg>
-                        <span>Tax Invoice</span>
-                    </button>
-
-                    <div class="flex items-center gap-2">
-                        <button type="button" id="cancelPackBtn" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold">Close</button>
-                        <button type="button" id="savePackingBtn" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold shadow-lg shadow-emerald-950/50">Save &amp; Sync</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- KHUSHALI CHEMICAL TAX INVOICE MODAL -->
-    <div id="invoiceModal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-4xl w-full p-4 sm:p-6 shadow-2xl my-6">
-            <!-- Invoice Toolbar -->
-            <div class="no-print flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-800 mb-4">
                 <div>
-                    <h3 class="text-base sm:text-lg font-bold text-white">Khushali Logistic Panel — Tax Invoice</h3>
-                    <p class="text-xs text-slate-400">Slab prices converted to base taxable rate (Excl. 18% GST). Edit rates, HSN, or tax % live.</p>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Tracking / AWB / LR No</label>
+                    <input type="text" id="edit-tracking" placeholder="e.g. AWB123456789" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-mono font-semibold focus:outline-none focus:border-purple-600">
                 </div>
-                <div class="flex flex-wrap items-center gap-2">
-                    <button type="button" id="printInvoiceBtn" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
-                        </svg>
-                        <span>Print Bill</span>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Remarks</label>
+                    <textarea id="edit-remarks" rows="2" placeholder="Packing notes, pending item note, or dispatch remarks..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-purple-600"></textarea>
+                </div>
+
+                <div class="pt-2 flex items-center gap-3">
+                    <button type="button" onclick="closeDispatchModal()" class="flex-1 py-3 px-4 rounded-xl border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 transition cursor-pointer">
+                        Cancel
                     </button>
-                    <button type="button" id="downloadInvoiceBtn" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                        </svg>
-                        <span>Download Bill</span>
+                    <button type="submit" class="flex-2 py-3 px-6 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs sm:text-sm shadow-md shadow-purple-600/20 transition cursor-pointer">
+                        Save & Sync
                     </button>
-                    <button type="button" id="closeInvoiceModalBtn" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center">✕</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: BILL / INVOICE PRINT & DOWNLOAD ==================== -->
+    <div id="bill-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-8">
+            <div class="no-print bg-slate-50 px-6 py-3.5 border-b border-slate-200 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="file-text" class="w-4 h-4 text-brand-600"></i>
+                    <span class="text-sm font-bold text-slate-900">Khushali Logistic Panel — Bill / Invoice</span>
+                </div>
+                <button type="button" onclick="closeBillModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 cursor-pointer">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div id="bill-print-area" class="p-6 sm:p-8 bg-white space-y-5">
+                <div class="border-2 border-slate-900 rounded-2xl p-5 sm:p-6 space-y-5">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-slate-900 pb-4">
+                        <div>
+                            <h2 class="text-xl sm:text-2xl font-black tracking-tight text-slate-900 uppercase">Khushali Logistic Panel</h2>
+                            <p class="text-xs font-semibold text-slate-600 mt-0.5">Bill / Invoice & Dispatch Slip</p>
+                        </div>
+                        <div class="sm:text-right space-y-1">
+                            <span class="inline-block px-3 py-1 bg-emerald-600 text-white text-xs font-extrabold rounded-md uppercase tracking-wider">
+                                PAYMENT: SUCCESS
+                            </span>
+                            <p id="bill-date" class="text-xs font-semibold text-slate-700"></p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-1">
+                            <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">Customer & Billing Details</p>
+                            <p id="bill-cust-name" class="text-sm font-extrabold text-slate-900"></p>
+                            <p id="bill-cust-company" class="font-bold text-slate-800 hidden"></p>
+                            <p id="bill-cust-tax" class="font-mono font-semibold text-slate-700 hidden"></p>
+                            <p id="bill-cust-phone" class="font-semibold text-slate-800"></p>
+                            <p id="bill-cust-address" class="text-slate-600 leading-relaxed pt-0.5"></p>
+                        </div>
+
+                        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-1.5">
+                            <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">Dispatch Details</p>
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">Status:</span>
+                                <span id="bill-status" class="font-extrabold text-slate-900"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">Courier / Transport:</span>
+                                <span id="bill-courier" class="font-bold text-slate-900"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">Tracking / AWB / LR:</span>
+                                <span id="bill-awb" class="font-mono font-bold text-slate-900"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">Box / Weight:</span>
+                                <span id="bill-weight" class="font-bold text-slate-900"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-slate-900 text-white">
+                                    <th class="py-2.5 px-3 font-bold rounded-tl-lg w-12">Sr.</th>
+                                    <th class="py-2.5 px-3 font-bold">Product</th>
+                                    <th class="py-2.5 px-3 font-bold">Quantity</th>
+                                    <th class="py-2.5 px-3 font-bold rounded-tr-lg text-right">Packing</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bill-items-tbody" class="divide-y divide-slate-200 border-x border-b border-slate-200"></tbody>
+                        </table>
+                    </div>
+
+                    <div id="bill-remarks-section" class="hidden bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs">
+                        <span class="font-extrabold text-amber-900 uppercase text-[10px] block">Remarks:</span>
+                        <span id="bill-remarks-text" class="text-slate-800 font-medium"></span>
+                    </div>
+
+                    <div class="pt-3 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500">
+                        <span><strong>Khushali Logistic Panel</strong></span>
+                        <span id="bill-total-count-footer"></span>
+                    </div>
                 </div>
             </div>
 
-            <div id="invoiceSampleNotice" class="no-print hidden mb-3 px-3.5 py-2 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs">
-                100 ML Sample Kit items are omitted from billing as sample kits do not generate a bill.
+            <div class="no-print px-6 pb-6 flex flex-col sm:flex-row gap-3">
+                <button type="button" onclick="closeBillModal()" class="py-3 px-4 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 transition cursor-pointer">
+                    Close
+                </button>
+                <button type="button" onclick="downloadBillFile()" class="flex-1 py-3 px-4 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition cursor-pointer">
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                    <span>Download Bill</span>
+                </button>
+                <button type="button" onclick="window.print()" class="flex-1 py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition cursor-pointer">
+                    <i data-lucide="printer" class="w-4 h-4"></i>
+                    <span>Print Bill</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: GOOGLE SHEET SYNC SETUP ==================== -->
+    <div id="sync-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-8">
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center">
+                        <i data-lucide="sheet" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900">Khushali Logistic Panel — Google Sheet Sync</h3>
+                        <p class="text-xs text-slate-500">Web App URL pre-configured • Safe sync with fallback</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeSyncModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 cursor-pointer">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
             </div>
 
-            <!-- Printable White Paper Invoice Sheet -->
-            <div class="overflow-x-auto rounded-xl">
-                <div id="invoicePrintableArea" class="bg-white text-black p-5 sm:p-7 border-2 border-black min-w-[700px] font-serif">
-                    <div class="flex justify-between items-start text-xs font-bold border-b border-black pb-1">
-                        <div>GSTIN : 08PBDPS5444B1ZD</div>
-                        <div class="underline tracking-wider text-sm">TAX INVOICE</div>
-                        <div>Mob.: 9610970195</div>
+            <div class="p-6 space-y-5 max-h-[80vh] overflow-y-auto">
+                <div class="bg-brand-50/60 border border-brand-200 rounded-2xl p-4 space-y-3">
+                    <label class="block text-xs font-extrabold uppercase tracking-wider text-brand-900">
+                        Google Apps Script Web App URL
+                    </label>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input type="url" id="sheets-url-input" placeholder="https://script.google.com/macros/s/.../exec" class="flex-1 px-3.5 py-2.5 bg-white border border-brand-300 rounded-xl text-xs font-mono focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        <button type="button" onclick="saveAndSyncNow()" class="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-xs whitespace-nowrap transition cursor-pointer">
+                            Save & Sync
+                        </button>
                     </div>
-
-                    <div class="text-center py-2.5 border-b border-black">
-                        <div class="text-3xl font-extrabold tracking-tight uppercase">Khushali Chemical</div>
-                        <div class="text-xs font-bold mt-0.5">Manufacturer &amp; Traders of Cleaning Products</div>
-                        <div class="text-xs mt-0.5">559, Gali No.9, Rishi Galav Nagar, Galta Gate, Jaipur</div>
+                    <div class="flex items-center justify-between text-[11px] text-slate-600">
+                        <span>Stored safely in localStorage.</span>
+                        <button type="button" onclick="restoreDefaultSheetsUrl()" class="text-brand-700 font-bold hover:underline cursor-pointer">Restore Default URL</button>
                     </div>
+                </div>
 
-                    <div class="grid grid-cols-12 border-b border-black text-xs">
-                        <div class="col-span-7 border-r border-black p-2.5 space-y-2">
-                            <div class="flex items-baseline gap-1.5">
-                                <span class="font-bold shrink-0">Name :</span>
-                                <input id="invCustName" type="text" class="w-full border-b border-dotted border-black bg-transparent font-semibold focus:outline-none px-1">
-                            </div>
-                            <div class="flex items-baseline gap-1.5">
-                                <span class="font-bold shrink-0">Address :</span>
-                                <input id="invCustAddress" type="text" class="w-full border-b border-dotted border-black bg-transparent focus:outline-none px-1">
-                            </div>
-                            <div class="grid grid-cols-12 gap-2 pt-0.5">
-                                <div class="col-span-7 flex items-baseline gap-1">
-                                    <span class="font-bold shrink-0">GSTIN / ID :</span>
-                                    <input id="invCustTaxId" type="text" class="w-full border-b border-dotted border-black bg-transparent font-semibold focus:outline-none px-1">
-                                </div>
-                                <div class="col-span-5 flex items-baseline gap-1">
-                                    <span class="font-bold shrink-0">State Code :</span>
-                                    <input id="invStateCode" type="text" placeholder="e.g. 08" class="w-full border-b border-dotted border-black bg-transparent focus:outline-none px-1">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-span-5 p-2.5 space-y-2">
-                            <div class="flex items-baseline gap-1.5">
-                                <span class="font-bold shrink-0">Invoice No. :</span>
-                                <input id="invNumber" type="text" class="w-full border-b border-dotted border-black bg-transparent font-bold text-red-700 focus:outline-none px-1">
-                            </div>
-                            <div class="flex items-baseline gap-1.5">
-                                <span class="font-bold shrink-0">Date :</span>
-                                <input id="invDate" type="text" class="w-full border-b border-dotted border-black bg-transparent font-semibold focus:outline-none px-1">
-                            </div>
-                            <div class="flex items-baseline gap-1.5">
-                                <span class="font-bold shrink-0">Place of Supply :</span>
-                                <input id="invPlaceOfSupply" type="text" placeholder="State" class="w-full border-b border-dotted border-black bg-transparent focus:outline-none px-1">
-                            </div>
-                            <div class="flex items-baseline gap-1.5">
-                                <span class="font-bold shrink-0">Transportation Mode :</span>
-                                <input id="invTransportMode" type="text" placeholder="Courier / Road" class="w-full border-b border-dotted border-black bg-transparent focus:outline-none px-1">
-                            </div>
-                        </div>
+                <div>
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-xs font-bold text-slate-800">Apps Script Code (No Order ID Column)</span>
+                        <button type="button" onclick="copyAppsScriptCode()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition cursor-pointer">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                            <span>Copy Script</span>
+                        </button>
                     </div>
+                    <pre id="apps-script-code" class="bg-slate-900 text-emerald-300 p-4 rounded-2xl text-[11px] font-mono overflow-x-auto leading-relaxed">const SHEET_NAME = "Orders";
 
-                    <table class="w-full border-collapse text-xs">
-                        <thead>
-                            <tr class="border-b border-black bg-gray-100">
-                                <th class="border-r border-black py-1.5 px-2 w-12 text-center">S. No.</th>
-                                <th class="border-r border-black py-1.5 px-2 text-left">PARTICULARS</th>
-                                <th class="border-r border-black py-1.5 px-2 w-20 text-center">HSN Code</th>
-                                <th class="border-r border-black py-1.5 px-2 w-16 text-center">Qty.</th>
-                                <th class="border-r border-black py-1.5 px-2 w-24 text-right">Rate</th>
-                                <th class="py-1.5 px-2 w-28 text-right">AMOUNT Rs.</th>
-                            </tr>
-                        </thead>
-                        <tbody id="invoiceItemsBody"></tbody>
-                    </table>
+function setupSheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName(SHEET_NAME);
+  if (!sheet) {
+    sheet = ss.insertSheet(SHEET_NAME);
+  }
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow([
+      "Date & Time",
+      "Customer Name",
+      "Contact Number",
+      "Company Name",
+      "Aadhaar / GST No",
+      "Delivery Address",
+      "Products & Quantity",
+      "Total Items",
+      "Payment Status",
+      "Packing Status",
+      "Packed Checklist",
+      "Box / Weight",
+      "Courier / Transport",
+      "Tracking / AWB / LR",
+      "Remarks"
+    ]);
+    sheet.getRange(1, 1, 1, 15).setFontWeight("bold");
+  }
+  return sheet;
+}
 
-                    <div class="grid grid-cols-12 border-t border-black text-xs">
-                        <div class="col-span-7 border-r border-black p-2.5 flex flex-col justify-between">
-                            <div>
-                                <div class="font-bold mb-1">Total (in words) :</div>
-                                <div id="invAmountWords" class="font-semibold italic text-sm leading-snug border-b border-dotted border-black pb-1">Zero Rupees Only</div>
-                            </div>
-                            <div class="text-[11px] text-gray-600 pt-2">
-                                * Slab prices converted to base taxable rates excluding 18% GST.
-                            </div>
-                        </div>
+function doGet(e) {
+  const sheet = setupSheet();
+  const data = sheet.getDataRange().getValues();
+  const orders = [];
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    if (!row[1]) continue;
+    orders.push({
+      createdAt: String(row[0] || ""),
+      customerName: String(row[1] || ""),
+      contactNo: String(row[2] || ""),
+      companyName: String(row[3] || ""),
+      taxId: String(row[4] || ""),
+      address: String(row[5] || ""),
+      items: String(row[6] || ""),
+      itemCount: Number(row[7] || 1),
+      paymentStatus: String(row[8] || "Success"),
+      packingStatus: String(row[9] || "Pending"),
+      packedFlags: String(row[10] || ""),
+      weightBox: String(row[11] || ""),
+      courierName: String(row[12] || ""),
+      trackingId: String(row[13] || ""),
+      remarks: String(row[14] || "")
+    });
+  }
+  return ContentService.createTextOutput(JSON.stringify({ status: "ok", orders: orders.reverse() }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
 
-                        <div class="col-span-5">
-                            <div class="flex justify-between items-center px-2.5 py-1.5 border-b border-black">
-                                <span class="font-bold">Total Amount Before Tax</span>
-                                <span id="invBeforeTax" class="font-bold">0.00</span>
-                            </div>
-                            <div class="flex justify-between items-center px-2.5 py-1 border-b border-black">
-                                <div class="flex items-center gap-1">
-                                    <span class="font-bold">CGST @</span>
-                                    <input id="invCgstRate" type="number" step="0.5" min="0" value="0" class="w-10 text-center border-b border-dotted border-black bg-transparent font-semibold focus:outline-none">
-                                    <span>%</span>
-                                </div>
-                                <span id="invCgstAmt">0.00</span>
-                            </div>
-                            <div class="flex justify-between items-center px-2.5 py-1 border-b border-black">
-                                <div class="flex items-center gap-1">
-                                    <span class="font-bold">SGST @</span>
-                                    <input id="invSgstRate" type="number" step="0.5" min="0" value="0" class="w-10 text-center border-b border-dotted border-black bg-transparent font-semibold focus:outline-none">
-                                    <span>%</span>
-                                </div>
-                                <span id="invSgstAmt">0.00</span>
-                            </div>
-                            <div class="flex justify-between items-center px-2.5 py-1 border-b border-black">
-                                <div class="flex items-center gap-1">
-                                    <span class="font-bold">IGST @</span>
-                                    <input id="invIgstRate" type="number" step="0.5" min="0" value="18" class="w-10 text-center border-b border-dotted border-black bg-transparent font-semibold focus:outline-none">
-                                    <span>%</span>
-                                </div>
-                                <span id="invIgstAmt">0.00</span>
-                            </div>
-                            <div class="flex justify-between items-center px-2.5 py-1 border-b border-black">
-                                <span class="font-bold">Round Off</span>
-                                <input id="invRoundOff" type="number" step="0.01" value="0" class="w-16 text-right border-b border-dotted border-black bg-transparent focus:outline-none">
-                            </div>
-                            <div class="flex justify-between items-center px-2.5 py-1.5 bg-gray-100 font-extrabold text-sm">
-                                <span>Grand Total</span>
-                                <span id="invGrandTotal">0.00</span>
-                            </div>
-                        </div>
-                    </div>
+function doPost(e) {
+  const sheet = setupSheet();
+  const payload = JSON.parse(e.postData.contents);
+  const data = sheet.getDataRange().getValues();
 
-                    <div class="border-t border-black text-xs">
-                        <div class="p-2 border-b border-black grid grid-cols-12 gap-2">
-                            <div class="col-span-4 font-bold">Bank Details :</div>
-                            <div class="col-span-4 flex items-center gap-1">
-                                <span class="font-bold">A/c No. :</span>
-                                <input id="invBankAc" type="text" placeholder="Enter A/c No." class="w-full border-b border-dotted border-black bg-transparent focus:outline-none">
-                            </div>
-                            <div class="col-span-4 flex items-center gap-1">
-                                <span class="font-bold">IFSC Code :</span>
-                                <input id="invBankIfsc" type="text" placeholder="Enter IFSC" class="w-full border-b border-dotted border-black bg-transparent focus:outline-none">
-                            </div>
-                        </div>
+  if (payload.action === "create") {
+    const o = payload.order;
+    sheet.appendRow([
+      o.createdAt,
+      o.customerName,
+      o.contactNo,
+      o.companyName || "",
+      o.taxId || "",
+      o.address,
+      o.items,
+      o.itemCount || 1,
+      "Success",
+      o.packingStatus || "Pending",
+      o.packedFlags || "",
+      "",
+      "",
+      "",
+      o.remarks || ""
+    ]);
+    return ContentService.createTextOutput(JSON.stringify({ status: "ok" }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
 
-                        <div class="grid grid-cols-12 p-2.5">
-                            <div class="col-span-7 space-y-0.5">
-                                <div class="font-bold underline mb-1">Terms and Condition :</div>
-                                <div>1. Subject to Jaipur Jurisdiction.</div>
-                                <div>2. Goods once sold will not be taken back.</div>
-                                <div>3. E. &amp; O. E.</div>
-                            </div>
-                            <div class="col-span-5 flex flex-col justify-between text-right">
-                                <div class="font-bold">For : Khushali Chemical</div>
-                                <div class="pt-8">
-                                    <div class="font-bold">Authorised Signatory</div>
-                                    <div class="text-[11px] font-semibold">Proprietor</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+  for (let i = 1; i < data.length; i++) {
+    const matchTime = String(data[i][0]) === String(payload.createdAt);
+    const matchName = String(data[i][1]) === String(payload.matchCustomerName || payload.customerName);
+    if (matchTime && matchName) {
+      const rowNum = i + 1;
+      if (payload.action === "editOrder") {
+        const o = payload.order;
+        sheet.getRange(rowNum, 2).setValue(o.customerName);
+        sheet.getRange(rowNum, 3).setValue(o.contactNo);
+        sheet.getRange(rowNum, 4).setValue(o.companyName || "");
+        sheet.getRange(rowNum, 5).setValue(o.taxId || "");
+        sheet.getRange(rowNum, 6).setValue(o.address);
+        sheet.getRange(rowNum, 7).setValue(o.items);
+        sheet.getRange(rowNum, 8).setValue(o.itemCount || 1);
+        sheet.getRange(rowNum, 11).setValue(o.packedFlags || "");
+      } else if (payload.action === "update") {
+        sheet.getRange(rowNum, 10).setValue(payload.packingStatus);
+        sheet.getRange(rowNum, 11).setValue(payload.packedFlags || "");
+        sheet.getRange(rowNum, 12).setValue(payload.weightBox || "");
+        sheet.getRange(rowNum, 13).setValue(payload.courierName || "");
+        sheet.getRange(rowNum, 14).setValue(payload.trackingId || "");
+        sheet.getRange(rowNum, 15).setValue(payload.remarks || "");
+      }
+      break;
+    }
+  }
+  return ContentService.createTextOutput(JSON.stringify({ status: "ok" }))
+    .setMimeType(ContentService.MimeType.JSON);
+}</pre>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- IMAGE LIGHTBOX MODAL -->
-    <div id="imageLightboxModal" class="hidden fixed inset-0 z-[90] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="relative max-w-2xl w-full bg-slate-900 border border-slate-800 rounded-2xl p-3">
-            <button type="button" id="closeLightboxBtn" class="absolute -top-3 -right-3 w-9 h-9 rounded-full bg-rose-600 text-white font-bold shadow-lg flex items-center justify-center">✕</button>
-            <img id="lightboxImage" src="" alt="Full Size Attachment" class="w-full max-h-[80vh] object-contain rounded-xl">
-        </div>
-    </div>
-
-    <!-- GOOGLE SHEETS SETTINGS MODAL -->
-    <div id="sheetSettingsModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl">
-            <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
-                <h3 class="text-lg font-bold text-white">Google Sheets Sync Configuration</h3>
-                <button type="button" id="closeSheetSettingsBtn" class="w-8 h-8 rounded-xl bg-slate-800 text-slate-300 flex items-center justify-center">✕</button>
-            </div>
-            <p class="text-xs text-slate-400 mb-3 leading-relaxed">
-                Orders, edits, packing updates, and deletions sync safely in the background with your Google Apps Script endpoint without blocking the UI.
-            </p>
-            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Google Apps Script Web App URL</label>
-            <input id="sheetUrlInput" type="url" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-emerald-300 font-mono mb-4 focus:outline-none focus:border-emerald-500">
-            <div class="flex justify-end gap-2">
-                <button type="button" id="resetDefaultSheetBtn" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300">Reset Default</button>
-                <button type="button" id="saveSheetUrlBtn" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white">Save URL</button>
-            </div>
-        </div>
-    </div>
-
+    <!-- ==================== APPLICATION JAVASCRIPT ==================== -->
     <script>
-        (function () {
-            "use strict";
+        const DEFAULT_PIN = "000000";
+        const DEFAULT_SHEETS_URL = "https://script.google.com/macros/s/AKfycbxdw3b-wUh284AjYOZ5cT08liAU8aY-gKtl6GFevQUHJ6ncHzgr2rI75YiS06H9iormTA/exec";
 
-            // =========================================================================
-            // 1. CONFIGURATION & CATALOG WITH EXACT SLAB PRICING
-            // =========================================================================
-            const DEFAULT_SHEET_URL = "https://script.google.com/macros/s/AKfycbxdw3b-wUh284AjYOZ5cT08liAU8aY-gKtl6GFevQUHJ6ncHzgr2rI75YiS06H9iormTA/exec";
-            const STORAGE_KEY_ORDERS = "khushali_logistic_panel_orders_v2";
-            const STORAGE_KEY_SHEET_URL = "khushali_logistic_panel_sheet_url_v2";
-            const STORAGE_KEY_INV_COUNTER = "khushali_logistic_panel_inv_counter_v2";
-            const LOGIN_PIN = "000000";
-            const PACKAGING_CHARGES_ITEM = "Packaging Charges";
+        // 17 specific cleaning products
+        const CLEANING_PRODUCTS = [
+            "Toilet Cleaner",
+            "Bathroom Cleaner",
+            "Hand Wash (Rose)",
+            "Hand Wash (Dettol)",
+            "Floor Cleaner (Rose)",
+            "Floor Cleaner (Lemon)",
+            "Dish Wash",
+            "Car Wash",
+            "Glass Cleaner",
+            "Fabric Wash",
+            "Room Freshener (Rose)",
+            "Room Freshener (Jasmine)",
+            "Room Freshener (Lavender)",
+            "White Phenyl",
+            "Rose Phenyl",
+            "Lemon Phenyl",
+            "Black Phenyl"
+        ];
 
-            // 17 exact products + slab rates (per kg, inclusive of 18% GST)
-            // Rules:
-            // - 100 ML => Sample Kit (no bill)
-            // - 1 kg to 24 kg => 5 kg slab rate
-            // - 25 kg to 49 kg => 25 kg slab rate
-            // - 50 kg and above => 50 kg slab rate
-            // - Room Freshener: 5 kg => 1220, 10 kg and above => 1210
-            const PRODUCT_CATALOG = [
-                { name: "Toilet Cleaner", type: "std", hsn: "3402", s5: 125, s25: 120, s50: 115 },
-                { name: "Bathroom Cleaner", type: "std", hsn: "3402", s5: 145, s25: 140, s50: 135 },
-                { name: "Hand Wash (Rose)", type: "std", hsn: "3401", s5: 350, s25: 345, s50: 340 },
-                { name: "Hand Wash (Dettol)", type: "std", hsn: "3401", s5: 350, s25: 345, s50: 340 },
-                { name: "Floor Cleaner (Rose)", type: "std", hsn: "3402", s5: 820, s25: 810, s50: 800 },
-                { name: "Floor Cleaner (Lemon)", type: "std", hsn: "3402", s5: 820, s25: 810, s50: 800 },
-                { name: "Dish Wash", type: "std", hsn: "3402", s5: 350, s25: 345, s50: 340 },
-                { name: "Car Wash", type: "std", hsn: "3402", s5: 350, s25: 345, s50: 340 },
-                { name: "Glass Cleaner", type: "std", hsn: "3402", s5: 160, s25: 155, s50: 150 },
-                { name: "Fabric Wash", type: "std", hsn: "3402", s5: 350, s25: 345, s50: 340 },
-                { name: "Room Freshener (Rose)", type: "rf", hsn: "3307", s5: 1220, s10: 1210 },
-                { name: "Room Freshener (Jasmine)", type: "rf", hsn: "3307", s5: 1220, s10: 1210 },
-                { name: "Room Freshener (Lavender)", type: "rf", hsn: "3307", s5: 1220, s10: 1210 },
-                { name: "White Phenyl", type: "std", hsn: "3808", s5: 255, s25: 250, s50: 245 },
-                { name: "Rose Phenyl", type: "std", hsn: "3808", s5: 265, s25: 260, s50: 255 },
-                { name: "Lemon Phenyl", type: "std", hsn: "3808", s5: 265, s25: 260, s50: 255 },
-                { name: "Black Phenyl", type: "std", hsn: "3808", s5: 175, s25: 170, s50: 165 }
-            ];
+        const QUANTITY_PRESETS = ["100 ML", "1Kg", "5Kg", "25Kg", "50Kg"];
 
-            // =========================================================================
-            // 2. APPLICATION STATE
-            // =========================================================================
-            let loggedInUser = "Piyush";
-            let loggedInRole = "Order Team";
-            let activeManagerView = "order";
-            let orders = [];
-            let draftItems = [];
-            let createImageData = "";
-            let editDraftItems = [];
-            let editImageData = "";
-            let activePackingUid = null;
-            let activeInvoiceUid = null;
-            let invoiceLineItems = [];
+        const STORAGE_KEYS = {
+            PROFILE: "khushali_logistic_profile",
+            ORDERS: "khushali_logistic_orders",
+            SHEETS_URL: "khushali_logistic_sheets_url"
+        };
 
-            // =========================================================================
-            // 3. UTILITY & PRICING FUNCTIONS
-            // =========================================================================
-            function escapeHtml(value) {
-                if (value === null || value === undefined) return "";
-                return String(value)
-                    .replace(/&/g, "&amp;")
-                    .replace(/</g, "&lt;")
-                    .replace(/>/g, "&gt;")
-                    .replace(/"/g, "&quot;")
-                    .replace(/'/g, "&#039;");
+        const PROFILES = {
+            "Piyush (Order Team)": { role: "order", subtitle: "Order Team • Create & Edit Orders" },
+            "Govardhan (Order Team)": { role: "order", subtitle: "Order Team • Create & Edit Orders" },
+            "Lokesh (Packaging Team)": { role: "dispatch", subtitle: "Packaging Team • Checklist, Remarks & Bills" },
+            "Manager": { role: "manager", subtitle: "Manager • Full Orders, Packing & Dispatch Access" }
+        };
+
+        let activeProfile = null;
+        let activeRole = null; // 'order' | 'dispatch' | 'manager'
+        let orders = [];
+        let searchTerm = "";
+        let orderFilter = "ALL";
+        let dispatchFilter = "ALL";
+        let pollTimer = null;
+        let currentBillUid = null;
+
+        const INITIAL_ORDERS = [
+            {
+                uid: "klp_sample_1",
+                createdAt: "22 Nov, 09:45 PM",
+                customerName: "Vikramaditya Singh",
+                contactNo: "9829011223",
+                companyName: "Jaipur Hygiene Solutions",
+                taxId: "08AAACJ1234F1Z5",
+                address: "42, Vaishali Nagar, Jaipur, Rajasthan - 302021",
+                items: "Toilet Cleaner (5Kg) | Black Phenyl (25Kg)",
+                itemCount: 2,
+                paymentStatus: "Success",
+                packingStatus: "Pending",
+                packedFlags: [false, false],
+                weightBox: "",
+                courierName: "",
+                trackingId: "",
+                remarks: ""
+            },
+            {
+                uid: "klp_sample_2",
+                createdAt: "22 Nov, 08:20 PM",
+                customerName: "Ananya Verma",
+                contactNo: "9811223344",
+                companyName: "Ananya Enterprises",
+                taxId: "",
+                address: "Shop 14, Karol Bagh Main Market, New Delhi - 110005",
+                items: "Floor Cleaner (Rose) (5Kg) | Dish Wash (1Kg) | Glass Cleaner (100 ML)",
+                itemCount: 3,
+                paymentStatus: "Success",
+                packingStatus: "Packed",
+                packedFlags: [true, true, true],
+                weightBox: "10 Kg / 1 Box",
+                courierName: "Delhivery",
+                trackingId: "DEL99887766",
+                remarks: "All 3 items packed and sealed."
+            }
+        ];
+
+        // --- INITIALIZATION ---
+        document.addEventListener("DOMContentLoaded", function () {
+            try {
+                if (typeof lucide !== "undefined") {
+                    lucide.createIcons();
+                }
+            } catch (e) {
+                console.warn("Icon init warning:", e);
             }
 
-            function getProductConfig(productName) {
-                return PRODUCT_CATALOG.find(item => item.name === productName) || null;
+            loadOrdersFromStorage();
+            resetCreateItems();
+            setOrderFilter("ALL");
+            setDispatchFilter("ALL");
+
+            try {
+                const savedProfile = sessionStorage.getItem(STORAGE_KEYS.PROFILE);
+                if (savedProfile && PROFILES[savedProfile]) {
+                    activateSession(savedProfile);
+                }
+            } catch (e) {
+                console.warn("Session restore warning:", e);
+            }
+        });
+
+        // --- LOGIN & ROLE ACCESS ---
+        function fillDefaultPin() {
+            const pinInput = document.getElementById("login-pin");
+            if (pinInput) {
+                pinInput.value = DEFAULT_PIN;
+                pinInput.focus();
+            }
+            const err = document.getElementById("login-error");
+            if (err) err.classList.add("hidden");
+        }
+
+        function handleLogin(event) {
+            if (event) event.preventDefault();
+
+            const pinInput = document.getElementById("login-pin");
+            const errEl = document.getElementById("login-error");
+            const selectedRadio = document.querySelector('input[name="loginProfile"]:checked');
+            const profileName = selectedRadio ? selectedRadio.value : "Piyush (Order Team)";
+            const enteredPin = pinInput ? pinInput.value.trim() : "";
+
+            if (enteredPin !== DEFAULT_PIN) {
+                if (errEl) errEl.classList.remove("hidden");
+                if (pinInput) pinInput.focus();
+                return;
             }
 
-            /**
-             * Calculates rate & total for a product or Packaging Charges item.
-             * Slab rates include 18% GST; reverse rate divides by 1.18.
-             */
-            function calculateItemPricing(name, qtyValue, isPackagingCharge = false, customUnitRate = 20) {
-                if (isPackagingCharge || name === PACKAGING_CHARGES_ITEM) {
-                    const units = Math.max(1, Math.floor(Number(qtyValue) || 1));
-                    const rateIncl = Math.max(0, Number(customUnitRate) || 20);
-                    const baseRate = Number((rateIncl / 1.18).toFixed(2));
-                    const totalIncl = Number((units * rateIncl).toFixed(2));
-                    return {
-                        isSample: false,
-                        isPackagingCharge: true,
-                        numericQty: units,
-                        unitLabel: `${units} ${units === 1 ? "Qty" : "Qty"}`,
-                        packLabel: `${units} ${units === 1 ? "Qty" : "Qty"}`,
-                        rateInclGst: rateIncl,
-                        baseRate: baseRate,
-                        totalInclGst: totalIncl,
-                        hsn: ""
-                    };
+            if (errEl) errEl.classList.add("hidden");
+
+            try {
+                sessionStorage.setItem(STORAGE_KEYS.PROFILE, profileName);
+            } catch (e) {
+                console.warn("Session storage blocked:", e);
+            }
+
+            activateSession(profileName);
+            showToast(`Logged in as ${profileName}`, "success");
+        }
+
+        function activateSession(profileName) {
+            const cfg = PROFILES[profileName] || PROFILES["Piyush (Order Team)"];
+            activeProfile = profileName;
+            activeRole = cfg.role;
+
+            const loginSec = document.getElementById("login-screen");
+            const appShell = document.getElementById("app-shell");
+            if (loginSec) loginSec.classList.add("hidden");
+            if (appShell) appShell.classList.remove("hidden");
+
+            const badge = document.getElementById("active-profile-badge");
+            const subtitle = document.getElementById("active-role-subtitle");
+            const orderSec = document.getElementById("order-section");
+            const dispatchSec = document.getElementById("dispatch-section");
+            const createCard = document.getElementById("create-order-card");
+            const listCol = document.getElementById("order-list-column");
+            const mgrBtn = document.getElementById("manager-toggle-form-btn");
+
+            if (badge) badge.textContent = profileName;
+            if (subtitle) subtitle.textContent = cfg.subtitle;
+
+            if (activeRole === "order") {
+                if (badge) badge.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-brand-50 text-brand-700 border border-brand-200";
+                if (orderSec) orderSec.classList.remove("hidden");
+                if (dispatchSec) dispatchSec.classList.add("hidden");
+                if (createCard) {
+                    createCard.classList.remove("hidden");
+                    createCard.className = "lg:col-span-5 bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden";
                 }
+                if (listCol) listCol.className = "lg:col-span-7 space-y-4";
+                if (mgrBtn) mgrBtn.classList.add("hidden");
+            } else if (activeRole === "dispatch") {
+                if (badge) badge.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-50 text-purple-700 border border-purple-200";
+                if (dispatchSec) dispatchSec.classList.remove("hidden");
+                if (orderSec) orderSec.classList.add("hidden");
+                if (mgrBtn) mgrBtn.classList.add("hidden");
+            } else {
+                // Manager: full visibility across Order entry/edit and Packing/Dispatch/Bills
+                if (badge) badge.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200";
+                if (orderSec) orderSec.classList.remove("hidden");
+                if (dispatchSec) dispatchSec.classList.remove("hidden");
+                if (createCard) createCard.classList.add("hidden");
+                if (listCol) listCol.className = "lg:col-span-12 space-y-4";
+                if (mgrBtn) mgrBtn.classList.remove("hidden");
+            }
 
-                if (String(qtyValue).toUpperCase() === "100 ML") {
-                    const cfg = getProductConfig(name);
-                    return {
-                        isSample: true,
-                        isPackagingCharge: false,
-                        numericQty: 0,
-                        unitLabel: "100 ML (Sample Kit)",
-                        packLabel: "100 ML (Sample)",
-                        rateInclGst: 0,
-                        baseRate: 0,
-                        totalInclGst: 0,
-                        hsn: cfg ? cfg.hsn : ""
-                    };
+            renderWorkspace();
+            syncFromGoogleSheets(true);
+            startPolling();
+        }
+
+        function toggleOrderFormPanel() {
+            const createCard = document.getElementById("create-order-card");
+            const listCol = document.getElementById("order-list-column");
+            if (!createCard || !listCol) return;
+
+            const isHidden = createCard.classList.contains("hidden");
+            if (isHidden) {
+                createCard.classList.remove("hidden");
+                createCard.className = "lg:col-span-5 bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden";
+                listCol.className = "lg:col-span-7 space-y-4";
+            } else {
+                createCard.classList.add("hidden");
+                listCol.className = "lg:col-span-12 space-y-4";
+            }
+        }
+
+        function handleLogout() {
+            try {
+                sessionStorage.removeItem(STORAGE_KEYS.PROFILE);
+            } catch (e) {
+                console.warn("Logout storage warning:", e);
+            }
+            activeProfile = null;
+            activeRole = null;
+            if (pollTimer) clearInterval(pollTimer);
+
+            const appShell = document.getElementById("app-shell");
+            const loginSec = document.getElementById("login-screen");
+            if (appShell) appShell.classList.add("hidden");
+            if (loginSec) loginSec.classList.remove("hidden");
+            refreshIcons();
+        }
+
+        // --- DATA NORMALIZATION & STORAGE ---
+        function splitOrderItems(itemsStr) {
+            if (!itemsStr) return [];
+            const sep = itemsStr.includes(" | ") ? " | " : ", ";
+            return itemsStr.split(sep).map(s => s.trim()).filter(Boolean);
+        }
+
+        function parseProductEntry(entry) {
+            const m = entry.match(/^(.*?)\s*\(([^()]+)\)\s*$/);
+            if (m) return { name: m[1].trim(), qty: m[2].trim() };
+            return { name: entry.trim(), qty: "" };
+        }
+
+        function normalizeFlags(rawFlags, count) {
+            let arr = [];
+            if (Array.isArray(rawFlags)) {
+                arr = rawFlags.map(Boolean);
+            } else if (typeof rawFlags === "string" && rawFlags.trim()) {
+                try {
+                    const parsed = JSON.parse(rawFlags);
+                    if (Array.isArray(parsed)) arr = parsed.map(Boolean);
+                } catch (e) {
+                    arr = rawFlags.split(",").map(v => v.trim() === "true" || v.trim() === "1");
                 }
+            }
+            while (arr.length < count) arr.push(false);
+            return arr.slice(0, count);
+        }
 
-                const kg = Math.max(0.5, Number(qtyValue) || 5);
-                const cfg = getProductConfig(name) || { type: "std", hsn: "3402", s5: 255, s25: 250, s50: 245 };
+        function normalizeStatus(st) {
+            if (!st) return "Pending";
+            if (st === "Pending Packing") return "Pending";
+            return st;
+        }
 
-                let rateInclGst = 0;
-                if (cfg.type === "rf") {
-                    rateInclGst = kg >= 10 ? cfg.s10 : cfg.s5;
+        function normalizeOrder(raw, index = 0) {
+            const parsedList = splitOrderItems(raw.items);
+            const itemCount = parsedList.length > 0 ? parsedList.length : (Number(raw.itemCount) || 1);
+            const packedFlags = normalizeFlags(raw.packedFlags, itemCount);
+            const uid = raw.uid || `ord_${index}_${String(raw.createdAt || "").replace(/\W+/g, "")}_${String(raw.customerName || "").replace(/\W+/g, "")}`;
+
+            return {
+                uid,
+                createdAt: raw.createdAt || formatTimestamp(),
+                customerName: String(raw.customerName || "").trim(),
+                contactNo: String(raw.contactNo || "").trim(),
+                companyName: String(raw.companyName || "").trim(),
+                taxId: String(raw.taxId || "").trim().toUpperCase(),
+                address: String(raw.address || "").trim(),
+                items: String(raw.items || "").trim(),
+                itemCount,
+                paymentStatus: "Success",
+                packingStatus: normalizeStatus(raw.packingStatus),
+                packedFlags,
+                weightBox: String(raw.weightBox || "").trim(),
+                courierName: String(raw.courierName || "").trim(),
+                trackingId: String(raw.trackingId || "").trim(),
+                remarks: String(raw.remarks || "").trim()
+            };
+        }
+
+        function loadOrdersFromStorage() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEYS.ORDERS);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    orders = Array.isArray(parsed) && parsed.length > 0
+                        ? parsed.map((o, idx) => normalizeOrder(o, idx))
+                        : INITIAL_ORDERS.map((o, idx) => normalizeOrder(o, idx));
                 } else {
-                    if (kg >= 50) {
-                        rateInclGst = cfg.s50;
-                    } else if (kg >= 25) {
-                        rateInclGst = cfg.s25;
-                    } else {
-                        rateInclGst = cfg.s5;
-                    }
+                    orders = INITIAL_ORDERS.map((o, idx) => normalizeOrder(o, idx));
+                    saveOrdersToStorage();
                 }
-
-                const baseRate = Number((rateInclGst / 1.18).toFixed(2));
-                const totalInclGst = Number((kg * rateInclGst).toFixed(2));
-
-                return {
-                    isSample: false,
-                    isPackagingCharge: false,
-                    numericQty: kg,
-                    unitLabel: `${kg} Kg`,
-                    packLabel: `${kg} Kg`,
-                    rateInclGst: rateInclGst,
-                    baseRate: baseRate,
-                    totalInclGst: totalInclGst,
-                    hsn: cfg.hsn || ""
-                };
+            } catch (e) {
+                console.warn("Load orders fallback:", e);
+                orders = INITIAL_ORDERS.map((o, idx) => normalizeOrder(o, idx));
             }
+        }
 
-            function showToast(message, variant = "info") {
-                const container = document.getElementById("toastContainer");
-                const toast = document.createElement("div");
-                const classes = {
-                    success: "bg-emerald-950/95 border-emerald-500/40 text-emerald-200",
-                    error: "bg-rose-950/95 border-rose-500/40 text-rose-200",
-                    info: "bg-slate-900/95 border-indigo-500/40 text-slate-100"
-                };
-                toast.className = `pointer-events-auto px-4 py-3 rounded-2xl border shadow-xl text-xs font-semibold transition-all duration-300 ${classes[variant] || classes.info}`;
-                toast.textContent = message;
-                container.appendChild(toast);
+        function saveOrdersToStorage() {
+            try {
+                localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(orders));
+            } catch (e) {
+                console.warn("Save orders warning:", e);
+            }
+        }
+
+        function getConfiguredSheetsUrl() {
+            try {
+                return (localStorage.getItem(STORAGE_KEYS.SHEETS_URL) || DEFAULT_SHEETS_URL).trim();
+            } catch (e) {
+                return DEFAULT_SHEETS_URL;
+            }
+        }
+
+        // --- SAFE GOOGLE SHEETS SYNC ---
+        async function syncFromGoogleSheets(silent = false) {
+            const url = getConfiguredSheetsUrl();
+            if (!url) return;
+
+            const icon = document.querySelector("#refresh-btn i");
+            if (icon) icon.classList.add("animate-spin");
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error("HTTP " + response.status);
+                const data = await response.json();
+                if (data && data.status === "ok" && Array.isArray(data.orders) && data.orders.length > 0) {
+                    orders = data.orders.map((o, idx) => normalizeOrder(o, idx));
+                    saveOrdersToStorage();
+                    renderWorkspace();
+                }
+                if (!silent) showToast("Synced with Google Sheets", "success");
+            } catch (err) {
+                console.warn("Sheets GET skipped/fallback:", err);
+                if (!silent) showToast("Showing latest saved orders", "info");
+            } finally {
+                if (icon) icon.classList.remove("animate-spin");
+            }
+        }
+
+        async function pushOrderAction(payload) {
+            const url = getConfiguredSheetsUrl();
+            if (!url) return;
+
+            try {
+                await fetch(url, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
                 setTimeout(() => {
-                    toast.style.opacity = "0";
-                    setTimeout(() => toast.remove(), 300);
-                }, 3000);
+                    syncFromGoogleSheets(true);
+                }, 1800);
+            } catch (err) {
+                console.warn("Sheets POST warning:", err);
+                showToast("Saved locally; will sync when online", "info");
+            }
+        }
+
+        function startPolling() {
+            if (pollTimer) clearInterval(pollTimer);
+            pollTimer = setInterval(() => {
+                if (activeProfile && getConfiguredSheetsUrl()) {
+                    syncFromGoogleSheets(true);
+                }
+            }, 25000);
+        }
+
+        function manualRefresh() {
+            syncFromGoogleSheets(false);
+            renderWorkspace();
+        }
+
+        // --- ITEM BUILDER & AUTOMATIC QUANTITY COUNT ---
+        function buildProductSelectHTML(selectedName = "") {
+            const placeholder = `<option value="" disabled ${!selectedName ? "selected" : ""}>Select Cleaning Product...</option>`;
+            return placeholder + CLEANING_PRODUCTS.map(prod =>
+                `<option value="${escapeAttr(prod)}" ${prod === selectedName ? "selected" : ""}>${escapeHTML(prod)}</option>`
+            ).join("");
+        }
+
+        function buildQtySelectHTML(selectedQty = "") {
+            const isPreset = QUANTITY_PRESETS.includes(selectedQty);
+            const isCustom = Boolean(selectedQty && !isPreset);
+            return QUANTITY_PRESETS.map(q =>
+                `<option value="${escapeAttr(q)}" ${q === selectedQty ? "selected" : ""}>${escapeHTML(q)}</option>`
+            ).join("") + `<option value="CUSTOM" ${isCustom ? "selected" : ""}>Custom Qty...</option>`;
+        }
+
+        function onQtyDropdownChange(selectEl) {
+            const row = selectEl.closest(".item-row");
+            if (!row) return;
+            const customInput = row.querySelector(".item-custom-qty");
+            if (!customInput) return;
+
+            if (selectEl.value === "CUSTOM") {
+                customInput.classList.remove("hidden");
+                customInput.required = true;
+                customInput.focus();
+            } else {
+                customInput.classList.add("hidden");
+                customInput.required = false;
+                customInput.value = "";
+            }
+            updateCountBadge(row.parentElement.id, row.parentElement.dataset.badgeId);
+        }
+
+        function updateCountBadge(containerId, badgeId) {
+            const container = document.getElementById(containerId);
+            const badge = document.getElementById(badgeId);
+            if (!container || !badge) return;
+            const total = container.querySelectorAll(".item-row").length;
+            badge.textContent = `${total} ${total === 1 ? "Item" : "Items"}`;
+        }
+
+        function addItemRow(containerId, badgeId, presetObj = null, lockFirstRemove = false) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.dataset.badgeId = badgeId;
+
+            const prodName = presetObj ? presetObj.name : "";
+            const qtyVal = presetObj ? presetObj.qty : "";
+            const isCustom = Boolean(qtyVal && !QUANTITY_PRESETS.includes(qtyVal));
+
+            const row = document.createElement("div");
+            row.className = "item-row bg-slate-50 p-2.5 rounded-xl border border-slate-200/90 space-y-2";
+            row.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <select required onchange="updateCountBadge('${containerId}', '${badgeId}')" class="item-name flex-1 min-w-0 px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:border-brand-600">
+                        ${buildProductSelectHTML(prodName)}
+                    </select>
+                    <select onchange="onQtyDropdownChange(this)" class="item-qty-select w-36 shrink-0 px-2.5 py-2 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 focus:outline-none focus:border-brand-600">
+                        ${buildQtySelectHTML(qtyVal)}
+                    </select>
+                    ${!lockFirstRemove ? `
+                        <button type="button" onclick="removeItemRow(this, '${containerId}', '${badgeId}')" title="Remove item" class="p-2 text-slate-400 hover:text-red-600 rounded-lg transition shrink-0 cursor-pointer">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    ` : ""}
+                </div>
+                <input type="text" value="${escapeAttr(isCustom ? qtyVal : "")}" ${isCustom ? "required" : ""} oninput="updateCountBadge('${containerId}', '${badgeId}')" placeholder="Enter custom quantity (e.g. 150 Litre, 10 Cans)..." class="item-custom-qty ${isCustom ? "" : "hidden"} w-full px-3 py-2 bg-white border border-brand-300 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600">
+            `;
+
+            container.appendChild(row);
+            updateCountBadge(containerId, badgeId);
+            refreshIcons();
+        }
+
+        function removeItemRow(btn, containerId, badgeId) {
+            const row = btn.closest(".item-row");
+            if (row) row.remove();
+            updateCountBadge(containerId, badgeId);
+        }
+
+        function resetCreateItems() {
+            const container = document.getElementById("create-items-container");
+            if (!container) return;
+            container.innerHTML = "";
+            addItemRow("create-items-container", "create-item-count-badge", null, true);
+        }
+
+        function collectOrderItems(containerId) {
+            const rows = document.querySelectorAll(`#${containerId} .item-row`);
+            const entries = [];
+            let invalid = false;
+
+            rows.forEach(row => {
+                const name = row.querySelector(".item-name").value.trim();
+                const qSel = row.querySelector(".item-qty-select").value;
+                const qCustom = row.querySelector(".item-custom-qty").value.trim();
+                const finalQty = qSel === "CUSTOM" ? qCustom : qSel;
+
+                if (!name || !finalQty) {
+                    invalid = true;
+                    return;
+                }
+                entries.push(`${name} (${finalQty})`);
+            });
+
+            return { invalid, entries };
+        }
+
+        function formatTimestamp() {
+            const d = new Date();
+            return d.toLocaleDateString("en-IN", { day: "2-digit", month: "short" }) + ", " +
+                   d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true });
+        }
+
+        // --- CREATE ORDER ---
+        async function submitNewOrder(event) {
+            event.preventDefault();
+            const customerName = document.getElementById("cust-name").value.trim();
+            const contactNo = document.getElementById("cust-phone").value.trim();
+            const companyName = document.getElementById("cust-company").value.trim();
+            const taxId = document.getElementById("cust-tax-id").value.trim().toUpperCase();
+            const address = document.getElementById("cust-address").value.trim();
+
+            const { invalid, entries } = collectOrderItems("create-items-container");
+            if (invalid || entries.length === 0) {
+                showToast("Please select a product and quantity for every item", "error");
+                return;
             }
 
-            function openConfirmModal(title, message, okLabel, onConfirmed) {
-                const modal = document.getElementById("confirmModal");
-                const okBtn = document.getElementById("confirmOkBtn");
-                const cancelBtn = document.getElementById("confirmCancelBtn");
-                document.getElementById("confirmTitle").textContent = title;
-                document.getElementById("confirmMessage").textContent = message;
-                okBtn.textContent = okLabel || "Confirm";
-                modal.classList.remove("hidden");
+            const created = normalizeOrder({
+                uid: `ord_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+                createdAt: formatTimestamp(),
+                customerName,
+                contactNo,
+                companyName,
+                taxId,
+                address,
+                items: entries.join(" | "),
+                itemCount: entries.length,
+                paymentStatus: "Success",
+                packingStatus: "Pending",
+                packedFlags: entries.map(() => false),
+                weightBox: "",
+                courierName: "",
+                trackingId: "",
+                remarks: ""
+            });
 
-                const cleanup = () => {
-                    modal.classList.add("hidden");
-                    okBtn.onclick = null;
-                    cancelBtn.onclick = null;
-                };
+            orders.unshift(created);
+            saveOrdersToStorage();
+            renderWorkspace();
 
-                cancelBtn.onclick = cleanup;
-                okBtn.onclick = () => {
-                    cleanup();
-                    onConfirmed();
-                };
-            }
+            document.getElementById("new-order-form").reset();
+            resetCreateItems();
+            showToast(`Order added (${created.itemCount} ${created.itemCount === 1 ? "item" : "items"})`, "success");
 
-            function readAndCompressImage(file) {
-                return new Promise((resolve) => {
-                    if (!file) return resolve("");
-                    const reader = new FileReader();
-                    reader.onload = (ev) => {
-                        const img = new Image();
-                        img.onload = () => {
-                            const canvas = document.createElement("canvas");
-                            const maxDim = 800;
-                            let width = img.width;
-                            let height = img.height;
-                            if (width > maxDim || height > maxDim) {
-                                if (width > height) {
-                                    height = Math.round((height * maxDim) / width);
-                                    width = maxDim;
-                                } else {
-                                    width = Math.round((width * maxDim) / height);
-                                    height = maxDim;
-                                }
-                            }
-                            canvas.width = width;
-                            canvas.height = height;
-                            const ctx = canvas.getContext("2d");
-                            ctx.drawImage(img, 0, 0, width, height);
-                            resolve(canvas.toDataURL("image/jpeg", 0.72));
-                        };
-                        img.onerror = () => resolve("");
-                        img.src = ev.target.result;
-                    };
-                    reader.onerror = () => resolve("");
-                    reader.readAsDataURL(file);
+            await pushOrderAction({
+                action: "create",
+                order: {
+                    ...created,
+                    packedFlags: JSON.stringify(created.packedFlags)
+                }
+            });
+        }
+
+        // --- EDIT EXISTING ORDER ---
+        function openEditOrderModal(uid) {
+            const found = orders.find(o => o.uid === uid);
+            if (!found) return;
+            const o = normalizeOrder(found);
+
+            document.getElementById("edit-order-uid").value = o.uid;
+            document.getElementById("edit-cust-name").value = o.customerName;
+            document.getElementById("edit-cust-phone").value = o.contactNo;
+            document.getElementById("edit-cust-company").value = o.companyName;
+            document.getElementById("edit-cust-tax-id").value = o.taxId;
+            document.getElementById("edit-cust-address").value = o.address;
+
+            const container = document.getElementById("edit-items-container");
+            container.innerHTML = "";
+            const rawItems = splitOrderItems(o.items);
+            if (rawItems.length === 0) {
+                addItemRow("edit-items-container", "edit-item-count-badge", null, true);
+            } else {
+                rawItems.forEach((txt, idx) => {
+                    addItemRow("edit-items-container", "edit-item-count-badge", parseProductEntry(txt), idx === 0);
                 });
             }
 
-            function amountToIndianWords(num) {
-                let n = Math.round(Number(num) || 0);
-                if (n === 0) return "Zero Rupees Only";
-                if (n < 0) return "Minus " + amountToIndianWords(Math.abs(n));
+            document.getElementById("edit-order-modal").classList.remove("hidden");
+            refreshIcons();
+        }
 
-                const ones = ["", "One", "Two", "Three", "Four", "Five", "
+        function closeEditOrderModal() {
+            document.getElementById("edit-order-modal").classList.add("hidden");
+        }
+
+        function openEditOrderFromDispatch() {
+            const uid = document.getElementById("edit-dispatch-uid").value;
+            closeDispatchModal();
+            openEditOrderModal(uid);
+        }
+
+        async function saveEditedOrder(event) {
+            event.preventDefault();
+            const uid = document.getElementById("edit-order-uid").value;
+            const customerName = document.getElementById("edit-cust-name").value.trim();
+            const contactNo = document.getElementById("edit-cust-phone").value.trim();
+            const companyName = document.getElementById("edit-cust-company").value.trim();
+            const taxId = document.getElementById("edit-cust-tax-id").value.trim().toUpperCase();
+            const address = document.getElementById("edit-cust-address").value.trim();
+
+            const { invalid, entries } = collectOrderItems("edit-items-container");
+            if (invalid || entries.length === 0) {
+                showToast("Please complete all products and quantities", "error");
+                return;
+            }
+
+            const idx = orders.findIndex(o => o.uid === uid);
+            if (idx === -1) return;
+
+            const previousName = orders[idx].customerName;
+            const oldFlags = orders[idx].packedFlags || [];
+            const nextFlags = entries.map((_, i) => Boolean(oldFlags[i]));
+
+            orders[idx] = {
+                ...orders[idx],
+                customerName,
+                contactNo,
+                companyName,
+                taxId,
+                address,
+                items: entries.join(" | "),
+                itemCount: entries.length,
+                packedFlags: nextFlags
+            };
+
+            saveOrdersToStorage();
+            closeEditOrderModal();
+            renderWorkspace();
+            showToast("Order updated and synced", "success");
+
+            await pushOrderAction({
+                action: "editOrder",
+                createdAt: orders[idx].createdAt,
+                matchCustomerName: previousName,
+                order: {
+                    ...orders[idx],
+                    packedFlags: JSON.stringify(nextFlags)
+                }
+            });
+        }
+
+        // --- PACKING CHECKLIST, REMARKS & DISPATCH MODAL ---
+        function openDispatchModal(uid) {
+            const found = orders.find(o => o.uid === uid);
+            if (!found) return;
+            const o = normalizeOrder(found);
+
+            document.getElementById("edit-dispatch-uid").value = o.uid;
+            document.getElementById("modal-cust-title").textContent = o.customerName;
+            document.getElementById("modal-cust-name").textContent = o.customerName;
+            document.getElementById("modal-cust-phone").textContent = o.contactNo;
+
+            const extraLine = [];
+            if (o.companyName) extraLine.push(`Company: ${o.companyName}`);
+            if (o.taxId) extraLine.push(`Aadhaar / GST: ${o.taxId}`);
+            const extraEl = document.getElementById("modal-cust-extra");
+            if (extraLine.length > 0) {
+                extraEl.textContent = extraLine.join(" • ");
+                extraEl.classList.remove("hidden");
+            } else {
+                extraEl.classList.add("hidden");
+            }
+
+            document.getElementById("modal-cust-address").textContent = o.address;
+            document.getElementById("edit-packing-status").value = o.packingStatus;
+            document.getElementById("edit-weight-box").value = o.weightBox;
+            document.getElementById("edit-courier").value = o.courierName;
+            document.getElementById("edit-tracking").value = o.trackingId;
+            document.getElementById("edit-remarks").value = o.remarks;
+
+            const itemsList = splitOrderItems(o.items);
+            const checklistEl = document.getElementById("modal-checklist-container");
+            checklistEl.innerHTML = itemsList.map((itemStr, idx) => {
+                const packed = Boolean(o.packedFlags[idx]);
+                const parsed = parseProductEntry(itemStr);
+                return `
+                    <label class="flex items-center justify-between gap-3 p-3 rounded-xl border ${packed ? "bg-emerald-50/80 border-emerald-300" : "bg-amber-50/50 border-amber-200"} cursor-pointer transition">
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" data-idx="${idx}" ${packed ? "checked" : ""} onchange="syncChecklistState(true)" class="pack-checkbox w-4 h-4 accent-emerald-600 rounded cursor-pointer">
+                            <div>
+                                <span class="pack-item-name text-sm font-bold ${packed ? "line-through text-emerald-900" : "text-slate-900"} block">${escapeHTML(parsed.name)}</span>
+                                ${parsed.qty ? `<span class="text-xs font-semibold ${packed ? "text-emerald-700" : "text-amber-800"}">Qty: ${escapeHTML(parsed.qty)}</span>` : ""}
+                            </div>
+                        </div>
+                        <span class="pack-item-badge px-2.5 py-0.5 rounded-full text-[11px] font-bold ${packed ? "bg-emerald-600 text-white" : "bg-amber-100 text-amber-800"}">
+                            ${packed ? "Packed" : "Pending"}
+                        </span>
+                    </label>
+                `;
+            }).join("");
+
+            syncChecklistState(false);
+            document.getElementById("dispatch-modal").classList.remove("hidden");
+            refreshIcons();
+        }
+
+        function setAllChecklist(checkedState) {
+            document.querySelectorAll(".pack-checkbox").forEach(cb => {
+                cb.checked = checkedState;
+            });
+            syncChecklistState(true);
+        }
+
+        function syncChecklistState(autoAdjustStatus) {
+            const boxes = Array.from(document.querySelectorAll(".pack-checkbox"));
+            const total = boxes.length;
+            const packedCount = boxes.filter(b => b.checked).length;
+
+            boxes.forEach(cb => {
+                const label = cb.closest("label");
+                const nameSpan = label.querySelector(".pack-item-name");
+                const badge = label.querySelector(".pack-item-badge");
+                if (cb.checked) {
+                    label.className = "flex items-center justify-between gap-3 p-3 rounded-xl border bg-emerald-50/80 border-emerald-300 cursor-pointer transition";
+                    if (nameSpan) nameSpan.className = "pack-item-name text-sm font-bold line-through text-emerald-900 block";
+                    if (badge) {
+                        badge.className = "pack-item-badge px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-600 text-white";
+                        badge.textContent = "Packed";
+                    }
+                } else {
+                    label.className = "flex items-center justify-between gap-3 p-3 rounded-xl border bg-amber-50/50 border-amber-200 cursor-pointer transition";
+                    if (nameSpan) nameSpan.className = "pack-item-name text-sm font-bold text-slate-900 block";
+                    if (badge) {
+                        badge.className = "pack-item-badge px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800";
+                        badge.textContent = "Pending";
+                    }
+                }
+            });
+
+            const summaryEl = document.getElementById("modal-item-summary");
+            const barEl = document.getElementById("checklist-progress-bar");
+            if (summaryEl) summaryEl.textContent = `${packedCount}/${total} Packed`;
+            if (barEl) {
+                const pct = total > 0 ? Math.round((packedCount / total) * 100) : 0;
+                barEl.style.width = `${pct}%`;
+            }
+
+            if (autoAdjustStatus && total > 0) {
+                const statusSel = document.getElementById("edit-packing-status");
+                if (statusSel && statusSel.value !== "Dispatched") {
+                    if (packedCount === 0) statusSel.value = "Pending";
+                    else if (packedCount < total) statusSel.value = "Packing";
+                    else statusSel.value = "Packed";
+                }
+            }
+        }
+
+        function closeDispatchModal() {
+            document.getElementById("dispatch-modal").classList.add("hidden");
+        }
+
+        function setCourierPreset(name) {
+            const input = document.getElementById("edit-courier");
+            if (input) input.value = name;
+        }
+
+        async function saveDispatchUpdate(event) {
+            event.preventDefault();
+            const uid = document.getElementById("edit-dispatch-uid").value;
+            const packingStatus = document.getElementById("edit-packing-status").value;
+            const weightBox = document.getElementById("edit-weight-box").value.trim();
+            const courierName = document.getElementById("edit-courier").value.trim();
+            const trackingId = document.getElementById("edit-tracking").value.trim();
+            const remarks = document.getElementById("edit-remarks").value.trim();
+            const packedFlags = Array.from(document.querySelectorAll(".pack-checkbox")).map(b => b.checked);
+
+            const idx = orders.findIndex(o => o.uid === uid);
+            if (idx === -1) return;
+
+            orders[idx] = {
+                ...orders[idx],
+                packingStatus,
+                packedFlags,
+                weightBox,
+                courierName,
+                trackingId,
+                remarks
+            };
+
+            saveOrdersToStorage();
+            closeDispatchModal();
+            renderWorkspace();
+            showToast(`Saved (${packingStatus})`, "success");
+
+            await pushOrderAction({
+                action: "update",
+                createdAt: orders[idx].createdAt,
+                customerName: orders[idx].customerName,
+                packingStatus,
+                packedFlags: JSON.stringify(packedFlags),
+                weightBox,
+                courierName,
+                trackingId,
+                remarks
+            });
+        }
+
+        // --- BILL / INVOICE PRINT & DOWNLOAD ---
+        function openBillModal(uid) {
+            const found = orders.find(o => o.uid === uid);
+            if (!found) return;
+            const o = normalizeOrder(found);
+            currentBillUid = o.uid;
+
+            document.getElementById("bill-date").textContent = "Date: " + o.createdAt;
+            document.getElementById("bill-cust-name").textContent = o.customerName;
+
+            const compEl = document.getElementById("bill-cust-company");
+            if (o.companyName) {
+                compEl.textContent = "Company: " + o.companyName;
+                compEl.classList.remove("hidden");
+            } else {
+                compEl.classList.add("hidden");
+            }
+
+            const taxEl = document.getElementById("bill-cust-tax");
+            if (o.taxId) {
+                taxEl.textContent = "Aadhaar / GST No: " + o.taxId;
+                taxEl.classList.remove("hidden");
+            } else {
+                taxEl.classList.add("hidden");
+            }
+
+            document.getElementById("bill-cust-phone").textContent = "Phone: " + o.contactNo;
+            document.getElementById("bill-cust-address").textContent = o.address;
+
+            document.getElementById("bill-status").textContent = o.packingStatus;
+            document.getElementById("bill-courier").textContent = o.courierName || "—";
+            document.getElementById("bill-awb").textContent = o.trackingId || "—";
+            document.getElementById("bill-weight").textContent = o.weightBox || "—";
+
+            const itemsList = splitOrderItems(o.items);
+            const tbody = document.getElementById("bill-items-tbody");
+            tbody.innerHTML = itemsList.map((itemStr, i) => {
+                const parsed = parseProductEntry(itemStr);
+                const isPacked = Boolean(o.packedFlags[i]);
+                return `
+                    <tr>
+                        <td class="py-2.5 px-3 font-bold text-slate-600">${i + 1}</td>
+                        <td class="py-2.5 px-3 font-bold text-slate-900">${escapeHTML(parsed.name)}</td>
+                        <td class="py-2.5 px-3 font-semibold text-slate-800">${escapeHTML(parsed.qty || "—")}</td>
+                        <td class="py-2.5 px-3 text-right font-bold ${isPacked ? "text-emerald-700" : "text-amber-700"}">
+                            ${isPacked ? "Packed" : "Pending"}
+                        </td>
+                    </tr>
+                `;
+            }).join("");
+
+            const remSec = document.getElementById("bill-remarks-section");
+            if (o.remarks) {
+                remSec.classList.remove("hidden");
+                document.getElementById("bill-remarks-text").textContent = o.remarks;
+            } else {
+                remSec.classList.add("hidden");
+            }
+
+            document.getElementById("bill-total-count-footer").textContent =
+                `Total Items: ${o.itemCount} ${o.itemCount === 1 ? "Item" : "Items"}`;
+
+            document.getElementById("bill-modal").classList.remove("hidden");
+            refreshIcons();
+        }
+
+        function closeBillModal() {
+            document.getElementById("bill-modal").classList.add("hidden");
+        }
+
+        function downloadBillFile() {
+            const found = orders.find(o => o.uid === currentBillUid);
+            if (!found) return;
+            const o = normalizeOrder(found);
+            const itemsList = splitOrderItems(o.items);
+
+            const rowsHtml = itemsList.map((itemStr, i) => {
+                const parsed = parseProductEntry(itemStr);
+                const packed = Boolean(o.packedFlags[i]);
+                return `
+                    <tr>
+                        <td style="padding:9px;border:1px solid #cbd5e1;">${i + 1}</td>
+                        <td style="padding:9px;border:1px solid #cbd5e1;font-weight:700;">${escapeHTML(parsed.name)}</td>
+                        <td style="padding:9px;border:1px solid #cbd5e1;">${escapeHTML(parsed.qty || "—")}</td>
+                        <td style="padding:9px;border:1px solid #cbd5e1;text-align:right;font-weight:700;color:${packed ? "#047857" : "#b45309"};">${packed ? "Packed" : "Pending"}</td>
+                    </tr>
+                `;
+            }).join("");
+
+            const docHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Khushali Logistic Panel - Bill - ${escapeHTML(o.customerName)}</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 28px; color: #0f172a; }
+  .sheet { max-width: 720px; margin: 0 auto; border: 2px solid #0f172a; border-radius: 12px; padding: 24px; }
+  .top { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0f172a; padding-bottom: 14px; margin-bottom: 18px; }
+  .paid { background: #059669; color: #fff; padding: 5px 10px; border-radius: 6px; font-weight: bold; font-size: 12px; }
+  .grid { display: flex; gap: 16px; margin-bottom: 18px; }
+  .box { flex: 1; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; font-size: 13px; line-height: 1.5; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px; }
+  th { background: #0f172a; color: #fff; padding: 10px; text-align: left; border: 1px solid #0f172a; }
+  .remarks { background: #fffbeb; border: 1px solid #fde68a; padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 14px; }
+  .foot { border-top: 1px solid #cbd5e1; padding-top: 10px; display: flex; justify-content: space-between; font-size: 12px; color: #64748b; }
+</style>
+</head>
+<body>
+  <div class="sheet">
+    <div class="top">
+      <div>
+        <h1 style="margin:0;font-size:22px;text-transform:uppercase;">Khushali Logistic Panel</h1>
+        <p style="margin:4px 0 0;font-size:12px;color:#475569;">Bill / Invoice & Dispatch Slip</p>
+      </div>
+      <div style="text-align:right;">
+        <span class="paid">PAYMENT: SUCCESS</span>
+        <p style="margin:6px 0 0;font-size:12px;font-weight:bold;">Date: ${escapeHTML(o.createdAt)}</p>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="box">
+        <div style="font-size:10px;font-weight:bold;color:#64748b;text-transform:uppercase;">Customer Details</div>
+        <div style="font-size:15px;font-weight:bold;">${escapeHTML(o.customerName)}</div>
+        ${o.companyName ? `<div><strong>Company:</strong> ${escapeHTML(o.companyName)}</div>` : ""}
+        ${o.taxId ? `<div><strong>Aadhaar / GST No:</strong> ${escapeHTML(o.taxId)}</div>` : ""}
+        <div><strong>Phone:</strong> ${escapeHTML(o.contactNo)}</div>
+        <div><strong>Address:</strong> ${escapeHTML(o.address)}</div>
+      </div>
+      <div class="box">
+        <div style="font-size:10px;font-weight:bold;color:#64748b;text-transform:uppercase;">Dispatch Details</div>
+        <div><strong>Status:</strong> ${escapeHTML(o.packingStatus)}</div>
+        <div><strong>Courier / Transport:</strong> ${escapeHTML(o.courierName || "—")}</div>
+        <div><strong>Tracking / AWB / LR:</strong> ${escapeHTML(o.trackingId || "—")}</div>
+        <div><strong>Box / Weight:</strong> ${escapeHTML(o.weightBox || "—")}</div>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:45px;">Sr.</th>
+          <th>Product</th>
+          <th>Quantity</th>
+          <th style="text-align:right;">Packing</th>
+        </tr>
+      </thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>
+    ${o.remarks ? `<div class="remarks"><strong>Remarks:</strong> ${escapeHTML(o.remarks)}</div>` : ""}
+    <div class="foot">
+      <span><strong>Khushali Logistic Panel</strong></span>
+      <span>Total Items: ${o.itemCount}</span>
+    </div>
+  </div>
+</body>
+</html>`;
+
+            const blob = new Blob([docHtml], { type: "text/html" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            const safeName = (o.customerName || "Customer").replace(/[^a-zA-Z0-9_-]/g, "_");
+            link.href = url;
+            link.download = `Khushali-Logistic-Panel-Bill-${safeName}.html`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast(`Downloaded Bill for ${o.customerName}`, "success");
+        }
+
+        // --- FILTERS & RENDERING ---
+        function handleSearchInput(val) {
+            searchTerm = String(val || "").toLowerCase().trim();
+            renderWorkspace();
+        }
+
+        function setOrderFilter(filter) {
+            orderFilter = filter;
+            document.querySelectorAll(".ofilter-btn").forEach(btn => {
+                const active = btn.dataset.ofilter === filter;
+                btn.className = active
+                    ? "ofilter-btn px-3 py-1.5 rounded-xl text-xs font-bold border border-brand-600 bg-brand-600 text-white transition whitespace-nowrap cursor-pointer"
+                    : "ofilter-btn px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 transition whitespace-nowrap cursor-pointer";
+            });
+            renderWorkspace();
+        }
+
+        function setDispatchFilter(filter) {
+            dispatchFilter = filter;
+            document.querySelectorAll(".dfilter-btn").forEach(btn => {
+                const active = btn.dataset.dfilter === filter;
+                btn.className = active
+                    ? "dfilter-btn px-3.5 py-2 rounded-xl text-xs font-bold border border-purple-600 bg-purple-600 text-white transition whitespace-nowrap cursor-pointer"
+                    : "dfilter-btn px-3.5 py-2 rounded-xl text-xs font-bold border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 transition whitespace-nowrap cursor-pointer";
+            });
+            renderWorkspace();
+        }
+
+        function getStatusPillHTML(status) {
+            const st = normalizeStatus(status);
+            if (st === "Dispatched") {
+                return `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Dispatched
+                </span>`;
+            }
+            if (st === "Packed") {
+                return `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-purple-50 text-purple-700 border border-purple-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span> Packed
+                </span>`;
+            }
+            if (st === "Packing") {
+                return `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span> Packing
+                </span>`;
+            }
+            return `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Pending
+            </span>`;
+        }
+
+        function renderStructuredItemsHTML(order) {
+            const itemsList = splitOrderItems(order.items);
+            const flags = normalizeFlags(order.packedFlags, itemsList.length);
+
+            return `
+                <ul class="space-y-1.5 mt-1.5">
+                    ${itemsList.map((itemStr, idx) => {
+                        const parsed = parseProductEntry(itemStr);
+                        const packed = Boolean(flags[idx]);
+                        return `
+                            <li class="flex items-center justify-between gap-2 text-xs bg-white px-2.5 py-1.5 rounded-lg border border-slate-200/80">
+                                <span class="font-bold ${packed ? "line-through text-emerald-800" : "text-slate-900"}">
+                                    ${packed ? "✓ " : "• "}${escapeHTML(parsed.name)}
+                                </span>
+                                ${parsed.qty ? `<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-800 font-bold text-[11px] shrink-0">${escapeHTML(parsed.qty)}</span>` : ""}
+                            </li>
+                        `;
+                    }).join("")}
+                </ul>
+            `;
+        }
+
+        function renderWorkspace() {
+            const pending = orders.filter(o => normalizeStatus(o.packingStatus) === "Pending").length;
+            const packing = orders.filter(o => normalizeStatus(o.packingStatus) === "Packing").length;
+            const packed = orders.filter(o => normalizeStatus(o.packingStatus) === "Packed").length;
+            const dispatched = orders.filter(o => normalizeStatus(o.packingStatus) === "Dispatched").length;
+
+            document.getElementById("count-pending").textContent = pending;
+            document.getElementById("count-packing").textContent = packing;
+            document.getElementById("count-packed").textContent = packed;
+            document.getElementById("count-dispatched").textContent = dispatched;
+
+            const matching = orders.filter(o => {
+                if (!searchTerm) return true;
+                return (
+                    (o.customerName || "").toLowerCase().includes(searchTerm) ||
+                    (o.contactNo || "").toLowerCase().includes(searchTerm) ||
+                    (o.companyName || "").toLowerCase().includes(searchTerm) ||
+                    (o.taxId || "").toLowerCase().includes(searchTerm) ||
+                    (o.items || "").toLowerCase().includes(searchTerm) ||
+                    (o.trackingId || "").toLowerCase().includes(searchTerm) ||
+                    (o.remarks || "").toLowerCase().includes(searchTerm)
+                );
+            });
+
+            if (activeRole === "order" || activeRole === "manager") {
+                renderOrderCards(matching);
+            }
+            if (activeRole === "dispatch" || activeRole === "manager") {
+                renderDispatchCards(matching);
+            }
+
+            refreshIcons();
+        }
+
+        function renderOrderCards(list) {
+            const filtered = list.filter(o => orderFilter === "ALL" || normalizeStatus(o.packingStatus) === orderFilter);
+            const container = document.getElementById("order-team-list");
+            if (!container) return;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white rounded-2xl border border-slate-200 p-8 text-center">
+                        <p class="text-sm font-bold text-slate-700">No matching orders found</p>
+                        <p class="text-xs text-slate-500 mt-1">Create a new order or adjust filters.</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map((raw, i) => {
+                const o = normalizeOrder(raw, i);
+                const packedCount = o.packedFlags.filter(Boolean).length;
+
+                return `
+                    <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs hover:border-slate-300 transition space-y-3">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <span class="text-xs text-slate-500 font-semibold">${escapeHTML(o.createdAt)}</span>
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <button type="button" onclick="openEditOrderModal('${o.uid}')" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-brand-50 hover:text-brand-700 hover:border-brand-200 text-slate-700 text-xs font-bold transition cursor-pointer">
+                                    <i data-lucide="pencil" class="w-3 h-3"></i>
+                                    Edit Order
+                                </button>
+                                <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold">
+                                    Paid: Success
+                                </span>
+                                ${getStatusPillHTML(o.packingStatus)}
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 text-xs">
+                            <div class="sm:col-span-5 space-y-1">
+                                <p class="font-extrabold text-slate-900 text-sm">${escapeHTML(o.customerName)}</p>
+                                ${o.companyName ? `<p class="font-bold text-slate-700">Company: ${escapeHTML(o.companyName)}</p>` : ""}
+                                ${o.taxId ? `<p class="font-mono text-[11px] font-semibold text-slate-600">ID / GST: ${escapeHTML(o.taxId)}</p>` : ""}
+                                <p class="text-slate-700 font-semibold">Phone: ${escapeHTML(o.contactNo)}</p>
+                                <p class="text-slate-500 leading-relaxed">${escapeHTML(o.address)}</p>
+                            </div>
+                            <div class="sm:col-span-7 bg-slate-50 rounded-xl p-2.5 border border-slate-200/80">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
+                                        Items (${o.itemCount} ${o.itemCount === 1 ? "Item" : "Items"})
+                                    </span>
+                                    <span class="text-[11px] font-bold text-purple-700">${packedCount}/${o.itemCount} Packed</span>
+                                </div>
+                                ${renderStructuredItemsHTML(o)}
+                            </div>
+                        </div>
+
+                        ${o.remarks ? `
+                            <div class="bg-amber-50/70 border border-amber-200/70 rounded-xl px-3 py-2 text-xs text-amber-950">
+                                <strong class="font-bold">Remarks:</strong> ${escapeHTML(o.remarks)}
+                            </div>
+                        ` : ""}
+
+                        ${(o.courierName || o.trackingId || o.weightBox) ? `
+                            <div class="pt-2.5 border-t border-slate-100 flex flex-wrap items-center gap-3 text-xs text-slate-700">
+                                ${o.courierName ? `<span>Courier: <strong>${escapeHTML(o.courierName)}</strong></span>` : ""}
+                                ${o.trackingId ? `<span class="font-mono bg-slate-100 px-2 py-0.5 rounded font-bold text-slate-900">AWB/LR: ${escapeHTML(o.trackingId)}</span>` : ""}
+                                ${o.weightBox ? `<span class="text-slate-500">${escapeHTML(o.weightBox)}</span>` : ""}
+                            </div>
+                        ` : ""}
+                    </div>
+                `;
+            }).join("");
+        }
+
+        function renderDispatchCards(list) {
+            const filtered = list.filter(o => dispatchFilter === "ALL" || normalizeStatus(o.packingStatus) === dispatchFilter);
+            const container = document.getElementById("dispatch-team-list");
+            if (!container) return;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full bg-white rounded-2xl border border-slate-200 p-10 text-center">
+                        <p class="text-sm font-bold text-slate-700">No orders in this status</p>
+                        <p class="text-xs text-slate-500 mt-1">Select another status tab or refresh.</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map((raw, i) => {
+                const o = normalizeOrder(raw, i);
+                const packedCount = o.packedFlags.filter(Boolean).length;
+
+                return `
+                    <div onclick="openDispatchModal('${o.uid}')" class="bg-white rounded-2xl border ${o.packingStatus === "Pending" ? "border-amber-300" : "border-slate-200"} p-4 sm:p-5 shadow-xs hover:border-purple-400 hover:shadow-md cursor-pointer transition flex flex-col justify-between space-y-4">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="text-xs text-slate-500 font-semibold">${escapeHTML(o.createdAt)}</span>
+                                ${getStatusPillHTML(o.packingStatus)}
+                            </div>
+
+                            <div>
+                                <div class="flex items-center justify-between gap-2">
+                                    <h3 class="text-base font-extrabold text-slate-900">${escapeHTML(o.customerName)}</h3>
+                                    <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-200">Paid: Success</span>
+                                </div>
+                                ${o.companyName ? `<p class="text-xs font-bold text-slate-700 mt-0.5">Company: ${escapeHTML(o.companyName)}</p>` : ""}
+                                ${o.taxId ? `<p class="text-[11px] font-mono font-semibold text-slate-600">ID / GST: ${escapeHTML(o.taxId)}</p>` : ""}
+                                <p class="text-xs font-semibold text-brand-600 mt-0.5">Phone: ${escapeHTML(o.contactNo)}</p>
+                                <p class="text-xs text-slate-600 mt-1 leading-relaxed">${escapeHTML(o.address)}</p>
+                            </div>
+
+                            <div class="bg-amber-50/60 border border-amber-200/80 rounded-xl p-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[10px] font-extrabold uppercase tracking-wider text-amber-900">
+                                        Items (${o.itemCount}) • Click Card for Checklist
+                                    </span>
+                                    <span class="px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-purple-100 text-purple-800">
+                                        ${packedCount}/${o.itemCount} Packed
+                                    </span>
+                                </div>
+                                ${renderStructuredItemsHTML(o)}
+                            </div>
+
+                            ${o.remarks ? `
+                                <div class="bg-slate-50 border border-slate-200/80 rounded-xl px-3 py-2 text-xs text-slate-700">
+                                    <strong class="font-bold text-slate-900">Remarks:</strong> ${escapeHTML(o.remarks)}
+                                </div>
+                            ` : ""}
+
+                            <div class="grid grid-cols-3 gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200/70 text-[11px]">
+                                <div>
+                                    <span class="text-slate-400 block font-semibold">Box / Weight</span>
+                                    <span class="font-bold text-slate-800">${escapeHTML(o.weightBox || "—")}</span>
+                                </div>
+                                <div>
+                                    <span class="text-slate-400 block font-semibold">Courier</span>
+                                    <span class="font-bold text-slate-800">${escapeHTML(o.courierName || "—")}</span>
+                                </div>
+                                <div>
+                                    <span class="text-slate-400 block font-semibold">AWB / LR</span>
+                                    <span class="font-mono font-bold text-slate-900 break-all">${escapeHTML(o.trackingId || "—")}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div onclick="event.stopPropagation()" class="pt-2 flex items-center gap-2">
+                            <button type="button" onclick="openBillModal('${o.uid}')" class="px-3.5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-800 text-xs font-bold flex items-center gap-1.5 transition cursor-pointer">
+                                <i data-lucide="file-text" class="w-4 h-4 text-brand-600"></i>
+                                <span>Bill</span>
+                            </button>
+                            <button type="button" onclick="openDispatchModal('${o.uid}')" class="flex-1 py-2.5 px-4 rounded-xl bg-purple-600 hover:bg-purple-700 active:scale-[0.99] text-white text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition cursor-pointer">
+                                <i data-lucide="list-checks" class="w-4 h-4"></i>
+                                <span>Checklist & Dispatch</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        // --- SYNC MODAL ---
+        function openSyncModal() {
+            const input = document.getElementById("sheets-url-input");
+            if (input) input.value = getConfiguredSheetsUrl();
+            document.getElementById("sync-modal").classList.remove("hidden");
+            refreshIcons();
+        }
+
+        function closeSyncModal() {
+            document.getElementById("sync-modal").classList.add("hidden");
+        }
+
+        function saveAndSyncNow() {
+            const val = (document.getElementById("sheets-url-input").value || "").trim();
+            if (!val) {
+                showToast("Please enter a valid Apps Script Web App URL", "error");
+                return;
+            }
+            try {
+                localStorage.setItem(STORAGE_KEYS.SHEETS_URL, val);
+            } catch (e) {
+                console.warn("Save URL warning:", e);
+            }
+            closeSyncModal();
+            syncFromGoogleSheets(false);
+        }
+
+        function restoreDefaultSheetsUrl() {
+            try {
+                localStorage.setItem(STORAGE_KEYS.SHEETS_URL, DEFAULT_SHEETS_URL);
+            } catch (e) {
+                console.warn("Restore URL warning:", e);
+            }
+            const input = document.getElementById("sheets-url-input");
+            if (input) input.value = DEFAULT_SHEETS_URL;
+            showToast("Restored default Google Sheets URL", "info");
+        }
+
+        function copyAppsScriptCode() {
+            const pre = document.getElementById("apps-script-code");
+            if (!pre) return;
+            const ta = document.createElement("textarea");
+            ta.value = pre.innerText;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand("copy");
+            document.body.removeChild(ta);
+            showToast("Apps Script code copied", "success");
+        }
+
+        // --- HELPERS ---
+        function refreshIcons() {
+            try {
+                if (typeof lucide !== "undefined") {
+                    lucide.createIcons();
+                }
+            } catch (e) {
+                // Ignore icon refresh errors
+            }
+        }
+
+        function escapeHTML(str) {
+            return String(str || "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function escapeAttr(str) {
+            return escapeHTML(str);
+        }
+
+        function showToast(msg, type = "info") {
+            const container = document.getElementById("toast-container");
+            if (!container) return;
+
+            const el = document.createElement("div");
+            const palette = {
+                success: "bg-slate-900 text-white border-emerald-500",
+                error: "bg-red-600 text-white border-red-400",
+                info: "bg-slate-800 text-white border-slate-600"
+            };
+            el.className = `pointer-events-auto px-4 py-3 rounded-2xl shadow-xl border-l-4 text-xs font-bold transition-all duration-300 ${palette[type] || palette.info}`;
+            el.textContent = msg;
+
+            container.appendChild(el);
+            setTimeout(() => {
+                el.style.opacity = "0";
+                setTimeout(() => el.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
